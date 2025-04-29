@@ -94,7 +94,6 @@ export function TrainingCard({
 
    // Registration type display - Use uppercase variable name for the component type
    const RegistrationTypeIcon = training.registrationType === 'closed' ? Lock : Unlock;
-   const registrationTypeText = training.registrationType === 'closed' ? t('trainingCard.registrationClosed') : t('trainingCard.registrationOpen');
 
    const canRegister = showRegisterButton && currentUser?.role === 'rider' && (!userStatus || userStatus === 'Rejected' || userStatus === 'Cancelled');
    const canCancel = showCancelButton && currentUser?.role === 'rider' && userStatus && (userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
@@ -140,7 +139,7 @@ export function TrainingCard({
             </div>
              <Badge variant={training.registrationType === 'closed' ? 'secondary' : 'outline'} className="ml-auto whitespace-nowrap shrink-0">
                 {/* Render the component using the uppercase variable */}
-                <RegistrationTypeIcon className="mr-1 h-3 w-3"/> {registrationTypeText}
+                <RegistrationTypeIcon className="mr-1 h-3 w-3"/>
             </Badge>
         </div>
       </CardHeader>

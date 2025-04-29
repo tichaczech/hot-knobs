@@ -17,12 +17,12 @@ export const placeholderMotorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '
 
 // --- Placeholder Users ---
 export const placeholderUsers: User[] = [
-  { id: 'user-1', name: 'Alice Rider', email: 'alice@example.com', role: 'rider' },
-  { id: 'user-2', name: 'Bob Trainer', email: 'bob@example.com', role: 'trainer' },
+  { id: 'user-1', name: 'Bob Trainer', email: 'bob@example.com', role: 'trainer' },
+  { id: 'user-2', name: 'Alice Rider', email: 'alice@example.com', role: 'rider' },
   { id: 'user-3', name: 'Charlie Rider', email: 'charlie@example.com', role: 'rider' },
-  { id: 'user-4', name: 'Diana Requester', email: 'diana@example.com', role: 'rider' }, // Requested closed training
-  { id: 'user-5', name: 'Eve Waitlist', email: 'eve@example.com', role: 'rider' }, // Will be on waiting list
-  { id: 'user-6', name: 'Frank Waitlist', email: 'frank@example.com', role: 'rider' }, // Will be on waiting list
+  { id: 'user-4', name: 'Diana Rider', email: 'diana@example.com', role: 'rider' }, // Requested closed training
+  { id: 'user-5', name: 'Eve Rider', email: 'eve@example.com', role: 'rider' }, // Will be on waiting list
+  { id: 'user-6', name: 'Frank Rider', email: 'frank@example.com', role: 'rider' }, // Will be on waiting list
 ];
 
 // --- Placeholder Trainings ---
@@ -30,70 +30,70 @@ export const placeholderUsers: User[] = [
 export let placeholderTrainings: TrainingSession[] = [ // Use let to allow modification
   {
     id: 'ts-1',
-    trainerId: 'user-2',
+    trainerId: 'user-1',
     trainerName: 'Bob Trainer',
-    title: 'Enduro Basics Clinic (Open)',
+    title: 'Enduro Basics Clinic',
     date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
     locationId: 'loc-1',
     locationName: 'Rocky Valley Trails',
     skillLevels: ['Beginner'],
     motorcycleTypes: ['125cc', '250cc', 'Other'],
-    description: 'Focus on fundamental enduro techniques: body positioning, braking, and small obstacles. Open registration.',
+    description: 'Focus on fundamental enduro techniques: body positioning, braking, and small obstacles.',
     registrationType: 'open',
     registrations: [
-        { userId: 'user-1', status: 'Confirmed', registeredAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) }, // Alice registered yesterday
+        { userId: 'user-4', status: 'Confirmed', registeredAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) }, // Diana registered yesterday
         { userId: 'user-3', status: 'Cancelled', registeredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), reason: "Rider cancelled." }, // Charlie cancelled
     ],
     maxRiders: 1, // Set low capacity to test waiting list easily
   },
   {
     id: 'ts-2',
-    trainerId: 'user-2',
+    trainerId: 'user-1',
     trainerName: 'Bob Trainer',
-    title: 'Motocross Cornering Masterclass (Closed)',
+    title: 'Motocross Cornering Masterclass',
     date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
     locationId: 'loc-2',
     locationName: 'MX Speed Park',
     skillLevels: ['Intermediate', 'Advanced'],
     motorcycleTypes: ['250cc', '450cc'],
-    description: 'Advanced cornering drills, ruts, and berms. Improve your lap times! Requires trainer approval.',
+    description: 'Advanced cornering drills, ruts, and berms. Improve your lap times!',
     registrationType: 'closed',
     registrations: [
         { userId: 'user-3', status: 'Confirmed', registeredAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) }, // Charlie is confirmed
         { userId: 'user-4', status: 'Created', registeredAt: new Date(Date.now() - 12 * 60 * 60 * 1000) }, // Diana requested 12 hours ago
-        { userId: 'user-1', status: 'Rejected', registeredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), reason: 'Skill level mismatch' }, // Alice was rejected
+        { userId: 'user-2', status: 'Rejected', registeredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), reason: 'Skill level mismatch' }, // Alice was rejected
     ],
     maxRiders: 8,
   },
   {
     id: 'ts-3',
-    trainerId: 'user-2',
+    trainerId: 'user-1',
     trainerName: 'Bob Trainer',
-    title: 'Advanced Hill Climb Techniques (Open)',
+    title: 'Advanced Hill Climb Techniques',
     date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
     locationId: 'loc-3',
     locationName: 'Steep Mountain Pass',
     skillLevels: ['Advanced', 'Pro'],
     motorcycleTypes: ['250cc', '450cc', 'Other'],
-    description: 'Learn techniques for tackling challenging ascents, line selection, and throttle control. Open registration.',
+    description: 'Learn techniques for tackling challenging ascents, line selection, and throttle control.',
     registrationType: 'open',
     registrations: [
-        { userId: 'user-1', status: 'Confirmed', registeredAt: new Date() },
+        { userId: 'user-2', status: 'Confirmed', registeredAt: new Date() },
         { userId: 'user-3', status: 'Confirmed', registeredAt: new Date() },
     ],
     maxRiders: 6,
   },
   {
     id: 'ts-4',
-    trainerId: 'user-2',
+    trainerId: 'user-1',
     trainerName: 'Bob Trainer',
-    title: 'Introduction to Motocross Jumps (Open)',
+    title: 'Introduction to Motocross Jumps',
     date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
     locationId: 'loc-2',
     locationName: 'MX Speed Park',
     skillLevels: ['Beginner'],
     motorcycleTypes: ['125cc', '250cc', 'Electric'],
-    description: 'Safely learn the basics of jumping small tabletops and rollers. Open registration.',
+    description: 'Safely learn the basics of jumping small tabletops and rollers.',
     registrationType: 'open',
     registrations: [
         { userId: 'user-3', status: 'Confirmed', registeredAt: new Date() },
@@ -214,7 +214,7 @@ export async function getMyWaitingListTrainings(userId: string): Promise<Trainin
 // Simulate getting the current user
 export async function getCurrentUser(): Promise<User | null> {
     await new Promise(resolve => setTimeout(resolve, 20));
-    const userIndex = 0; // 0: Alice (Rider), 1: Bob (Trainer), 2: Charlie (Rider), ...
+    const userIndex = 1; // 0: Bob (Trainer), 1: Alice (Rider), 2: Charlie (Rider), ...
     const user = userIndex < placeholderUsers.length ? placeholderUsers[userIndex] : null;
     // console.log("Current User:", user); // Keep this commented unless debugging
     return user ? JSON.parse(JSON.stringify(user)) : null;
