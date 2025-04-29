@@ -19,26 +19,33 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Loader2, Bike } from "lucide-react"; // Added Bike icon
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { CalendarIcon, Loader2, Bike, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useTransition } from "react";
-import { createTraining } from "@/lib/placeholder-data"; // Server action/API call
+import { useState, useEffect, useTransition } from "react"; // Added useEffect
+import { createTraining, getLocations } from "@/lib/placeholder-data"; // Added getLocations
 import { useRouter } from 'next/navigation';
-import type { SkillLevel, MotorcycleType } from "@/lib/types";
+import type { SkillLevel, MotorcycleType, Location } from "@/lib/types";
 
 
 const skillLevels: SkillLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Pro'];
-const motorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '450cc', 'Electric', 'Other']; // Defined motorcycle types
+const motorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '450cc', 'Electric', 'Other'];
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
   date: z.date({ required_error: "A date for the training is required." }),
-  location: z.string().min(3, { message: "Location must be at least 3 characters." }),
-  skillLevels: z.array(z.enum(skillLevels as [SkillLevel, ...SkillLevel[]])) // Ensure Zod gets the tuple type
+  locationId: z.string({ required_error: "A location must be selected." }).min(1, { message: "Please select a location." }), // Changed from location string to locationId
+  skillLevels: z.array(z.enum(skillLevels as [SkillLevel, ...SkillLevel[]]))
                  .min(1, { message: "Select at least one skill level." }),
-  motorcycleTypes: z.array(z.enum(motorcycleTypes as [MotorcycleType, ...MotorcycleType[]])) // Added motorcycleTypes schema
+  motorcycleTypes: z.array(z.enum(motorcycleTypes as [MotorcycleType, ...MotorcycleType[]]))
                       .min(1, { message: "Select at least one motorcycle type." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }).max(500, {message: "Description cannot exceed 500 characters."}),
   maxRiders: z.coerce.number().int().positive().optional(),
@@ -52,17 +59,41 @@ interface CreateTrainingFormProps {
 
 export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
   const [isPending, startTransition] = useTransition();
+  const [locations, setLocations] = useState<Location[]>([]); // State for locations
+  const [isLoadingLocations, setIsLoadingLocations] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
+
+  // Fetch locations on component mount
+  useEffect(() => {
+    async function fetchLocations() {
+      setIsLoadingLocations(true);
+      try {
+        const fetchedLocations = await getLocations();
+        setLocations(fetchedLocations);
+      } catch (error) {
+        console.error("Failed to fetch locations:", error);
+        toast({
+          title: "Error",
+          description: "Could not load locations. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingLocations(false);
+      }
+    }
+    fetchLocations();
+  }, [toast]);
+
 
   const form = useForm<TrainingFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       date: undefined,
-      location: "",
+      locationId: "", // Default to empty string for locationId
       skillLevels: [],
-      motorcycleTypes: [], // Default to empty array
+      motorcycleTypes: [],
       description: "",
       maxRiders: 10,
     },
@@ -71,7 +102,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
   function onSubmit(values: TrainingFormValues) {
     console.log("Form submitted with values:", values); // Debug log
     startTransition(async () => {
-        // Ensure date is passed correctly
+        // Data structure matches placeholder function expectation
         const dataToSubmit = {
           ...values,
           date: values.date, // Keep as Date object
@@ -145,7 +176,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                     selected={field.value}
                     onSelect={(date) => {
                          if (date) {
-                           // Preserve time if date already has one, otherwise default
                            const currentTime = field.value || new Date();
                            date.setHours(currentTime.getHours(), currentTime.getMinutes(), 0, 0);
                            field.onChange(date);
@@ -153,7 +183,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                             field.onChange(undefined);
                          }
                      }}
-                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))} // Disable past dates
+                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
                     initialFocus
                   />
                   <div className="p-3 border-t border-border">
@@ -163,11 +193,11 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                          defaultValue={field.value ? format(field.value, "HH:mm") : "10:00"}
                         onChange={(e) => {
                             const time = e.target.value;
-                            const currentDate = field.value || new Date(); // Use existing date or today
+                            const currentDate = field.value || new Date();
                             if (time) {
                                 const [hours, minutes] = time.split(':').map(Number);
                                 const newDate = new Date(currentDate);
-                                newDate.setHours(hours, minutes, 0, 0); // Set H, M, S, MS
+                                newDate.setHours(hours, minutes, 0, 0);
                                 field.onChange(newDate);
                             }
                         }}
@@ -180,19 +210,36 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           )}
         />
 
-        <FormField
+        {/* Location Select Field */}
+         <FormField
           control={form.control}
-          name="location"
+          name="locationId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Location</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., MX Speed Park - Main Track" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoadingLocations}>
+                <FormControl>
+                  <SelectTrigger>
+                    <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder={isLoadingLocations ? "Loading locations..." : "Select a location"} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {!isLoadingLocations && locations.length === 0 && (
+                     <SelectItem value="no-locations" disabled>No locations available</SelectItem>
+                  )}
+                  {locations.map((location) => (
+                    <SelectItem key={location.id} value={location.id}>
+                      {location.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
+
 
          <FormField
           control={form.control}
@@ -245,7 +292,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           )}
         />
 
-         {/* Motorcycle Types Checkboxes */}
           <FormField
           control={form.control}
           name="motorcycleTypes"
@@ -257,7 +303,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                   Select all applicable motorcycle types for this training.
                 </FormDescription>
               </div>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3"> {/* Adjusted grid columns */}
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                  {motorcycleTypes.map((type) => (
                     <FormField
                       key={type}
@@ -327,8 +373,8 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                     type="number"
                     placeholder="e.g., 10"
                     {...field}
-                    value={field.value ?? ""} // Handle potential undefined value for input
-                    onChange={event => field.onChange(event.target.value === '' ? undefined : +event.target.value)} // Convert empty string to undefined
+                    value={field.value ?? ""}
+                    onChange={event => field.onChange(event.target.value === '' ? undefined : +event.target.value)}
                  />
               </FormControl>
                <FormDescription>
@@ -340,12 +386,11 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
         />
 
 
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button type="submit" className="w-full" disabled={isPending || isLoadingLocations}>
            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Create Training Session
+           {isLoadingLocations ? 'Loading...' : 'Create Training Session'}
         </Button>
       </form>
     </Form>
   );
 }
-

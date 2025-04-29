@@ -21,7 +21,8 @@ export async function generateMetadata({ params }: TrainingDetailsPageProps): Pr
   }
   return {
     title: `${training.title} - Mad Sprocket Training`,
-    description: `Details for the training session: ${training.title} on ${training.date.toLocaleDateString()} at ${training.location}. Suitable for ${training.skillLevels.join(', ')}.`,
+    // Updated description to use locationName
+    description: `Details for the training session: ${training.title} on ${training.date.toLocaleDateString()} at ${training.locationName}. Suitable for ${training.skillLevels.join(', ')}.`,
   };
 }
 

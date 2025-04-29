@@ -46,7 +46,7 @@ export function TrainingCard({
         </div>
         <div className="flex items-center text-sm text-muted-foreground">
           <MapPin className="mr-2 h-4 w-4" />
-          <span>{training.location}</span>
+          <span>{training.locationName}</span> {/* Changed from training.location */}
         </div>
          <div className="flex items-start text-sm text-muted-foreground"> {/* Changed to items-start for wrapping */}
           <BarChart className="mr-2 h-4 w-4 shrink-0 mt-0.5" /> {/* Added shrink-0 and adjusted margin */}
