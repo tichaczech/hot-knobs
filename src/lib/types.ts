@@ -8,7 +8,7 @@ export interface TrainingSession {
   title: string;
   date: Date;
   location: string;
-  skillLevel: SkillLevel;
+  skillLevels: SkillLevel[]; // Changed from skillLevel: SkillLevel
   description: string;
   registeredRiders?: string[]; // Array of user IDs registered
   maxRiders?: number;

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: TrainingDetailsPageProps): Pr
   }
   return {
     title: `${training.title} - ThrottleUp Training`,
-    description: `Details for the training session: ${training.title} on ${training.date.toLocaleDateString()} at ${training.location}.`,
+    description: `Details for the training session: ${training.title} on ${training.date.toLocaleDateString()} at ${training.location}. Suitable for ${training.skillLevels.join(', ')}.`,
   };
 }
 
@@ -34,7 +34,7 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
     notFound(); // Redirect to 404 if training doesn't exist
   }
 
-   const isRegistered = currentUser && training.registeredRiders?.includes(currentUser.id);
+   const isRegistered = !!currentUser && !!training.registeredRiders?.includes(currentUser.id); // Added checks for null/undefined
 
 
   return (
@@ -48,26 +48,30 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
       <TrainingCard
           training={training}
           currentUser={currentUser}
+          // Only show register button if user is a rider AND not already registered
           showRegisterButton={currentUser?.role === 'rider'}
-          showUnregisterButton={isRegistered} // Show unregister if already registered on this page
+          // Only show unregister button if user is a rider AND is registered
+          showUnregisterButton={currentUser?.role === 'rider' && isRegistered}
           showViewDetailsLink={false} // Hide the 'View Details' link on the details page
        />
 
-       {/* Potentially add more details specific to this page if needed */}
-       {/* <Card>
+       {/* Card for full description if needed */}
+       <Card>
            <CardHeader>
-               <CardTitle>Additional Information</CardTitle>
+               <CardTitle>Full Description</CardTitle>
            </CardHeader>
            <CardContent>
-               <p>More details about the terrain, specific requirements, or schedule could go here.</p>
+               <p className="whitespace-pre-wrap">{training.description}</p>
+               {/* Potential future actions for trainer */}
                {currentUser?.role === 'trainer' && currentUser.id === training.trainerId && (
-                 <div className="mt-4">
-                    <Button variant="outline" size="sm">Edit Training</Button>
-                    <Button variant="destructive" size="sm" className="ml-2">Delete Training</Button>
+                 <div className="mt-4 border-t pt-4 flex gap-2">
+                    {/* Placeholder buttons for future functionality */}
+                    {/* <Button variant="outline" size="sm">Edit Training</Button>
+                    <Button variant="destructive" size="sm">Delete Training</Button> */}
                  </div>
                )}
            </CardContent>
-       </Card> */}
+       </Card>
 
     </div>
   );

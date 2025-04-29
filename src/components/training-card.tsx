@@ -25,8 +25,13 @@ export function TrainingCard({
   showViewDetailsLink = true,
 }: TrainingCardProps) {
   const isRegistered = currentUser && training.registeredRiders?.includes(currentUser.id);
-  const isFull = training.maxRiders && training.registeredRiders && training.registeredRiders.length >= training.maxRiders;
-  const spotsLeft = training.maxRiders ? training.maxRiders - (training.registeredRiders?.length ?? 0) : Infinity;
+  const isFull = training.maxRiders !== undefined && training.registeredRiders && training.registeredRiders.length >= training.maxRiders;
+  const spotsLeft = training.maxRiders !== undefined ? training.maxRiders - (training.registeredRiders?.length ?? 0) : Infinity;
+
+  // Handle potential undefined maxRiders for display logic
+   const spotsDisplay = training.maxRiders !== undefined
+        ? `${training.registeredRiders?.length ?? 0} / ${training.maxRiders} registered (${spotsLeft > 0 ? `${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left` : 'Full'})`
+        : `${training.registeredRiders?.length ?? 0} registered (Open)`; // Indicate unlimited spots
 
   return (
     <Card className="flex flex-col h-full shadow-md hover:shadow-lg transition-shadow duration-200">
@@ -44,18 +49,19 @@ export function TrainingCard({
           <span>{training.location}</span>
         </div>
          <div className="flex items-center text-sm text-muted-foreground">
-          <BarChart className="mr-2 h-4 w-4" />
-          <span>Skill Level: <Badge variant="secondary">{training.skillLevel}</Badge></span>
+          <BarChart className="mr-2 h-4 w-4 shrink-0" />
+          <div className="flex flex-wrap gap-1">
+             <span className="mr-1">Levels:</span>
+              {training.skillLevels?.map(level => (
+                  <Badge key={level} variant="secondary" className="whitespace-nowrap">{level}</Badge>
+              ))}
+          </div>
         </div>
          <div className="flex items-center text-sm text-muted-foreground">
           <Users className="mr-2 h-4 w-4" />
-          <span>
-             {training.maxRiders
-                ? `${training.registeredRiders?.length ?? 0} / ${training.maxRiders} registered (${spotsLeft > 0 ? `${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left` : 'Full'})`
-                : `${training.registeredRiders?.length ?? 0} registered`}
-          </span>
+          <span>{spotsDisplay}</span>
         </div>
-        <p className="text-sm">{training.description}</p>
+        <p className="text-sm line-clamp-3">{training.description}</p> {/* Add line-clamp */}
       </CardContent>
       <CardFooter className="flex justify-between items-center mt-auto pt-4 border-t">
          {showViewDetailsLink && (

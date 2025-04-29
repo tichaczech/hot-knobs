@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,13 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Loader2 } from "lucide-react";
@@ -31,15 +26,19 @@ import { useToast } from "@/hooks/use-toast";
 import { useState, useTransition } from "react";
 import { createTraining } from "@/lib/placeholder-data"; // Server action/API call
 import { useRouter } from 'next/navigation';
+import type { SkillLevel } from "@/lib/types";
 
+
+const skillLevels: SkillLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Pro'];
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
   date: z.date({ required_error: "A date for the training is required." }),
   location: z.string().min(3, { message: "Location must be at least 3 characters." }),
-  skillLevel: z.enum(['Beginner', 'Intermediate', 'Advanced', 'Pro']),
+  skillLevels: z.array(z.enum(['Beginner', 'Intermediate', 'Advanced', 'Pro']))
+                 .min(1, { message: "Select at least one skill level." }), // Changed from skillLevel to skillLevels (array)
   description: z.string().min(10, { message: "Description must be at least 10 characters." }).max(500, {message: "Description cannot exceed 500 characters."}),
-  maxRiders: z.coerce.number().int().positive().optional(), // Make maxRiders optional but must be positive int if provided
+  maxRiders: z.coerce.number().int().positive().optional(),
 });
 
 type TrainingFormValues = z.infer<typeof formSchema>;
@@ -59,13 +58,14 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
       title: "",
       date: undefined,
       location: "",
-      skillLevel: 'Intermediate', // Default skill level
+      skillLevels: [], // Default to empty array
       description: "",
-      maxRiders: 10, // Default max riders
+      maxRiders: 10,
     },
   });
 
   function onSubmit(values: TrainingFormValues) {
+    console.log("Form submitted with values:", values); // Debug log
     startTransition(async () => {
         const result = await createTraining(trainerId, values);
         if (result.success) {
@@ -75,17 +75,16 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                 variant: "default",
                  className: "bg-primary text-primary-foreground"
             });
-            // Redirect to the newly created training details page or the main trainings page
             if(result.trainingId) {
                  router.push(`/trainings/${result.trainingId}`);
             } else {
                 router.push('/trainings');
             }
-            router.refresh(); // Ensure layout potentially showing trainer's sessions updates
+            router.refresh();
         } else {
              toast({
                 title: "Creation Failed",
-                description: result.message,
+                description: result.message || "An unexpected error occurred.",
                 variant: "destructive",
             });
         }
@@ -139,9 +138,8 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                     disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))} // Disable past dates
                     initialFocus
                   />
-                   {/* Basic Time Input - Consider a dedicated time picker component for better UX */}
                   <div className="p-3 border-t border-border">
-                    <input
+                    <Input
                         type="time"
                         className="w-full p-2 border rounded"
                          defaultValue={field.value ? format(field.value, "HH:mm") : "10:00"}
@@ -153,10 +151,9 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                                 newDate.setHours(hours, minutes);
                                 field.onChange(newDate);
                             } else if (time){
-                                // If no date is selected yet, just set a default date (today) and apply time
                                 const [hours, minutes] = time.split(':').map(Number);
-                                const newDate = new Date();
-                                newDate.setHours(hours, minutes, 0, 0);
+                                const newDate = new Date(); // Use current date if none selected
+                                newDate.setHours(hours, minutes, 0, 0); // Set seconds/ms to 0
                                 field.onChange(newDate);
                             }
                         }}
@@ -185,27 +182,55 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
 
          <FormField
           control={form.control}
-          name="skillLevel"
-          render={({ field }) => (
+          name="skillLevels"
+          render={() => (
             <FormItem>
-              <FormLabel>Skill Level</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select the target skill level" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Beginner">Beginner</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
-                  <SelectItem value="Pro">Pro</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="mb-4">
+                <FormLabel className="text-base">Skill Levels</FormLabel>
+                <FormDescription>
+                  Select all applicable skill levels for this training.
+                </FormDescription>
+              </div>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                 {skillLevels.map((level) => (
+                    <FormField
+                      key={level}
+                      control={form.control}
+                      name="skillLevels"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={level}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(level)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...(field.value || []), level])
+                                    : field.onChange(
+                                        (field.value || []).filter(
+                                          (value) => value !== level
+                                        )
+                                      )
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {level}
+                            </FormLabel>
+                          </FormItem>
+                        )
+                      }}
+                    />
+                  ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
+
 
          <FormField
           control={form.control}
@@ -232,7 +257,14 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
             <FormItem>
               <FormLabel>Maximum Riders (Optional)</FormLabel>
               <FormControl>
-                 <Input type="number" placeholder="e.g., 10" {...field} onChange={event => field.onChange(+event.target.value)} />
+                 {/* Ensure value is treated as number */}
+                 <Input
+                    type="number"
+                    placeholder="e.g., 10"
+                    {...field}
+                    value={field.value ?? ""} // Handle potential undefined value for input
+                    onChange={event => field.onChange(event.target.value === '' ? undefined : +event.target.value)} // Convert empty string to undefined
+                 />
               </FormControl>
                <FormDescription>
                  Leave blank for unlimited participants.
@@ -251,3 +283,4 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
     </Form>
   );
 }
+
