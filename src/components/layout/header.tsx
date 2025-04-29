@@ -5,10 +5,11 @@ import type { UserRole } from '@/lib/types';
 import React from 'react';
 import { getI18n } from '@/locales/server'; // Import server-side i18n for translateRole helper
 import { HeaderNav } from './header-nav'; // Import the new client component
+import { NavLink } from './nav-link'; // Import NavLink from its own file
 
 // Helper to translate role safely using server-side i18n initially
+// This helper is kept here for potential future use on the server, but not passed directly
 const translateRole = async (role: UserRole) => {
-    // This function now runs on the server initially
     const t = await getI18n();
     try {
       return t(`userRoles.${role}`);
@@ -22,7 +23,7 @@ export async function Header() {
   const t = await getI18n(); // Get server-side translations for Header
 
   // Prepare props for the client component
-  const initialTranslatedRole = user ? await translateRole(user.role) : '';
+  // Removed: const initialTranslatedRole = user ? await translateRole(user.role) : ''; - Not needed in HeaderNav
   const navTranslations = {
         availableTrainings: t('nav.availableTrainings'),
         myRegistrations: t('nav.myRegistrations'),
@@ -51,7 +52,7 @@ export async function Header() {
             user={user}
             navTranslations={navTranslations}
             roleTranslations={roleTranslations}
-            initialTranslatedRole={initialTranslatedRole}
+            // Removed: initialTranslatedRole={initialTranslatedRole}
            />
         </nav>
       </div>
@@ -59,17 +60,4 @@ export async function Header() {
   );
 }
 
-
-// Helper component for navigation links (remains server or client, doesn't matter much here)
-// Keeping it here as it doesn't use client hooks
-export function NavLink({ href, children, icon }: { href: string; children: React.ReactNode, icon?: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary flex items-center gap-1"
-    >
-       {icon && React.cloneElement(icon as React.ReactElement, { className: 'h-4 w-4' })}
-      {children}
-    </Link>
-  );
-}
+// NavLink component moved to src/components/layout/nav-link.tsx

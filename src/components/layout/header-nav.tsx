@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { UserCog, CalendarCheck, LogIn, SquarePen } from 'lucide-react';
 import type { User, UserRole } from '@/lib/types';
 import React from 'react';
-import { NavLink } from './header'; // Import NavLink from header.tsx
-import { useI18n } from '@/locales/client'; // Import client-side hook
+import { NavLink } from './nav-link'; // Import NavLink from the new file
+// Removed: import { useI18n } from '@/locales/client'; - No longer needed as translations are passed via props
 
 interface NavTranslations {
     availableTrainings: string;
@@ -26,14 +26,14 @@ interface HeaderNavProps {
     user: User | null;
     navTranslations: NavTranslations;
     roleTranslations: RoleTranslations;
-    initialTranslatedRole: string; // Pass initial translation from server if needed
+    // Removed: initialTranslatedRole: string; - Not used directly
 }
 
-// Client component to use the i18n hook
-export function HeaderNav({ user, navTranslations, roleTranslations, initialTranslatedRole }: HeaderNavProps) {
-    const t = useI18n(); // Now safe to use the client hook
+// Client component - uses passed props for translations
+export function HeaderNav({ user, navTranslations, roleTranslations }: HeaderNavProps) {
+    // Removed: const t = useI18n();
 
-    // Function to translate role using client-side hook data if needed, or directly use passed translations
+    // Function to translate role using passed translations
     const getTranslatedRole = (role: UserRole): string => {
         return roleTranslations[role] || role; // Use pre-fetched translations
     };
