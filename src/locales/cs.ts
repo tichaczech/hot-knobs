@@ -12,6 +12,9 @@ export default {
   confirm: 'Potvrdit',
   save: 'Uložit',
   optional: 'Volitelné',
+  reason: 'Důvod', // New
+  submit: 'Odeslat', // New
+
 
   // Hlavička / Navigace
   nav: {
@@ -48,6 +51,22 @@ export default {
     backToTrainings: 'Zpět na tréninky',
     location: 'Místo konání',
     fullDescription: 'Úplný popis',
+    registrationStatus: 'Stav registrace', // New
+    registrationTypeLabel: 'Registrace:', // New
+    status: 'Stav:', // New
+    approved: 'Schváleno', // New
+    pendingApproval: 'Čeká na schválení', // New
+    rejected: 'Zamítnuto', // New
+    cancelled: 'Zrušeno trenérem', // New
+    yourStatus: 'Váš stav:', // New
+    manageRegistrations: 'Spravovat registrace', // New (Trainer View)
+    pending: 'Čekající', // New (Trainer View)
+    registered: 'Registrovaní', // New (Trainer View)
+    approve: 'Schválit', // New (Trainer Action)
+    reject: 'Zamítnout', // New (Trainer Action)
+    cancelRegistration: 'Zrušit registraci', // New (Trainer Action - Open Trainings)
+    rejectionReasonPlaceholder: 'Volitelný důvod zamítnutí...', // New
+    cancellationReasonPlaceholder: 'Volitelný důvod zrušení...', // New
     editTraining: 'Upravit trénink',
     deleteTraining: 'Smazat trénink',
      notFound: {
@@ -94,9 +113,12 @@ export default {
   myTrainings: {
     title: 'Moje registrované tréninky',
     upcoming: 'Nadcházející',
+    pending: 'Čeká na schválení', // New
     past: 'Minulé',
     noRegistrations: 'Zatím žádné registrace!',
     noRegistrationsDesc: 'Zatím jste se nezaregistrovali na žádný trénink. Přejděte na stránku <link>Dostupné tréninky</link> a nějaký si vyberte.',
+    noPendingRegistrations: 'Žádné čekající registrace.', // New
+    viewStatus: 'Zobrazit stav', // New (Replaces View Details for Pending)
      meta: {
         title: 'Moje registrace - Mad Sprocket',
         description: 'Zobrazte si tréninky, na které jste zaregistrováni.',
@@ -138,6 +160,11 @@ export default {
         maxRidersPlaceholder: 'např. 10',
         maxRidersDesc: 'Ponechte prázdné pro neomezený počet účastníků.',
         maxRidersError: 'Musí být kladné celé číslo.',
+        registrationTypeLabel: 'Typ registrace', // New
+        registrationTypeDesc: 'Otevřená: Kdokoliv se může registrovat (do max). Uzavřená: Vyžaduje schválení trenérem.', // New
+        registrationTypeError: 'Vyberte typ registrace.', // New
+        registrationTypeOpen: 'Otevřená', // New
+        registrationTypeClosed: 'Uzavřená (Vyžaduje schválení)', // New
         submitButton: 'Vytvořit trénink',
         submitButtonLoading: 'Načítání...',
         submitButtonCreating: 'Vytváření tréninku',
@@ -165,25 +192,54 @@ export default {
     spot: 'místo',
     spots: 'místa',
     registeredBadge: 'Registrován',
+    pendingBadge: 'Čeká na schválení', // New
+    registrationClosed: 'Uzavř. reg.', // New
+    registrationOpen: 'Otevř. reg.', // New
   },
 
   // Tlačítka Registrovat/Odregistrovat
   registerButton: {
     register: 'Registrovat',
+    requestRegistration: 'Požádat o registraci', // New
     registrationSuccessTitle: 'Registrace úspěšná!',
     registrationSuccessDesc: '{message}',
+    registrationPendingTitle: 'Žádost odeslána!', // New
+    registrationPendingDesc: '{message}', // New
     registrationErrorTitle: 'Registrace selhala',
     registrationErrorDesc: '{message}',
   },
   unregisterButton: {
     unregister: 'Odregistrovat',
+    withdrawRequest: 'Stáhnout žádost', // New
     confirmTitle: 'Jste si jistý?',
     confirmDesc: 'Tuto akci nelze vrátit zpět. Budete odstraněni ze seznamu registrací pro tento trénink.',
+    confirmWithdrawDesc: 'Tuto akci nelze vrátit zpět. Vaše žádost o registraci bude stažena.', // New
     confirmAction: 'Potvrdit odregistraci',
+    confirmWithdrawAction: 'Potvrdit stažení', // New
     unregistrationSuccessTitle: 'Odregistrace úspěšná!',
     unregistrationSuccessDesc: '{message}',
     unregistrationErrorTitle: 'Odregistrace selhala',
     unregistrationErrorDesc: '{message}',
+    withdrawSuccessTitle: 'Žádost stažena', // New
+    withdrawSuccessDesc: '{message}', // New
+    withdrawErrorTitle: 'Stažení žádosti selhalo', // New
+    withdrawErrorDesc: '{message}', // New
+  },
+
+   // Akce trenéra (Schválit/Zamítnout/Zrušit)
+  trainerActions: {
+    approveSuccessTitle: 'Registrace schválena',
+    approveSuccessDesc: 'Jezdec úspěšně schválen.',
+    approveErrorTitle: 'Schválení selhalo',
+    approveErrorDesc: '{message}',
+    rejectSuccessTitle: 'Registrace zamítnuta',
+    rejectSuccessDesc: 'Jezdec úspěšně zamítnut.',
+    rejectErrorTitle: 'Zamítnutí selhalo',
+    rejectErrorDesc: '{message}',
+    cancelSuccessTitle: 'Registrace zrušena',
+    cancelSuccessDesc: 'Registrace jezdce úspěšně zrušena.',
+    cancelErrorTitle: 'Zrušení selhalo',
+    cancelErrorDesc: '{message}',
   },
 
   // Úrovně dovedností
@@ -210,4 +266,11 @@ export default {
         guest: 'Host',
     },
 
+    // Typy registrace
+    registrationTypes: {
+        open: 'Otevřená',
+        closed: 'Uzavřená (Vyžaduje schválení)',
+    },
+
 } as const;
+

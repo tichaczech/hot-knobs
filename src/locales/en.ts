@@ -12,6 +12,8 @@ export default {
   confirm: 'Confirm',
   save: 'Save',
   optional: 'Optional',
+  reason: 'Reason', // New
+  submit: 'Submit', // New
 
   // Header / Navigation
   nav: {
@@ -48,8 +50,24 @@ export default {
     backToTrainings: 'Back to Trainings',
     location: 'Location',
     fullDescription: 'Full Description',
-    editTraining: 'Edit Training',
-    deleteTraining: 'Delete Training',
+    registrationStatus: 'Registration Status', // New
+    registrationTypeLabel: 'Registration:', // New
+    status: 'Status:', // New
+    approved: 'Approved', // New
+    pendingApproval: 'Pending Approval', // New
+    rejected: 'Rejected', // New
+    cancelled: 'Cancelled by Trainer', // New
+    yourStatus: 'Your Status:', // New
+    manageRegistrations: 'Manage Registrations', // New (Trainer View)
+    pending: 'Pending', // New (Trainer View)
+    registered: 'Registered', // New (Trainer View)
+    approve: 'Approve', // New (Trainer Action)
+    reject: 'Reject', // New (Trainer Action)
+    cancelRegistration: 'Cancel Registration', // New (Trainer Action - Open Trainings)
+    rejectionReasonPlaceholder: 'Optional reason for rejection...', // New
+    cancellationReasonPlaceholder: 'Optional reason for cancellation...', // New
+    editTraining: 'Edit Training', // Keep for future
+    deleteTraining: 'Delete Training', // Keep for future
     notFound: {
         title: 'Training Not Found',
         description: 'Could not find the requested training session.',
@@ -93,9 +111,12 @@ export default {
   myTrainings: {
     title: 'My Registered Trainings',
     upcoming: 'Upcoming Sessions',
+    pending: 'Pending Approval', // New
     past: 'Past Sessions',
     noRegistrations: 'No Registrations Yet!',
     noRegistrationsDesc: 'You haven\'t registered for any training sessions. Head over to the <link>Available Trainings</link> page to find one.',
+    noPendingRegistrations: 'No pending registrations.', // New
+    viewStatus: 'View Status', // New (Replaces View Details for Pending)
     meta: {
         title: 'My Registrations - Mad Sprocket',
         description: 'View the training sessions you are registered for.',
@@ -137,6 +158,11 @@ export default {
         maxRidersPlaceholder: 'e.g., 10',
         maxRidersDesc: 'Leave blank for unlimited participants.',
         maxRidersError: 'Must be a positive whole number.', // Zod handles type coercion, message for invalid input
+        registrationTypeLabel: 'Registration Type', // New
+        registrationTypeDesc: 'Open: Anyone can register (up to max). Closed: Requires trainer approval.', // New
+        registrationTypeError: 'Select a registration type.', // New
+        registrationTypeOpen: 'Open', // New
+        registrationTypeClosed: 'Closed (Approval Required)', // New
         submitButton: 'Create Training Session',
         submitButtonLoading: 'Loading...',
         submitButtonCreating: 'Creating Training Session',
@@ -164,25 +190,54 @@ export default {
     spot: 'spot',
     spots: 'spots',
     registeredBadge: 'Registered',
+    pendingBadge: 'Pending Approval', // New
+    registrationClosed: 'Closed Reg.', // New (Short for Closed Registration)
+    registrationOpen: 'Open Reg.', // New (Short for Open Registration)
   },
 
   // Register/Unregister Buttons
   registerButton: {
     register: 'Register',
+    requestRegistration: 'Request Registration', // New (for closed trainings)
     registrationSuccessTitle: 'Registration Successful!',
     registrationSuccessDesc: '{message}',
+    registrationPendingTitle: 'Registration Submitted!', // New
+    registrationPendingDesc: '{message}', // New
     registrationErrorTitle: 'Registration Failed',
     registrationErrorDesc: '{message}',
   },
   unregisterButton: {
     unregister: 'Unregister',
+    withdrawRequest: 'Withdraw Request', // New
     confirmTitle: 'Are you sure?',
     confirmDesc: 'This action cannot be undone. You will be removed from the registration list for this training session.',
+    confirmWithdrawDesc: 'This action cannot be undone. Your registration request will be withdrawn.', // New
     confirmAction: 'Confirm Unregistration',
+    confirmWithdrawAction: 'Confirm Withdrawal', // New
     unregistrationSuccessTitle: 'Unregistration Successful!',
     unregistrationSuccessDesc: '{message}',
     unregistrationErrorTitle: 'Unregistration Failed',
     unregistrationErrorDesc: '{message}',
+    withdrawSuccessTitle: 'Registration Withdrawn', // New
+    withdrawSuccessDesc: '{message}', // New
+    withdrawErrorTitle: 'Withdrawal Failed', // New
+    withdrawErrorDesc: '{message}', // New
+  },
+
+  // Trainer Actions (Approve/Reject/Cancel)
+  trainerActions: {
+    approveSuccessTitle: 'Registration Approved',
+    approveSuccessDesc: 'Rider approved successfully.',
+    approveErrorTitle: 'Approval Failed',
+    approveErrorDesc: '{message}',
+    rejectSuccessTitle: 'Registration Rejected',
+    rejectSuccessDesc: 'Rider rejected successfully.',
+    rejectErrorTitle: 'Rejection Failed',
+    rejectErrorDesc: '{message}',
+    cancelSuccessTitle: 'Registration Cancelled',
+    cancelSuccessDesc: 'Rider registration cancelled successfully.',
+    cancelErrorTitle: 'Cancellation Failed',
+    cancelErrorDesc: '{message}',
   },
 
   // Skill Levels
@@ -209,4 +264,11 @@ export default {
         guest: 'Guest',
     },
 
+     // Registration Types
+    registrationTypes: {
+        open: 'Open',
+        closed: 'Closed (Approval Required)',
+    },
+
 } as const;
+

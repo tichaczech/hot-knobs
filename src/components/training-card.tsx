@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, BarChart, AlertCircle, CheckCircle, Bike } from "lucide-react";
+import { Calendar, MapPin, Users, BarChart, AlertCircle, CheckCircle, Bike, Lock, Unlock, Clock } from "lucide-react"; // Added Lock, Unlock, Clock
 import { Badge } from "@/components/ui/badge";
 import type { TrainingSession, User as AppUser, SkillLevel, MotorcycleType } from "@/lib/types"; // Import SkillLevel and MotorcycleType
 import { format } from 'date-fns';
@@ -16,8 +16,9 @@ interface TrainingCardProps {
   training: TrainingSession;
   currentUser: AppUser | null;
   showRegisterButton?: boolean; // Rider view
-  showUnregisterButton?: boolean; // My Trainings view
+  showUnregisterButton?: boolean; // My Trainings view (Approved/Open) or Pending view
   showViewDetailsLink?: boolean; // General purpose link
+  showViewStatusLink?: boolean; // Link for pending registrations
 }
 
 // Helper function to translate SkillLevel safely
@@ -46,10 +47,15 @@ export function TrainingCard({
   showRegisterButton = false,
   showUnregisterButton = false,
   showViewDetailsLink = true,
+  showViewStatusLink = false,
 }: TrainingCardProps) {
   const t = useI18n(); // Get translation function
 
   const isRegistered = currentUser && training.registeredRiders?.includes(currentUser.id);
+  const isPending = currentUser && training.registrationType === 'closed' && training.pendingRegistrations?.includes(currentUser.id);
+  const isRejected = currentUser && training.registrationType === 'closed' && training.rejectedRegistrations?.some(r => r.userId === currentUser.id);
+   const isCancelled = currentUser && training.registrationType === 'open' && training.cancelledRegistrations?.some(c => c.userId === currentUser.id);
+
   const isFull = training.maxRiders !== undefined && training.registeredRiders && training.registeredRiders.length >= training.maxRiders;
   const spotsLeft = training.maxRiders !== undefined ? training.maxRiders - (training.registeredRiders?.length ?? 0) : Infinity;
   const spotText = spotsLeft !== 1 ? t('trainingCard.spots') : t('trainingCard.spot');
@@ -59,11 +65,22 @@ export function TrainingCard({
         ? t('trainingCard.registered', { count: training.registeredRiders?.length ?? 0, max: training.maxRiders, spotsLeft: spotsLeft > 0 ? spotsLeft : 0, spotText: spotsLeft > 0 ? spotText : '' }).replace(' 0 ','').trim() // Remove extra space if 0 spots left
         : t('trainingCard.registeredOpen', { count: training.registeredRiders?.length ?? 0 });
 
+   // Registration type display
+   const registrationTypeIcon = training.registrationType === 'closed' ? Lock : Unlock;
+   const registrationTypeText = training.registrationType === 'closed' ? t('trainingCard.registrationClosed') : t('trainingCard.registrationOpen');
+
   return (
     <Card className="flex flex-col h-full shadow-md hover:shadow-lg transition-shadow duration-200">
       <CardHeader>
-        <CardTitle className="text-primary">{training.title}</CardTitle>
-        <CardDescription>{t('trainingCard.taughtBy', { trainerName: training.trainerName })}</CardDescription>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle className="text-primary">{training.title}</CardTitle>
+                <CardDescription>{t('trainingCard.taughtBy', { trainerName: training.trainerName })}</CardDescription>
+            </div>
+             <Badge variant={training.registrationType === 'closed' ? 'secondary' : 'outline'} className="ml-2 whitespace-nowrap">
+                <registrationTypeIcon className="mr-1 h-3 w-3"/> {registrationTypeText}
+            </Badge>
+        </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-3">
         <div className="flex items-center text-sm text-muted-foreground">
@@ -103,33 +120,72 @@ export function TrainingCard({
         <p className="text-sm line-clamp-3">{training.description}</p>
       </CardContent>
       <CardFooter className="flex justify-between items-center mt-auto pt-4 border-t">
-         {showViewDetailsLink && (
+         {showViewDetailsLink && !showViewStatusLink && ( // Only show if not showing status link
              <Link href={`/trainings/${training.id}`} passHref legacyBehavior>
               <Button variant="link" size="sm">{t('viewDetails')}</Button>
             </Link>
          )}
-        <div className="flex gap-2">
-            {currentUser?.role === 'rider' && showRegisterButton && (
+          {showViewStatusLink && ( // Show "View Status" for pending
+             <Link href={`/trainings/${training.id}`} passHref legacyBehavior>
+              <Button variant="link" size="sm">{t('myTrainings.viewStatus')}</Button>
+            </Link>
+         )}
+        <div className="flex gap-2 items-center"> {/* Use items-center */}
+            {currentUser?.role === 'rider' && (
               <>
-                {isRegistered ? (
+                {/* Show status badges */}
+                 {isRegistered && !isPending && !showUnregisterButton && ( // Show only if not on page with unregister button
                    <Badge variant="default" className="bg-green-600 hover:bg-green-700">
                      <CheckCircle className="mr-1 h-4 w-4" /> {t('trainingCard.registeredBadge')}
                    </Badge>
-                ) : isFull ? (
+                )}
+                 {isPending && !showUnregisterButton && ( // Show only if not on page with unregister button
+                   <Badge variant="secondary" className="text-yellow-800 bg-yellow-100 border-yellow-300">
+                     <Clock className="mr-1 h-4 w-4" /> {t('trainingCard.pendingBadge')}
+                   </Badge>
+                )}
+                {isRejected && (
                     <Badge variant="destructive">
-                      <AlertCircle className="mr-1 h-4 w-4" /> {t('trainingCard.full')}
+                      <AlertCircle className="mr-1 h-4 w-4" /> {t('trainingDetails.rejected')}
                     </Badge>
-                ) : (
-                    <RegisterButton trainingId={training.id} userId={currentUser.id} />
+                )}
+                {isCancelled && (
+                     <Badge variant="destructive">
+                      <AlertCircle className="mr-1 h-4 w-4" /> {t('trainingDetails.cancelled')}
+                    </Badge>
+                )}
+
+
+                {/* Show Register Button */}
+                {showRegisterButton && !isRegistered && !isPending && !isRejected && !isCancelled && (
+                    isFull && training.registrationType === 'open' ? ( // Only show full for open registration here
+                        <Badge variant="destructive">
+                        <AlertCircle className="mr-1 h-4 w-4" /> {t('trainingCard.full')}
+                        </Badge>
+                    ) : (
+                        <RegisterButton
+                            trainingId={training.id}
+                            userId={currentUser.id}
+                            registrationType={training.registrationType} // Pass type
+                        />
+                    )
+                )}
+
+                 {/* Show Unregister Button */}
+                 {showUnregisterButton && (isRegistered || isPending) && ( // Show if registered OR pending
+                     <UnregisterButton
+                        trainingId={training.id}
+                        userId={currentUser.id}
+                        isPending={isPending} // Pass pending status
+                     />
                 )}
               </>
             )}
-            {currentUser?.role === 'rider' && showUnregisterButton && isRegistered && (
-                 <UnregisterButton trainingId={training.id} userId={currentUser.id} />
-            )}
+
              {/* Maybe add edit/delete for trainers in the future */}
         </div>
       </CardFooter>
     </Card>
   );
 }
+

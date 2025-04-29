@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"; // Import RadioGroup
 import {
   Select,
   SelectContent,
@@ -28,20 +29,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CalendarIcon, Loader2, Bike, MapPin, AlertCircle } from "lucide-react";
+import { CalendarIcon, Loader2, Bike, MapPin, AlertCircle, Lock, Unlock } from "lucide-react"; // Added Lock, Unlock
 import { cn } from "@/lib/utils";
 import { format } from "date-fns"; // Consider locale-aware formatting later
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect, useTransition } from "react";
 import { createTraining, getLocations, getSkillLevels, getMotorcycleTypes } from "@/lib/placeholder-data";
 import { useRouter } from 'next/navigation';
-import type { SkillLevel, MotorcycleType, Location } from "@/lib/types";
+import type { SkillLevel, MotorcycleType, Location, RegistrationType } from "@/lib/types"; // Added RegistrationType
 import { useI18n } from '@/locales/client'; // Import client-side i18n hook
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+// Define registration types for the form
+const registrationTypes: RegistrationType[] = ['open', 'closed'];
+
 // We need to dynamically build the enum for Zod based on fetched data
-const createFormSchema = (t: ReturnType<typeof useI18n>, availableSkills: SkillLevel[], availableTypes: MotorcycleType[]) => z.object({
+const createFormSchema = (
+    t: ReturnType<typeof useI18n>,
+    availableSkills: SkillLevel[],
+    availableTypes: MotorcycleType[]
+) => z.object({
   title: z.string().min(5, { message: t('createTraining.form.titleError') }),
   date: z.date({ required_error: t('createTraining.form.dateError') }),
   locationId: z.string({ required_error: t('createTraining.form.locationError') }).min(1, { message: t('createTraining.form.locationError') }),
@@ -53,9 +61,11 @@ const createFormSchema = (t: ReturnType<typeof useI18n>, availableSkills: SkillL
                   .min(10, { message: t('createTraining.form.descriptionErrorShort') })
                   .max(500, {message: t('createTraining.form.descriptionErrorLong')}),
   maxRiders: z.coerce.number().int().positive({message: t('createTraining.form.maxRidersError')}).optional(),
+  registrationType: z.enum(registrationTypes as [RegistrationType, ...RegistrationType[]], { required_error: t('createTraining.form.registrationTypeError') }) // Added registration type field
 });
 
-type TrainingFormValues = z.infer<ReturnType<typeof createFormSchema>>;
+// Update the form values type
+type CreateTrainingData = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface CreateTrainingFormProps {
     trainerId: string;
@@ -128,8 +138,18 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
         }
     };
 
+     // Helper function to translate RegistrationType safely
+    const translateRegistrationType = (type: RegistrationType): string => {
+        try {
+        return t(`registrationTypes.${type}`);
+        } catch (e) {
+        console.warn(`Missing translation for registration type: ${type}`);
+        return type; // Fallback
+        }
+    };
 
-  const form = useForm<TrainingFormValues>({
+
+  const form = useForm<CreateTrainingData>({
     resolver: zodResolver(formSchema),
     // We need to re-initialize the form when the schema changes (data loads)
     // However, react-hook-form handles schema updates, so defaultValues is enough.
@@ -141,6 +161,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
       motorcycleTypes: [],
       description: "",
       maxRiders: undefined, // Set undefined as default for optional number
+      registrationType: 'open', // Default to open registration
     },
      // Re-validate when schema changes (data loads)
     mode: "onChange",
@@ -151,7 +172,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
     //     form.reset(undefined, { keepValues: true }); // Keep existing values if user started typing
     // }, [skillLevels, motorcycleTypes, form]);
 
-  function onSubmit(values: TrainingFormValues) {
+  function onSubmit(values: CreateTrainingData) {
     startTransition(async () => {
         // Ensure skill levels and types are valid based on fetched data
         const validSkillLevels = values.skillLevels.filter(sl => skillLevels.includes(sl));
@@ -175,6 +196,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           // Ensure maxRiders is number or undefined
           maxRiders: values.maxRiders !== undefined && !isNaN(values.maxRiders) ? Number(values.maxRiders) : undefined,
         };
+        // Pass the complete validated data including registrationType
         const result = await createTraining(trainerId, dataToSubmit);
         if (result.success) {
             toast({
@@ -230,6 +252,15 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
          <Skeleton className="h-24 w-full" />
          <Skeleton className="h-10 w-full" />
          <Skeleton className="h-10 w-full" />
+         {/* Skeleton for registration type */}
+         <div className="space-y-2">
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-4 w-1/2" />
+             <div className="flex gap-4">
+                 <Skeleton className="h-10 w-1/3" />
+                 <Skeleton className="h-10 w-1/3" />
+             </div>
+         </div>
       </div>
     );
   }
@@ -512,6 +543,45 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        {/* Registration Type Selection */}
+        <FormField
+            control={form.control}
+            name="registrationType"
+            render={({ field }) => (
+                <FormItem className="space-y-3">
+                <FormLabel>{t('createTraining.form.registrationTypeLabel')}</FormLabel>
+                 <FormDescription>
+                     {t('createTraining.form.registrationTypeDesc')}
+                 </FormDescription>
+                <FormControl>
+                    <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex flex-col space-y-1 md:flex-row md:space-y-0 md:space-x-4"
+                    >
+                    <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                        <RadioGroupItem value="open" />
+                        </FormControl>
+                        <FormLabel className="font-normal flex items-center">
+                           <Unlock className="mr-2 h-4 w-4 text-green-600"/> {t('createTraining.form.registrationTypeOpen')}
+                        </FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                        <RadioGroupItem value="closed" />
+                        </FormControl>
+                        <FormLabel className="font-normal flex items-center">
+                           <Lock className="mr-2 h-4 w-4 text-red-600"/> {t('createTraining.form.registrationTypeClosed')}
+                        </FormLabel>
+                    </FormItem>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
         />
 
 

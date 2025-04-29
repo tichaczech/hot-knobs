@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { unregisterFromTraining } from '@/lib/placeholder-data'; // Assuming server action or API call function
-import { Loader2, XCircle } from 'lucide-react';
+import { Loader2, XCircle, LogOut } from 'lucide-react'; // Added LogOut for withdraw
 import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
@@ -22,27 +22,39 @@ import { useI18n } from '@/locales/client'; // Import client-side i18n hook
 interface UnregisterButtonProps {
   trainingId: string;
   userId: string;
+  isPending: boolean; // Is the registration pending approval?
 }
 
-export function UnregisterButton({ trainingId, userId }: UnregisterButtonProps) {
+export function UnregisterButton({ trainingId, userId, isPending }: UnregisterButtonProps) {
   const t = useI18n(); // Get translation function
-  const [isPending, startTransition] = useTransition();
+  const [isSubmitting, startTransition] = useTransition(); // Renamed for clarity
   const { toast } = useToast();
   const router = useRouter();
 
-  const handleUnregister = () => {
+  const buttonText = isPending ? t('unregisterButton.withdrawRequest') : t('unregisterButton.unregister');
+  const ButtonIcon = isPending ? LogOut : XCircle;
+  const confirmTitle = isPending ? t('unregisterButton.confirmTitle') : t('unregisterButton.confirmTitle'); // Same title ok?
+  const confirmDesc = isPending ? t('unregisterButton.confirmWithdrawDesc') : t('unregisterButton.confirmDesc');
+  const confirmActionText = isPending ? t('unregisterButton.confirmWithdrawAction') : t('unregisterButton.confirmAction');
+  const successTitle = isPending ? t('unregisterButton.withdrawSuccessTitle') : t('unregisterButton.unregistrationSuccessTitle');
+  const errorTitle = isPending ? t('unregisterButton.withdrawErrorTitle') : t('unregisterButton.unregistrationErrorTitle');
+  const successDescKey = isPending ? 'unregisterButton.withdrawSuccessDesc' : 'unregisterButton.unregistrationSuccessDesc';
+  const errorDescKey = isPending ? 'unregisterButton.withdrawErrorDesc' : 'unregisterButton.unregistrationErrorDesc';
+
+
+  const handleAction = () => {
     startTransition(async () => {
-      const result = await unregisterFromTraining(userId, trainingId);
+      const result = await unregisterFromTraining(userId, trainingId); // Same function handles both
       if (result.success) {
         toast({
-          title: t('unregisterButton.unregistrationSuccessTitle'),
-          description: t('unregisterButton.unregistrationSuccessDesc', { message: result.message || t('success') }),
+          title: successTitle,
+          description: t(successDescKey, { message: result.message || t('success') }),
         });
          router.refresh(); // Refresh data on the page
       } else {
         toast({
-          title: t('unregisterButton.unregistrationErrorTitle'),
-          description: t('unregisterButton.unregistrationErrorDesc', { message: result.message || t('error') }),
+          title: errorTitle,
+          description: t(errorDescKey, { message: result.message || t('error') }),
           variant: "destructive",
         });
       }
@@ -52,27 +64,27 @@ export function UnregisterButton({ trainingId, userId }: UnregisterButtonProps) 
   return (
      <AlertDialog>
       <AlertDialogTrigger asChild>
-         <Button variant="outline" size="sm" disabled={isPending}>
-            {isPending ? (
+         <Button variant="outline" size="sm" disabled={isSubmitting}>
+            {isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-                <XCircle className="mr-2 h-4 w-4" />
+                <ButtonIcon className="mr-2 h-4 w-4" />
             )}
-            {t('unregisterButton.unregister')}
+            {buttonText}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t('unregisterButton.confirmTitle')}</AlertDialogTitle>
+          <AlertDialogTitle>{confirmTitle}</AlertDialogTitle>
           <AlertDialogDescription>
-            {t('unregisterButton.confirmDesc')}
+            {confirmDesc}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-          <AlertDialogAction onClick={handleUnregister} disabled={isPending} className="bg-destructive hover:bg-destructive/90">
-             {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {t('unregisterButton.confirmAction')}
+          <AlertDialogAction onClick={handleAction} disabled={isSubmitting} className="bg-destructive hover:bg-destructive/90">
+             {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            {confirmActionText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
