@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,28 +27,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CalendarIcon, Loader2, Bike, MapPin } from "lucide-react";
+import { CalendarIcon, Loader2, Bike, MapPin, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns"; // Consider locale-aware formatting later
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect, useTransition } from "react";
-import { createTraining, getLocations } from "@/lib/placeholder-data";
+import { createTraining, getLocations, getSkillLevels, getMotorcycleTypes } from "@/lib/placeholder-data";
 import { useRouter } from 'next/navigation';
 import type { SkillLevel, MotorcycleType, Location } from "@/lib/types";
 import { useI18n } from '@/locales/client'; // Import client-side i18n hook
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const skillLevels: SkillLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Pro'];
-const motorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '450cc', 'Electric', 'Other'];
-
-// Form schema remains largely the same, Zod handles validation logic
-// Translations are applied in the component rendering
-const createFormSchema = (t: ReturnType<typeof useI18n>) => z.object({
+// We need to dynamically build the enum for Zod based on fetched data
+const createFormSchema = (t: ReturnType<typeof useI18n>, availableSkills: SkillLevel[], availableTypes: MotorcycleType[]) => z.object({
   title: z.string().min(5, { message: t('createTraining.form.titleError') }),
   date: z.date({ required_error: t('createTraining.form.dateError') }),
   locationId: z.string({ required_error: t('createTraining.form.locationError') }).min(1, { message: t('createTraining.form.locationError') }),
-  skillLevels: z.array(z.enum(skillLevels as [SkillLevel, ...SkillLevel[]]))
+  skillLevels: z.array(z.enum(availableSkills as [SkillLevel, ...SkillLevel[]], { errorMap: () => ({ message: t('createTraining.form.skillLevelsError') }) }))
                  .min(1, { message: t('createTraining.form.skillLevelsError') }),
-  motorcycleTypes: z.array(z.enum(motorcycleTypes as [MotorcycleType, ...MotorcycleType[]]))
+  motorcycleTypes: z.array(z.enum(availableTypes as [MotorcycleType, ...MotorcycleType[]], { errorMap: () => ({ message: t('createTraining.form.motorcycleTypesError') }) }))
                       .min(1, { message: t('createTraining.form.motorcycleTypesError') }),
   description: z.string()
                   .min(10, { message: t('createTraining.form.descriptionErrorShort') })
@@ -63,12 +62,50 @@ interface CreateTrainingFormProps {
 
 export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
   const t = useI18n(); // Get translation function
-  const formSchema = createFormSchema(t); // Create schema with translations
   const [isPending, startTransition] = useTransition();
   const [locations, setLocations] = useState<Location[]>([]);
-  const [isLoadingLocations, setIsLoadingLocations] = useState(true);
+  const [skillLevels, setSkillLevels] = useState<SkillLevel[]>([]);
+  const [motorcycleTypes, setMotorcycleTypes] = useState<MotorcycleType[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [loadingError, setLoadingError] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+
+  // Fetch initial data (locations, skills, types)
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoadingData(true);
+      setLoadingError(null);
+      try {
+        const [fetchedLocations, fetchedSkills, fetchedTypes] = await Promise.all([
+          getLocations(),
+          getSkillLevels(),
+          getMotorcycleTypes(),
+        ]);
+        setLocations(fetchedLocations);
+        setSkillLevels(fetchedSkills);
+        setMotorcycleTypes(fetchedTypes);
+      } catch (error) {
+        console.error("Failed to fetch form data:", error);
+        setLoadingError(t('createTraining.form.errorLoadData'));
+        toast({
+          title: t('error'),
+          description: t('createTraining.form.errorLoadData'),
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingData(false);
+      }
+    }
+    fetchData();
+  }, [t, toast]);
+
+   // Create the form schema dynamically once data is loaded
+   const formSchema = React.useMemo(() => {
+    // Provide empty arrays if still loading to prevent Zod errors
+    return createFormSchema(t, skillLevels.length > 0 ? skillLevels : ['Beginner'], motorcycleTypes.length > 0 ? motorcycleTypes : ['125cc']);
+   }, [t, skillLevels, motorcycleTypes]);
+
 
   // Helper function to translate SkillLevel safely
     const translateSkillLevel = (level: SkillLevel): string => {
@@ -91,29 +128,10 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
     };
 
 
-  useEffect(() => {
-    async function fetchLocations() {
-      setIsLoadingLocations(true);
-      try {
-        const fetchedLocations = await getLocations();
-        setLocations(fetchedLocations);
-      } catch (error) {
-        console.error("Failed to fetch locations:", error);
-        toast({
-          title: t('error'),
-          description: t('createTraining.form.errorLoadLocations'),
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingLocations(false);
-      }
-    }
-    fetchLocations();
-  }, [t, toast]);
-
-
   const form = useForm<TrainingFormValues>({
     resolver: zodResolver(formSchema),
+    // We need to re-initialize the form when the schema changes (data loads)
+    // However, react-hook-form handles schema updates, so defaultValues is enough.
     defaultValues: {
       title: "",
       date: undefined,
@@ -123,13 +141,36 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
       description: "",
       maxRiders: undefined, // Set undefined as default for optional number
     },
+     // Re-validate when schema changes (data loads)
+    mode: "onChange",
   });
+
+   // Watch for changes in fetched data to potentially reset form if needed (optional)
+    // useEffect(() => {
+    //     form.reset(undefined, { keepValues: true }); // Keep existing values if user started typing
+    // }, [skillLevels, motorcycleTypes, form]);
 
   function onSubmit(values: TrainingFormValues) {
     startTransition(async () => {
+        // Ensure skill levels and types are valid based on fetched data
+        const validSkillLevels = values.skillLevels.filter(sl => skillLevels.includes(sl));
+        const validMotorcycleTypes = values.motorcycleTypes.filter(mt => motorcycleTypes.includes(mt));
+
+        if (validSkillLevels.length !== values.skillLevels.length) {
+             toast({ title: t('error'), description: t('createTraining.form.invalidSkillLevel'), variant: "destructive" });
+             return;
+        }
+         if (validMotorcycleTypes.length !== values.motorcycleTypes.length) {
+            toast({ title: t('error'), description: t('createTraining.form.invalidMotorcycleType'), variant: "destructive" });
+             return;
+        }
+
+
         const dataToSubmit = {
           ...values,
           date: values.date,
+           skillLevels: validSkillLevels,
+           motorcycleTypes: validMotorcycleTypes,
           // Ensure maxRiders is number or undefined
           maxRiders: values.maxRiders !== undefined && !isNaN(values.maxRiders) ? Number(values.maxRiders) : undefined,
         };
@@ -158,6 +199,51 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
     });
   }
 
+   // Render loading state
+   if (isLoadingData) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-1/3" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+         <div className="space-y-2">
+             <Skeleton className="h-6 w-1/4" />
+             <Skeleton className="h-4 w-1/2" />
+             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                 <Skeleton className="h-10 w-full" />
+                 <Skeleton className="h-10 w-full" />
+                 <Skeleton className="h-10 w-full" />
+                 <Skeleton className="h-10 w-full" />
+             </div>
+         </div>
+         <div className="space-y-2">
+             <Skeleton className="h-6 w-1/4" />
+             <Skeleton className="h-4 w-1/2" />
+             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                 <Skeleton className="h-10 w-full" />
+                 <Skeleton className="h-10 w-full" />
+                 <Skeleton className="h-10 w-full" />
+             </div>
+         </div>
+         <Skeleton className="h-24 w-full" />
+         <Skeleton className="h-10 w-full" />
+         <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
+
+   // Render error state
+  if (loadingError) {
+      return (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{loadingError}</AlertDescription>
+        </Alert>
+      );
+  }
+
+  // Render form once data is loaded
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -243,15 +329,15 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('createTraining.form.locationLabel')}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoadingLocations}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoadingData}>
                 <FormControl>
                   <SelectTrigger>
                     <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <SelectValue placeholder={isLoadingLocations ? t('createTraining.form.locationPlaceholderLoading') : t('createTraining.form.locationPlaceholder')} />
+                    <SelectValue placeholder={isLoadingData ? t('createTraining.form.locationPlaceholderLoading') : (locations.length === 0 ? t('createTraining.form.locationNotAvailable') : t('createTraining.form.locationPlaceholder'))} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {!isLoadingLocations && locations.length === 0 && (
+                  {locations.length === 0 && (
                      <SelectItem value="no-locations" disabled>{t('createTraining.form.locationNotAvailable')}</SelectItem>
                   )}
                   {locations.map((location) => (
@@ -261,6 +347,11 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+               {locations.length === 0 && !isLoadingData && (
+                  <FormDescription className="text-destructive">
+                     {t('createTraining.form.noLocationsAvailableAdmin')}
+                 </FormDescription>
+               )}
               <FormMessage />
             </FormItem>
           )}
@@ -313,6 +404,11 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                     />
                   ))}
               </div>
+                {skillLevels.length === 0 && !isLoadingData && (
+                    <FormDescription className="text-destructive mt-2">
+                         {t('createTraining.form.noSkillLevelsAvailableAdmin')}
+                    </FormDescription>
+                )}
               <FormMessage />
             </FormItem>
           )}
@@ -364,6 +460,11 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                     />
                   ))}
               </div>
+                {motorcycleTypes.length === 0 && !isLoadingData && (
+                    <FormDescription className="text-destructive mt-2">
+                         {t('createTraining.form.noMotorcycleTypesAvailableAdmin')}
+                    </FormDescription>
+                )}
               <FormMessage />
             </FormItem>
           )}
@@ -413,9 +514,9 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
         />
 
 
-        <Button type="submit" className="w-full" disabled={isPending || isLoadingLocations}>
+        <Button type="submit" className="w-full" disabled={isPending || isLoadingData}>
            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-           {isLoadingLocations ? t('createTraining.form.submitButtonLoading') : (isPending ? t('createTraining.form.submitButtonCreating') : t('createTraining.form.submitButton'))}
+           {isLoadingData ? t('createTraining.form.submitButtonLoading') : (isPending ? t('createTraining.form.submitButtonCreating') : t('createTraining.form.submitButton'))}
         </Button>
       </form>
     </Form>

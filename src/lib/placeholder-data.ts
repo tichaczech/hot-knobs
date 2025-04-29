@@ -8,6 +8,13 @@ export const placeholderLocations: Location[] = [
     { id: 'loc-4', name: 'Desert Scramble Zone', address: '101 Cactus Flats, Sandy Plains', latitude: 33.6846, longitude: -117.8265 },
 ];
 
+// --- Placeholder Skill Levels ---
+export const placeholderSkillLevels: SkillLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Pro'];
+
+// --- Placeholder Motorcycle Types ---
+export const placeholderMotorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '450cc', 'Electric', 'Other'];
+
+
 // --- Placeholder Users ---
 export const placeholderUsers: User[] = [
   { id: 'user-1', name: 'Alice Rider', email: 'alice@example.com', role: 'rider' },
@@ -89,6 +96,18 @@ export async function getLocationById(id: string): Promise<Location | undefined>
     await new Promise(resolve => setTimeout(resolve, 30)); // Simulate network delay
     const location = placeholderLocations.find(loc => loc.id === id);
     return location ? JSON.parse(JSON.stringify(location)) : undefined;
+}
+
+// Fetch all available skill levels
+export async function getSkillLevels(): Promise<SkillLevel[]> {
+    await new Promise(resolve => setTimeout(resolve, 25)); // Simulate network delay
+    return JSON.parse(JSON.stringify(placeholderSkillLevels));
+}
+
+// Fetch all available motorcycle types
+export async function getMotorcycleTypes(): Promise<MotorcycleType[]> {
+    await new Promise(resolve => setTimeout(resolve, 25)); // Simulate network delay
+    return JSON.parse(JSON.stringify(placeholderMotorcycleTypes));
 }
 
 
