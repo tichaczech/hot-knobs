@@ -234,15 +234,15 @@ export async function registerForTraining(userId: string, trainingId: string): P
     const training = placeholderTrainings[trainingIndex];
     const existingRegistration = training.registrations.find(r => r.userId === userId);
 
+    // Prevent re-registration if already Cancelled or Rejected
+    if (existingRegistration && (isRejected(existingRegistration) || isCancelled(existingRegistration))) {
+        return { success: false, message: `Cannot re-register after being ${existingRegistration.status.toLowerCase()}.` };
+    }
+
     // Check if user has an active registration already (Created, Confirmed, Waiting)
     if (existingRegistration && isActiveRegistration(existingRegistration)) {
         return { success: false, message: `Already ${existingRegistration.status.toLowerCase()} for this training.` };
     }
-
-    // Check if user was previously Rejected or Cancelled (Allow re-registering maybe? Depends on requirements. For now, allow.)
-    // if (existingRegistration && (isRejected(existingRegistration) || isCancelled(existingRegistration))) {
-    //     // Optionally prevent re-registration or handle differently
-    // }
 
     const isFull = isTrainingFull(training);
     let newStatus: RegistrationStatus;
@@ -264,9 +264,10 @@ export async function registerForTraining(userId: string, trainingId: string): P
 
     // Update existing registration or add new one
     if (existingRegistration) {
+        // This case should ideally not happen due to the checks above, but handles it defensively
         existingRegistration.status = newStatus;
-        existingRegistration.registeredAt = new Date(); // Update timestamp on re-apply/waitlist
-        existingRegistration.reason = undefined; // Clear previous rejection/cancellation reason
+        existingRegistration.registeredAt = new Date();
+        existingRegistration.reason = undefined;
     } else {
         const newRegistration: Registration = {
             userId: userId,

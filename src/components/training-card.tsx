@@ -95,8 +95,18 @@ export function TrainingCard({
    // Registration type display - Use uppercase variable name for the component type
    const RegistrationTypeIcon = training.registrationType === 'closed' ? Lock : Unlock;
 
-   const canRegister = showRegisterButton && currentUser?.role === 'rider' && (!userStatus || userStatus === 'Rejected' || userStatus === 'Cancelled');
-   const canCancel = showCancelButton && currentUser?.role === 'rider' && userStatus && (userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
+   // Determine if the register button should be shown
+   // Can register IF: showRegisterButton is true, user is a rider, AND
+   // (there's no existing registration OR the status is NOT Cancelled and NOT Rejected)
+   const canRegister = showRegisterButton &&
+                      currentUser?.role === 'rider' &&
+                      (!userStatus || (userStatus !== 'Cancelled' && userStatus !== 'Rejected'));
+
+   // Determine if the cancel button should be shown
+   const canCancel = showCancelButton &&
+                      currentUser?.role === 'rider' &&
+                      userStatus &&
+                      (userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
 
   // --- Status Badge Logic ---
     let statusBadge = null;
@@ -140,6 +150,8 @@ export function TrainingCard({
              <Badge variant={training.registrationType === 'closed' ? 'secondary' : 'outline'} className="ml-auto whitespace-nowrap shrink-0">
                 {/* Render the component using the uppercase variable */}
                 <RegistrationTypeIcon className="mr-1 h-3 w-3"/>
+                {/* Display translated registration type text - Fetch translation */}
+                {training.registrationType === 'closed' ? t('registrationTypes.closed') : t('registrationTypes.open')}
             </Badge>
         </div>
       </CardHeader>
@@ -211,7 +223,7 @@ export function TrainingCard({
                 <UnregisterButton
                     trainingId={training.id}
                     userId={currentUser!.id} // Should be safe due to canCancel check
-                    currentStatus={userStatus} // Pass current status
+                    currentStatus={userStatus!} // Should be safe due to canCancel check
                 />
             )}
         </div>

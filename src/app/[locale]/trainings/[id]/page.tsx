@@ -95,8 +95,12 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
    const userReason = userRegistration?.reason;
 
    // Determine capabilities based on user role and status
-   const canRegister = currentUser?.role === 'rider' && (!userStatus || userStatus === 'Rejected' || userStatus === 'Cancelled');
-   const canCancel = currentUser?.role === 'rider' && userStatus && (userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
+   // Can register IF: user is a rider AND (no existing registration OR status is not Cancelled and not Rejected)
+   const canRegister = currentUser?.role === 'rider' &&
+                      (!userStatus || (userStatus !== 'Cancelled' && userStatus !== 'Rejected'));
+   const canCancel = currentUser?.role === 'rider' &&
+                      userStatus &&
+                      (userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
    const isTrainerOwner = currentUser?.role === 'trainer' && currentUser.id === training.trainerId;
 
    const translatedRegType = await translateRegistrationType(training.registrationType, params.locale);
@@ -119,14 +123,14 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
 
       {/*
         Re-use TrainingCard for consistent display.
-        It handles its own client-side date formatting to prevent hydration errors.
+        Pass the determined capabilities.
       */}
       <TrainingCard
           training={training}
           currentUser={currentUser}
-          showRegisterButton={true}
-          showCancelButton={true}
-          showViewDetailsLink={false}
+          showRegisterButton={canRegister} // Pass determined capability
+          showCancelButton={canCancel}     // Pass determined capability
+          showViewDetailsLink={false}      // Don't show details link *within* the card on the details page
        />
 
         {/* Card for Location Link */}
