@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, User, Users, BarChart, AlertCircle, CheckCircle } from "lucide-react";
+import { Calendar, MapPin, User, Users, BarChart, AlertCircle, CheckCircle, Bike } from "lucide-react"; // Added Bike icon
 import { Badge } from "@/components/ui/badge";
 import type { TrainingSession, User as AppUser } from "@/lib/types";
 import { format } from 'date-fns';
@@ -48,12 +48,22 @@ export function TrainingCard({
           <MapPin className="mr-2 h-4 w-4" />
           <span>{training.location}</span>
         </div>
-         <div className="flex items-center text-sm text-muted-foreground">
-          <BarChart className="mr-2 h-4 w-4 shrink-0" />
+         <div className="flex items-start text-sm text-muted-foreground"> {/* Changed to items-start for wrapping */}
+          <BarChart className="mr-2 h-4 w-4 shrink-0 mt-0.5" /> {/* Added shrink-0 and adjusted margin */}
           <div className="flex flex-wrap gap-1">
              <span className="mr-1">Levels:</span>
               {training.skillLevels?.map(level => (
                   <Badge key={level} variant="secondary" className="whitespace-nowrap">{level}</Badge>
+              ))}
+          </div>
+        </div>
+        {/* Display Motorcycle Types */}
+         <div className="flex items-start text-sm text-muted-foreground"> {/* Changed to items-start for wrapping */}
+          <Bike className="mr-2 h-4 w-4 shrink-0 mt-0.5" /> {/* Added shrink-0 and adjusted margin */}
+          <div className="flex flex-wrap gap-1">
+             <span className="mr-1">Bikes:</span>
+              {training.motorcycleTypes?.map(type => (
+                  <Badge key={type} variant="outline" className="whitespace-nowrap">{type}</Badge> // Used outline variant
               ))}
           </div>
         </div>

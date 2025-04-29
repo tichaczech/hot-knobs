@@ -1,4 +1,4 @@
-import type { TrainingSession, User, SkillLevel } from './types';
+import type { TrainingSession, User, SkillLevel, MotorcycleType } from './types';
 
 export const placeholderUsers: User[] = [
   { id: 'user-1', name: 'Alice Rider', email: 'alice@example.com', role: 'rider' },
@@ -14,7 +14,8 @@ export const placeholderTrainings: TrainingSession[] = [
     title: 'Enduro Basics Clinic',
     date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
     location: 'Rocky Valley Trails',
-    skillLevels: ['Beginner'], // Updated
+    skillLevels: ['Beginner'],
+    motorcycleTypes: ['125cc', '250cc', 'Other'], // Added sample motorcycle types
     description: 'Focus on fundamental enduro techniques: body positioning, braking, and small obstacles.',
     registeredRiders: ['user-1'],
     maxRiders: 10,
@@ -26,7 +27,8 @@ export const placeholderTrainings: TrainingSession[] = [
     title: 'Motocross Cornering Masterclass',
     date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
     location: 'MX Speed Park',
-    skillLevels: ['Intermediate', 'Advanced'], // Updated
+    skillLevels: ['Intermediate', 'Advanced'],
+    motorcycleTypes: ['250cc', '450cc'], // Added sample motorcycle types
     description: 'Advanced cornering drills, ruts, and berms. Improve your lap times!',
     registeredRiders: [],
     maxRiders: 8,
@@ -38,7 +40,8 @@ export const placeholderTrainings: TrainingSession[] = [
     title: 'Advanced Hill Climb Techniques',
     date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
     location: 'Steep Mountain Pass',
-    skillLevels: ['Advanced', 'Pro'], // Updated
+    skillLevels: ['Advanced', 'Pro'],
+    motorcycleTypes: ['250cc', '450cc', 'Other'], // Added sample motorcycle types
     description: 'Learn techniques for tackling challenging ascents, line selection, and throttle control.',
     registeredRiders: ['user-1', 'user-3'],
     maxRiders: 6,
@@ -50,7 +53,8 @@ export const placeholderTrainings: TrainingSession[] = [
     title: 'Introduction to Motocross Jumps',
     date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
     location: 'MX Speed Park - Training Area',
-    skillLevels: ['Beginner'], // Updated
+    skillLevels: ['Beginner'],
+    motorcycleTypes: ['125cc', '250cc', 'Electric'], // Added sample motorcycle types
     description: 'Safely learn the basics of jumping small tabletops and rollers.',
     registeredRiders: ['user-3'],
     maxRiders: 12,
@@ -68,7 +72,8 @@ export async function getTrainings(): Promise<TrainingSession[]> {
 export async function getTrainingById(id: string): Promise<TrainingSession | undefined> {
   await new Promise(resolve => setTimeout(resolve, 50));
    const training = placeholderTrainings.find(t => t.id === id);
-   return training ? { ...training, date: new Date(training.date) } : undefined; // Ensure date is a Date object
+   // Ensure date is a Date object and return deep copy
+   return training ? { ...JSON.parse(JSON.stringify(training)), date: new Date(training.date) } : undefined;
 }
 
 export async function getMyRegisteredTrainings(userId: string): Promise<TrainingSession[]> {
@@ -116,8 +121,12 @@ export async function registerForTraining(userId: string, trainingId: string): P
     return { success: true, message: 'Successfully registered!' };
 }
 
+// Define the type for the data passed to createTraining
+type CreateTrainingData = Omit<TrainingSession, 'id' | 'trainerId' | 'trainerName' | 'registeredRiders' | 'date'> & { date: Date };
+
+
 // Simulate training creation action
-export async function createTraining(trainerId: string, data: Omit<TrainingSession, 'id' | 'trainerId' | 'trainerName' | 'registeredRiders'>): Promise<{ success: boolean; message: string; trainingId?: string }> {
+export async function createTraining(trainerId: string, data: CreateTrainingData): Promise<{ success: boolean; message: string; trainingId?: string }> {
     console.log(`Simulating training creation by Trainer ${trainerId} with data:`, data);
     await new Promise(resolve => setTimeout(resolve, 200)); // Simulate API call
 
@@ -129,6 +138,9 @@ export async function createTraining(trainerId: string, data: Omit<TrainingSessi
      if (!data.skillLevels || data.skillLevels.length === 0) {
         return { success: false, message: 'At least one skill level must be selected.' };
     }
+     if (!data.motorcycleTypes || data.motorcycleTypes.length === 0) {
+        return { success: false, message: 'At least one motorcycle type must be selected.' };
+    }
 
 
     const newTraining: TrainingSession = {
@@ -137,8 +149,7 @@ export async function createTraining(trainerId: string, data: Omit<TrainingSessi
         trainerId: trainer.id,
         trainerName: trainer.name,
         registeredRiders: [],
-         // Ensure date is properly handled if it's coming as a string or needs parsing
-        date: new Date(data.date),
+        date: new Date(data.date), // Ensure date is correctly handled
     };
 
     // In a real app, save to the database here

@@ -1,5 +1,6 @@
 export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Pro';
 export type UserRole = 'rider' | 'trainer' | 'guest'; // Guest for logged-out state
+export type MotorcycleType = '125cc' | '250cc' | '450cc' | 'Electric' | 'Other'; // Added MotorcycleType
 
 export interface TrainingSession {
   id: string;
@@ -8,7 +9,8 @@ export interface TrainingSession {
   title: string;
   date: Date;
   location: string;
-  skillLevels: SkillLevel[]; // Changed from skillLevel: SkillLevel
+  skillLevels: SkillLevel[];
+  motorcycleTypes: MotorcycleType[]; // Added motorcycleTypes field
   description: string;
   registeredRiders?: string[]; // Array of user IDs registered
   maxRiders?: number;

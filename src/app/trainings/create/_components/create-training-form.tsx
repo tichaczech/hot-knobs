@@ -16,27 +16,30 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
+import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, Bike } from "lucide-react"; // Added Bike icon
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useTransition } from "react";
 import { createTraining } from "@/lib/placeholder-data"; // Server action/API call
 import { useRouter } from 'next/navigation';
-import type { SkillLevel } from "@/lib/types";
+import type { SkillLevel, MotorcycleType } from "@/lib/types";
 
 
 const skillLevels: SkillLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Pro'];
+const motorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '450cc', 'Electric', 'Other']; // Defined motorcycle types
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
   date: z.date({ required_error: "A date for the training is required." }),
   location: z.string().min(3, { message: "Location must be at least 3 characters." }),
-  skillLevels: z.array(z.enum(['Beginner', 'Intermediate', 'Advanced', 'Pro']))
-                 .min(1, { message: "Select at least one skill level." }), // Changed from skillLevel to skillLevels (array)
+  skillLevels: z.array(z.enum(skillLevels as [SkillLevel, ...SkillLevel[]])) // Ensure Zod gets the tuple type
+                 .min(1, { message: "Select at least one skill level." }),
+  motorcycleTypes: z.array(z.enum(motorcycleTypes as [MotorcycleType, ...MotorcycleType[]])) // Added motorcycleTypes schema
+                      .min(1, { message: "Select at least one motorcycle type." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }).max(500, {message: "Description cannot exceed 500 characters."}),
   maxRiders: z.coerce.number().int().positive().optional(),
 });
@@ -58,7 +61,8 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
       title: "",
       date: undefined,
       location: "",
-      skillLevels: [], // Default to empty array
+      skillLevels: [],
+      motorcycleTypes: [], // Default to empty array
       description: "",
       maxRiders: 10,
     },
@@ -67,7 +71,12 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
   function onSubmit(values: TrainingFormValues) {
     console.log("Form submitted with values:", values); // Debug log
     startTransition(async () => {
-        const result = await createTraining(trainerId, values);
+        // Ensure date is passed correctly
+        const dataToSubmit = {
+          ...values,
+          date: values.date, // Keep as Date object
+        };
+        const result = await createTraining(trainerId, dataToSubmit);
         if (result.success) {
             toast({
                 title: "Training Created!",
@@ -126,7 +135,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(field.value, "PPP HH:mm") : <span>Pick a date and time</span>}
+                      {field.value ? format(field.value, "PPP p") : <span>Pick a date and time</span>}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -134,7 +143,16 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                   <Calendar
                     mode="single"
                     selected={field.value}
-                    onSelect={field.onChange}
+                    onSelect={(date) => {
+                         if (date) {
+                           // Preserve time if date already has one, otherwise default
+                           const currentTime = field.value || new Date();
+                           date.setHours(currentTime.getHours(), currentTime.getMinutes(), 0, 0);
+                           field.onChange(date);
+                         } else {
+                            field.onChange(undefined);
+                         }
+                     }}
                     disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))} // Disable past dates
                     initialFocus
                   />
@@ -145,15 +163,11 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                          defaultValue={field.value ? format(field.value, "HH:mm") : "10:00"}
                         onChange={(e) => {
                             const time = e.target.value;
-                            if (field.value && time) {
+                            const currentDate = field.value || new Date(); // Use existing date or today
+                            if (time) {
                                 const [hours, minutes] = time.split(':').map(Number);
-                                const newDate = new Date(field.value);
-                                newDate.setHours(hours, minutes);
-                                field.onChange(newDate);
-                            } else if (time){
-                                const [hours, minutes] = time.split(':').map(Number);
-                                const newDate = new Date(); // Use current date if none selected
-                                newDate.setHours(hours, minutes, 0, 0); // Set seconds/ms to 0
+                                const newDate = new Date(currentDate);
+                                newDate.setHours(hours, minutes, 0, 0); // Set H, M, S, MS
                                 field.onChange(newDate);
                             }
                         }}
@@ -231,6 +245,58 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           )}
         />
 
+         {/* Motorcycle Types Checkboxes */}
+          <FormField
+          control={form.control}
+          name="motorcycleTypes"
+          render={() => (
+            <FormItem>
+              <div className="mb-4">
+                <FormLabel className="text-base">Motorcycle Types</FormLabel>
+                <FormDescription>
+                  Select all applicable motorcycle types for this training.
+                </FormDescription>
+              </div>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3"> {/* Adjusted grid columns */}
+                 {motorcycleTypes.map((type) => (
+                    <FormField
+                      key={type}
+                      control={form.control}
+                      name="motorcycleTypes"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={type}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(type)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...(field.value || []), type])
+                                    : field.onChange(
+                                        (field.value || []).filter(
+                                          (value) => value !== type
+                                        )
+                                      )
+                                }}
+                              />
+                            </FormControl>
+                             <FormLabel className="font-normal flex items-center gap-1">
+                               <Bike className="h-4 w-4 text-muted-foreground" /> {type}
+                            </FormLabel>
+                          </FormItem>
+                        )
+                      }}
+                    />
+                  ))}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
 
          <FormField
           control={form.control}
@@ -257,7 +323,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
             <FormItem>
               <FormLabel>Maximum Riders (Optional)</FormLabel>
               <FormControl>
-                 {/* Ensure value is treated as number */}
                  <Input
                     type="number"
                     placeholder="e.g., 10"
