@@ -84,6 +84,13 @@ export async function getLocations(): Promise<Location[]> {
     return JSON.parse(JSON.stringify(placeholderLocations));
 }
 
+// Fetch location by ID
+export async function getLocationById(id: string): Promise<Location | undefined> {
+    await new Promise(resolve => setTimeout(resolve, 30)); // Simulate network delay
+    const location = placeholderLocations.find(loc => loc.id === id);
+    return location ? JSON.parse(JSON.stringify(location)) : undefined;
+}
+
 
 // Fetch all trainings
 export async function getTrainings(): Promise<TrainingSession[]> {
@@ -112,7 +119,7 @@ export async function getCurrentUser(): Promise<User | null> {
     await new Promise(resolve => setTimeout(resolve, 20));
     const userIndex = 1; // 0: Rider, 1: Trainer, 2: Guest
     const user = userIndex < placeholderUsers.length ? placeholderUsers[userIndex] : null;
-    console.log("Current User:", user);
+    // console.log("Current User:", user); // Keep this commented unless debugging
     return user;
 }
 

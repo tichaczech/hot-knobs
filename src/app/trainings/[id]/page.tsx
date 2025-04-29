@@ -3,7 +3,7 @@ import { TrainingCard } from '@/components/training-card';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -55,6 +55,22 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
           showUnregisterButton={currentUser?.role === 'rider' && isRegistered}
           showViewDetailsLink={false} // Hide the 'View Details' link on the details page
        />
+
+        {/* Card for Location Link */}
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center text-base"> {/* Reduced size */}
+                    <MapPin className="mr-2 h-4 w-4" /> Location
+                </CardTitle>
+            </CardHeader>
+             <CardContent>
+                <Link href={`/locations/${training.locationId}`} passHref legacyBehavior>
+                    <Button variant="link" className="p-0 h-auto text-base"> {/* Adjust link styling */}
+                         {training.locationName}
+                    </Button>
+                </Link>
+            </CardContent>
+        </Card>
 
        {/* Card for full description if needed */}
        <Card>
