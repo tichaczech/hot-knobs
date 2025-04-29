@@ -87,8 +87,8 @@ export async function getCurrentUser(): Promise<User | null> {
     await new Promise(resolve => setTimeout(resolve, 20));
     // Cycle between rider, trainer, and guest for testing different views
     // Set to 0 for rider, 1 for trainer, 2 for guest
-    const userIndex = 0; // Fixed to rider for consistency during development
-    const user = userIndex < 2 ? placeholderUsers[userIndex] : null;
+    const userIndex = 1; // Set to 1 for Bob Trainer
+    const user = userIndex < placeholderUsers.length ? placeholderUsers[userIndex] : null;
     console.log("Current User:", user); // Log current user for debugging
     return user;
 }
