@@ -36,12 +36,12 @@ export default async function LocationDetailsPage({ params }: LocationDetailsPag
     notFound(); // Redirect to 404 if location doesn't exist
   }
 
-  const hasCoordinates = location.latitude !== undefined && location.longitude !== undefined;
+  const hasCoordinates = location.location !== undefined
   const googleMapsUrl = hasCoordinates
-    ? `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}`
+    ? `https://www.google.com/maps/search/?api=1&query=${location.location!.latitude},${location.location!.longitude}`
     : null;
    const openStreetMapUrl = hasCoordinates
-    ? `https://www.openstreetmap.org/?mlat=${location.latitude}&mlon=${location.longitude}#map=15/${location.latitude}/${location.longitude}`
+    ? `https://www.openstreetmap.org/?mlat=${location.latitude}&mlon=${location.location!.longitude}#map=15/${location.latitude}/${location.location!.longitude}`
      : null;
 
   // TODO: Fetch trainings happening at this location in the future?
@@ -72,7 +72,7 @@ export default async function LocationDetailsPage({ params }: LocationDetailsPag
                 </p>
                 {hasCoordinates && (
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
-                        <span>{t('locationDetails.coordinates', { lat: location.latitude?.toFixed(4), lon: location.longitude?.toFixed(4) })}</span>
+                        <span>{t('locationDetails.coordinates', { lat: location.location?.latitude.toFixed(4), lon: location.location?.longitude.toFixed(4) })}</span>
                     </div>
                 )}
             </div>

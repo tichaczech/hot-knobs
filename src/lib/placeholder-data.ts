@@ -1,11 +1,11 @@
-import type { TrainingSession, User, SkillLevel, MotorcycleType, Location, RegistrationType, CreateTrainingData, Registration, RegistrationStatus, RegistrationResult } from './types'; // Updated imports
+import type { TrainingSession, User, SkillLevel, MotorcycleType, Site, RegistrationType, CreateTrainingData, Registration, RegistrationStatus, RegistrationResult } from './types'; // Updated imports
 
 // --- Placeholder Locations ---
-export const placeholderLocations: Location[] = [
-    { id: 'loc-1', name: 'Rocky Valley Trails', address: '123 Trailhead Rd, Mountain View', latitude: 37.4220, longitude: -122.0841 },
-    { id: 'loc-2', name: 'MX Speed Park', address: '456 Motocross Ln, Fastville', latitude: 34.0522, longitude: -118.2437 },
-    { id: 'loc-3', name: 'Steep Mountain Pass', address: '789 Summit Ave, High Peaks', latitude: 39.7392, longitude: -104.9903 },
-    { id: 'loc-4', name: 'Desert Scramble Zone', address: '101 Cactus Flats, Sandy Plains', latitude: 33.6846, longitude: -117.8265 },
+export const placeholderSites: Site[] = [
+    { id: 'loc-1', name: 'Rocky Valley Trails', address: '123 Trailhead Rd, Mountain View', location: { latitude: 37.4220, longitude: -122.0841 } },
+    { id: 'loc-2', name: 'MX Speed Park', address: '456 Motocross Ln, Fastville', location: { latitude: 34.0522, longitude: -118.2437 } },
+    { id: 'loc-3', name: 'Steep Mountain Pass', address: '789 Summit Ave, High Peaks', location: { latitude: 39.7392, longitude: -104.9903 } },
+    { id: 'loc-4', name: 'Desert Scramble Zone', address: '101 Cactus Flats, Sandy Plains', location: { latitude: 33.6846, longitude: -117.8265 } },
 ];
 
 // --- Placeholder Skill Levels ---
@@ -17,12 +17,13 @@ export const placeholderMotorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '
 
 // --- Placeholder Users ---
 export const placeholderUsers: User[] = [
+  { id: 'user-0', name: 'Tom Admin', email: 'tom@example.com', role: 'admin' },
   { id: 'user-1', name: 'Bob Trainer', email: 'bob@example.com', role: 'trainer' },
   { id: 'user-2', name: 'Alice Rider', email: 'alice@example.com', role: 'rider' },
   { id: 'user-3', name: 'Charlie Rider', email: 'charlie@example.com', role: 'rider' },
-  { id: 'user-4', name: 'Diana Rider', email: 'diana@example.com', role: 'rider' }, // Requested closed training
-  { id: 'user-5', name: 'Eve Rider', email: 'eve@example.com', role: 'rider' }, // Will be on waiting list
-  { id: 'user-6', name: 'Frank Rider', email: 'frank@example.com', role: 'rider' }, // Will be on waiting list
+  { id: 'user-4', name: 'Diana Rider', email: 'diana@example.com', role: 'rider' },
+  { id: 'user-5', name: 'Eve Rider', email: 'eve@example.com', role: 'rider' },
+  { id: 'user-6', name: 'Frank Rider', email: 'frank@example.com', role: 'rider' },
 ];
 
 // --- Placeholder Trainings ---
@@ -139,13 +140,13 @@ function getFirstWaitingUser(training: TrainingSession): Registration | undefine
 // --- Data Fetching Functions ---
 
 // Fetch all available locations
-export async function getLocations(): Promise<Location[]> {
+export async function getLocations(): Promise<Site[]> {
     await new Promise(resolve => setTimeout(resolve, 40));
     return JSON.parse(JSON.stringify(placeholderLocations));
 }
 
 // Fetch location by ID
-export async function getLocationById(id: string): Promise<Location | undefined> {
+export async function getLocationById(id: string): Promise<Site | undefined> {
     await new Promise(resolve => setTimeout(resolve, 30));
     const location = placeholderLocations.find(loc => loc.id === id);
     return location ? JSON.parse(JSON.stringify(location)) : undefined;

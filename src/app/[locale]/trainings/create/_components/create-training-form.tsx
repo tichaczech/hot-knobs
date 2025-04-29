@@ -34,7 +34,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect, useTransition } from "react";
 import { createTraining, getLocations, getSkillLevels, getMotorcycleTypes } from "@/lib/placeholder-data";
 import { useRouter } from 'next/navigation';
-import type { SkillLevel, MotorcycleType, Location, RegistrationType, CreateTrainingData as CreateTrainingPayload } from "@/lib/types"; // Use specific payload type
+import type { SkillLevel, MotorcycleType, Site, RegistrationType, CreateTrainingData as CreateTrainingPayload } from "@/lib/types"; // Use specific payload type
 import { useI18n } from '@/locales/client';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -70,7 +70,7 @@ interface CreateTrainingFormProps {
 export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
   const t = useI18n();
   const [isPending, startTransition] = useTransition();
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<Site[]>([]);
   const [skillLevels, setSkillLevels] = useState<SkillLevel[]>([]);
   const [motorcycleTypes, setMotorcycleTypes] = useState<MotorcycleType[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
