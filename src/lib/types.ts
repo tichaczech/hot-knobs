@@ -7,6 +7,8 @@ export interface Location {
     id: string;
     name: string;
     address?: string; // Optional address details
+    latitude?: number; // Added latitude
+    longitude?: number; // Added longitude
     // Could add more fields like website, contact, etc.
 }
 
