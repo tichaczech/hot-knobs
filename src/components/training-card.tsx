@@ -97,10 +97,10 @@ export function TrainingCard({
 
    // Determine if the register button should be shown
    // Can register IF: showRegisterButton is true, user is a rider, AND
-   // (there's no existing registration OR the status is NOT Cancelled and NOT Rejected)
+   // user does NOT have an 'active' registration (Confirmed, Created, or Waiting)
    const canRegister = showRegisterButton &&
                       currentUser?.role === 'rider' &&
-                      (!userStatus || (userStatus !== 'Cancelled' && userStatus !== 'Rejected'));
+                      !(userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
 
    // Determine if the cancel button should be shown
    const canCancel = showCancelButton &&

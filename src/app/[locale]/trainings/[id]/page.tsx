@@ -95,9 +95,9 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
    const userReason = userRegistration?.reason;
 
    // Determine capabilities based on user role and status
-   // Can register IF: user is a rider AND (no existing registration OR status is not Cancelled and not Rejected)
+   // Can register IF: user is a rider AND does NOT have an 'active' registration (Confirmed, Created, or Waiting)
    const canRegister = currentUser?.role === 'rider' &&
-                      (!userStatus || (userStatus !== 'Cancelled' && userStatus !== 'Rejected'));
+                      !(userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
    const canCancel = currentUser?.role === 'rider' &&
                       userStatus &&
                       (userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
