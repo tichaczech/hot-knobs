@@ -11,6 +11,7 @@ import { RegisterButton } from './register-button';
 import { UnregisterButton } from './unregister-button';
 import { useI18n } from '@/locales/client';
 import { getUserRegistration, getRegistrationCounts, isTrainingFull } from '@/lib/placeholder-data'; // Import helpers
+import React from 'react'; // Import React
 
 interface TrainingCardProps {
   training: TrainingSession;
@@ -73,8 +74,8 @@ export function TrainingCard({
         ? `${t('trainingCard.registeredCount', { count: confirmed })} / ${training.maxRiders}` + (waiting > 0 ? ` (${t('trainingCard.waitingCount', { count: waiting })})` : '')
         : t('trainingCard.registeredOpen', { count: confirmed });
 
-   // Registration type display
-   const registrationTypeIcon = training.registrationType === 'closed' ? Lock : Unlock;
+   // Registration type display - Use uppercase variable name for the component type
+   const RegistrationTypeIcon = training.registrationType === 'closed' ? Lock : Unlock;
    const registrationTypeText = training.registrationType === 'closed' ? t('trainingCard.registrationClosed') : t('trainingCard.registrationOpen');
 
    const canRegister = showRegisterButton && currentUser?.role === 'rider' && (!userStatus || userStatus === 'Rejected' || userStatus === 'Cancelled');
@@ -120,7 +121,8 @@ export function TrainingCard({
                 <CardDescription>{t('trainingCard.taughtBy', { trainerName: training.trainerName })}</CardDescription>
             </div>
              <Badge variant={training.registrationType === 'closed' ? 'secondary' : 'outline'} className="ml-auto whitespace-nowrap shrink-0">
-                <registrationTypeIcon className="mr-1 h-3 w-3"/> {registrationTypeText}
+                {/* Render the component using the uppercase variable */}
+                <RegistrationTypeIcon className="mr-1 h-3 w-3"/> {registrationTypeText}
             </Badge>
         </div>
       </CardHeader>
