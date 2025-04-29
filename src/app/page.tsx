@@ -14,7 +14,7 @@ export default async function Home() {
   return (
     <div className="space-y-8">
       <section className="text-center bg-card p-8 rounded-lg shadow">
-        <h1 className="text-4xl font-bold text-primary mb-2">Welcome to ThrottleUp Training!</h1>
+        <h1 className="text-4xl font-bold text-primary mb-2">Welcome to Mad Sprocket!</h1>
         <p className="text-lg text-muted-foreground mb-4">
           Your hub for motocross and enduro training sessions.
         </p>

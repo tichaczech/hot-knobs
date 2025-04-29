@@ -7,7 +7,7 @@ import { Info } from 'lucide-react';
 
 
 export const metadata: Metadata = {
-  title: 'My Registrations - ThrottleUp',
+  title: 'My Registrations - Mad Sprocket',
   description: 'View the training sessions you are registered for.',
 };
 

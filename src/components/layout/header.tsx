@@ -13,7 +13,7 @@ export async function Header() {
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <Link href="/" className="flex items-center space-x-2">
           <Bike className="h-6 w-6 text-primary" /> {/* Changed Motorcycle to Bike */}
-          <span className="font-bold text-lg">ThrottleUp Training</span>
+          <span className="font-bold text-lg">Mad Sprocket</span>
         </Link>
         <nav className="flex flex-1 items-center justify-end space-x-4">
            <NavLink href="/trainings" icon={<CalendarCheck />}>Available Trainings</NavLink>

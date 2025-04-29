@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 
 export const metadata: Metadata = {
-  title: 'Create Training - ThrottleUp',
+  title: 'Create Training - Mad Sprocket',
   description: 'Create a new motocross or enduro training session.',
 };
 

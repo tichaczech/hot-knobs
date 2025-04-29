@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ThrottleUp Training',
-  description: 'Manage and register for motocross and enduro trainings.',
+  title: 'Mad Sprocket Training',
+  description: 'Manage and register for motocross and enduro trainings with Mad Sprocket.',
 };
 
 export default async function RootLayout({

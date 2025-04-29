@@ -3,7 +3,7 @@ import { TrainingCard } from '@/components/training-card';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Available Trainings - ThrottleUp',
+  title: 'Available Trainings - Mad Sprocket',
   description: 'Browse all available motocross and enduro training sessions.',
 };
 

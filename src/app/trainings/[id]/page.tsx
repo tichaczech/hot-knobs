@@ -16,11 +16,11 @@ export async function generateMetadata({ params }: TrainingDetailsPageProps): Pr
   const training = await getTrainingById(params.id);
   if (!training) {
     return {
-      title: 'Training Not Found - ThrottleUp',
+      title: 'Training Not Found - Mad Sprocket',
     };
   }
   return {
-    title: `${training.title} - ThrottleUp Training`,
+    title: `${training.title} - Mad Sprocket Training`,
     description: `Details for the training session: ${training.title} on ${training.date.toLocaleDateString()} at ${training.location}. Suitable for ${training.skillLevels.join(', ')}.`,
   };
 }
