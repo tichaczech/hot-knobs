@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { registerForTraining } from '@/lib/placeholder-data'; // Assuming server action or API call function
 import { Loader2, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useI18n } from '@/locales/client'; // Import client-side i18n hook
 
 
 interface RegisterButtonProps {
@@ -14,6 +15,7 @@ interface RegisterButtonProps {
 }
 
 export function RegisterButton({ trainingId, userId }: RegisterButtonProps) {
+  const t = useI18n(); // Get translation function
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
    const router = useRouter();
@@ -23,16 +25,16 @@ export function RegisterButton({ trainingId, userId }: RegisterButtonProps) {
       const result = await registerForTraining(userId, trainingId);
       if (result.success) {
         toast({
-          title: "Registration Successful!",
-          description: result.message,
+          title: t('registerButton.registrationSuccessTitle'),
+          description: t('registerButton.registrationSuccessDesc', { message: result.message || t('success') }), // Provide fallback message
            variant: "default", // Use default styling (often green or neutral)
            className: "bg-primary text-primary-foreground"
         });
         router.refresh(); // Refresh data on the page
       } else {
         toast({
-          title: "Registration Failed",
-          description: result.message,
+          title: t('registerButton.registrationErrorTitle'),
+          description: t('registerButton.registrationErrorDesc', { message: result.message || t('error') }), // Provide fallback message
           variant: "destructive",
         });
       }
@@ -46,7 +48,7 @@ export function RegisterButton({ trainingId, userId }: RegisterButtonProps) {
       ) : (
         <CheckCircle className="mr-2 h-4 w-4" />
       )}
-      Register
+      {t('registerButton.register')}
     </Button>
   );
 }

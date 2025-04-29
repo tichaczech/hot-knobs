@@ -5,25 +5,31 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { MapPin, ArrowLeft, Map } from 'lucide-react'; // Added Map icon
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { getI18n } from '@/locales/server'; // Import server-side i18n
+import type { Locale } from '@/locales/config'; // Import Locale type
 
 interface LocationDetailsPageProps {
-  params: { id: string };
+  params: { id: string; locale: Locale }; // Add locale
 }
 
+// Generate localized metadata
 export async function generateMetadata({ params }: LocationDetailsPageProps): Promise<Metadata> {
+  const t = await getI18n(params.locale);
   const location = await getLocationById(params.id);
   if (!location) {
     return {
-      title: 'Location Not Found - Mad Sprocket',
+      title: t('locationDetails.meta.notFoundTitle'),
     };
   }
+  const addressPart = location.address ? t('locationDetails.meta.addressPart', { address: location.address }) : '';
   return {
-    title: `${location.name} - Mad Sprocket Training Location`,
-    description: `Details for the training location: ${location.name}${location.address ? ` at ${location.address}` : ''}.`,
+    title: t('locationDetails.meta.title', { locationName: location.name }),
+    description: t('locationDetails.meta.description', { locationName: location.name, address: addressPart }),
   };
 }
 
 export default async function LocationDetailsPage({ params }: LocationDetailsPageProps) {
+  const t = await getI18n(params.locale); // Get translation function
   const location = await getLocationById(params.id);
 
   if (!location) {
@@ -45,7 +51,7 @@ export default async function LocationDetailsPage({ params }: LocationDetailsPag
       <Link href="/trainings" passHref legacyBehavior>
         {/* Adjust link as needed, maybe back to a locations list page if created */}
         <Button variant="outline" size="sm" className="mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Trainings
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t('locationDetails.backToTrainings')}
         </Button>
       </Link>
 
@@ -62,11 +68,11 @@ export default async function LocationDetailsPage({ params }: LocationDetailsPag
             {/* Location Details */}
             <div className="space-y-2 mb-6">
                  <p className="text-muted-foreground">
-                    More details about the location could go here, such as track conditions, amenities, website link, etc.
+                    {t('locationDetails.detailsPlaceholder')}
                 </p>
                 {hasCoordinates && (
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
-                        <span>Coordinates: {location.latitude?.toFixed(4)}, {location.longitude?.toFixed(4)}</span>
+                        <span>{t('locationDetails.coordinates', { lat: location.latitude?.toFixed(4), lon: location.longitude?.toFixed(4) })}</span>
                     </div>
                 )}
             </div>
@@ -75,27 +81,27 @@ export default async function LocationDetailsPage({ params }: LocationDetailsPag
           {/* Map Preview Section */}
           {hasCoordinates && (
              <div className="border-t pt-4">
-                <h3 className="text-lg font-semibold mb-2 flex items-center"><Map className="mr-2 h-5 w-5"/>Map Preview & Links</h3>
+                <h3 className="text-lg font-semibold mb-2 flex items-center"><Map className="mr-2 h-5 w-5"/>{t('locationDetails.mapPreview')}</h3>
                  {/* Placeholder for an embedded map or image */}
                 <div className="bg-muted rounded-md p-4 text-center mb-4 h-48 flex items-center justify-center">
                   <p className="text-muted-foreground">
-                    (Map preview placeholder - Integration with a map library like Leaflet or an iframe is needed here)
+                    {t('locationDetails.mapPlaceholder')}
                      <br/>
-                     <span className="text-xs"> For now, use the links below.</span>
+                     <span className="text-xs">{t('locationDetails.mapHint')}</span>
                   </p>
                 </div>
                  <div className="flex gap-4">
                      {googleMapsUrl && (
                         <Link href={googleMapsUrl} target="_blank" rel="noopener noreferrer" passHref legacyBehavior>
                              <Button variant="outline">
-                                 View on Google Maps
+                                 {t('locationDetails.viewOnGoogleMaps')}
                              </Button>
                          </Link>
                     )}
                      {openStreetMapUrl && (
                          <Link href={openStreetMapUrl} target="_blank" rel="noopener noreferrer" passHref legacyBehavior>
                             <Button variant="outline">
-                                View on OpenStreetMap
+                                {t('locationDetails.viewOnOpenStreetMap')}
                              </Button>
                         </Link>
                     )}
@@ -105,9 +111,9 @@ export default async function LocationDetailsPage({ params }: LocationDetailsPag
 
           {/* Placeholder for list of upcoming trainings at this location */}
            <div className="mt-6 border-t pt-4">
-                <h3 className="text-lg font-semibold mb-2">Upcoming Trainings Here</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('locationDetails.upcomingTrainings')}</h3>
                 <p className="text-sm text-muted-foreground">
-                    (Functionality to list trainings for this location is not yet implemented.)
+                    {t('locationDetails.upcomingTrainingsPlaceholder')}
                 </p>
                 {/* Example:
                  <ul>
@@ -120,8 +126,8 @@ export default async function LocationDetailsPage({ params }: LocationDetailsPag
             {/*
             {currentUser?.role === 'admin' && (
                 <div className="mt-6 border-t pt-4 flex gap-2">
-                    <Button variant="outline" size="sm">Edit Location</Button>
-                    <Button variant="destructive" size="sm">Delete Location</Button>
+                    <Button variant="outline" size="sm">{t('locationDetails.editLocation')}</Button>
+                    <Button variant="destructive" size="sm">{t('locationDetails.deleteLocation')}</Button>
                 </div>
             )}
             */}

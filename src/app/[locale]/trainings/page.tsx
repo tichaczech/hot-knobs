@@ -1,14 +1,21 @@
 import { getTrainings, getCurrentUser } from '@/lib/placeholder-data';
 import { TrainingCard } from '@/components/training-card';
 import { Metadata } from 'next';
+import { getI18n } from '@/locales/server'; // Import server-side i18n
+import type { Locale } from '@/locales/config'; // Import Locale type
 
-export const metadata: Metadata = {
-  title: 'Available Trainings - Mad Sprocket',
-  description: 'Browse all available motocross and enduro training sessions.',
-};
+// Generate localized metadata
+export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Promise<Metadata> {
+  const t = await getI18n(locale);
+  return {
+    title: t('trainings.meta.title'),
+    description: t('trainings.meta.description'),
+  };
+}
 
 
 export default async function TrainingsPage() {
+  const t = await getI18n(); // Get translation function
   const trainings = await getTrainings();
   const currentUser = await getCurrentUser();
 
@@ -19,7 +26,7 @@ export default async function TrainingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-center">Available Training Sessions</h1>
+      <h1 className="text-3xl font-bold text-center">{t('trainings.title')}</h1>
 
        {upcomingTrainings.length > 0 ? (
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -34,7 +41,7 @@ export default async function TrainingsPage() {
                 ))}
             </div>
        ) : (
-           <p className="text-center text-muted-foreground mt-8">No upcoming training sessions found. Check back soon!</p>
+           <p className="text-center text-muted-foreground mt-8">{t('trainings.noUpcoming')}</p>
        )}
 
     </div>

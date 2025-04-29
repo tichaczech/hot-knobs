@@ -4,21 +4,27 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Info } from 'lucide-react';
+import { getI18n } from '@/locales/server'; // Import server-side i18n
+import type { Locale } from '@/locales/config'; // Import Locale type
+import Link from 'next/link'; // Import Link for the alert message
 
-
-export const metadata: Metadata = {
-  title: 'My Registrations - Mad Sprocket',
-  description: 'View the training sessions you are registered for.',
-};
+// Generate localized metadata
+export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Promise<Metadata> {
+  const t = await getI18n(locale);
+  return {
+    title: t('myTrainings.meta.title'),
+    description: t('myTrainings.meta.description'),
+  };
+}
 
 
 export default async function MyTrainingsPage() {
+  const t = await getI18n(); // Get translation function
   const currentUser = await getCurrentUser();
 
   // This page is only for riders
   if (!currentUser || currentUser.role !== 'rider') {
-     // Redirect non-riders or guests to the homepage or login page
-     // For now, redirecting to homepage
+     // Redirect non-riders or guests to the localized homepage
      redirect('/');
   }
 
@@ -35,21 +41,22 @@ export default async function MyTrainingsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-center">My Registered Trainings</h1>
+      <h1 className="text-3xl font-bold text-center">{t('myTrainings.title')}</h1>
 
        {upcomingRegistrations.length === 0 && pastRegistrations.length === 0 && (
              <Alert>
                 <Info className="h-4 w-4" />
-                <AlertTitle>No Registrations Yet!</AlertTitle>
+                <AlertTitle>{t('myTrainings.noRegistrations')}</AlertTitle>
                 <AlertDescription>
-                    You haven't registered for any training sessions. Head over to the <a href="/trainings" className="font-medium text-primary underline">Available Trainings</a> page to find one.
+                    {/* Use dangerouslySetInnerHTML for simple link embedding, or use a more robust solution if needed */}
+                    <span dangerouslySetInnerHTML={{ __html: t('myTrainings.noRegistrationsDesc').replace('<link>', `<a href="/trainings" class="font-medium text-primary underline">`).replace('</link>', '</a>') }} />
                 </AlertDescription>
             </Alert>
        )}
 
        {upcomingRegistrations.length > 0 && (
            <section>
-               <h2 className="text-2xl font-semibold mb-4">Upcoming Sessions</h2>
+               <h2 className="text-2xl font-semibold mb-4">{t('myTrainings.upcoming')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {upcomingRegistrations.map((training) => (
                     <TrainingCard
@@ -66,7 +73,7 @@ export default async function MyTrainingsPage() {
 
         {pastRegistrations.length > 0 && (
            <section>
-               <h2 className="text-2xl font-semibold mb-4 text-muted-foreground">Past Sessions</h2>
+               <h2 className="text-2xl font-semibold mb-4 text-muted-foreground">{t('myTrainings.past')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-70">
                     {pastRegistrations.map((training) => (
                     <TrainingCard

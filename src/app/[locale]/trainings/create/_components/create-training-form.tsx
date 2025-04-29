@@ -28,43 +28,69 @@ import {
 } from "@/components/ui/select"
 import { CalendarIcon, Loader2, Bike, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format } from "date-fns"; // Consider locale-aware formatting later
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect, useTransition } from "react"; // Added useEffect
-import { createTraining, getLocations } from "@/lib/placeholder-data"; // Added getLocations
+import { useState, useEffect, useTransition } from "react";
+import { createTraining, getLocations } from "@/lib/placeholder-data";
 import { useRouter } from 'next/navigation';
 import type { SkillLevel, MotorcycleType, Location } from "@/lib/types";
-
+import { useI18n } from '@/locales/client'; // Import client-side i18n hook
 
 const skillLevels: SkillLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Pro'];
 const motorcycleTypes: MotorcycleType[] = ['125cc', '250cc', '450cc', 'Electric', 'Other'];
 
-const formSchema = z.object({
-  title: z.string().min(5, { message: "Title must be at least 5 characters." }),
-  date: z.date({ required_error: "A date for the training is required." }),
-  locationId: z.string({ required_error: "A location must be selected." }).min(1, { message: "Please select a location." }), // Changed from location string to locationId
+// Form schema remains largely the same, Zod handles validation logic
+// Translations are applied in the component rendering
+const createFormSchema = (t: ReturnType<typeof useI18n>) => z.object({
+  title: z.string().min(5, { message: t('createTraining.form.titleError') }),
+  date: z.date({ required_error: t('createTraining.form.dateError') }),
+  locationId: z.string({ required_error: t('createTraining.form.locationError') }).min(1, { message: t('createTraining.form.locationError') }),
   skillLevels: z.array(z.enum(skillLevels as [SkillLevel, ...SkillLevel[]]))
-                 .min(1, { message: "Select at least one skill level." }),
+                 .min(1, { message: t('createTraining.form.skillLevelsError') }),
   motorcycleTypes: z.array(z.enum(motorcycleTypes as [MotorcycleType, ...MotorcycleType[]]))
-                      .min(1, { message: "Select at least one motorcycle type." }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters." }).max(500, {message: "Description cannot exceed 500 characters."}),
-  maxRiders: z.coerce.number().int().positive().optional(),
+                      .min(1, { message: t('createTraining.form.motorcycleTypesError') }),
+  description: z.string()
+                  .min(10, { message: t('createTraining.form.descriptionErrorShort') })
+                  .max(500, {message: t('createTraining.form.descriptionErrorLong')}),
+  maxRiders: z.coerce.number().int().positive({message: t('createTraining.form.maxRidersError')}).optional(),
 });
 
-type TrainingFormValues = z.infer<typeof formSchema>;
+type TrainingFormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface CreateTrainingFormProps {
     trainerId: string;
 }
 
 export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
+  const t = useI18n(); // Get translation function
+  const formSchema = createFormSchema(t); // Create schema with translations
   const [isPending, startTransition] = useTransition();
-  const [locations, setLocations] = useState<Location[]>([]); // State for locations
+  const [locations, setLocations] = useState<Location[]>([]);
   const [isLoadingLocations, setIsLoadingLocations] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
 
-  // Fetch locations on component mount
+  // Helper function to translate SkillLevel safely
+    const translateSkillLevel = (level: SkillLevel): string => {
+    try {
+        return t(`skillLevels.${level}`);
+    } catch (e) {
+        console.warn(`Missing translation for skill level: ${level}`);
+        return level; // Fallback
+    }
+    };
+
+    // Helper function to translate MotorcycleType safely
+    const translateMotorcycleType = (type: MotorcycleType): string => {
+        try {
+        return t(`motorcycleTypes.${type}`);
+        } catch (e) {
+        console.warn(`Missing translation for motorcycle type: ${type}`);
+        return type; // Fallback
+        }
+    };
+
+
   useEffect(() => {
     async function fetchLocations() {
       setIsLoadingLocations(true);
@@ -74,8 +100,8 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
       } catch (error) {
         console.error("Failed to fetch locations:", error);
         toast({
-          title: "Error",
-          description: "Could not load locations. Please try again later.",
+          title: t('error'),
+          description: t('createTraining.form.errorLoadLocations'),
           variant: "destructive",
         });
       } finally {
@@ -83,7 +109,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
       }
     }
     fetchLocations();
-  }, [toast]);
+  }, [t, toast]);
 
 
   const form = useForm<TrainingFormValues>({
@@ -91,27 +117,27 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
     defaultValues: {
       title: "",
       date: undefined,
-      locationId: "", // Default to empty string for locationId
+      locationId: "",
       skillLevels: [],
       motorcycleTypes: [],
       description: "",
-      maxRiders: 10,
+      maxRiders: undefined, // Set undefined as default for optional number
     },
   });
 
   function onSubmit(values: TrainingFormValues) {
-    console.log("Form submitted with values:", values); // Debug log
     startTransition(async () => {
-        // Data structure matches placeholder function expectation
         const dataToSubmit = {
           ...values,
-          date: values.date, // Keep as Date object
+          date: values.date,
+          // Ensure maxRiders is number or undefined
+          maxRiders: values.maxRiders !== undefined && !isNaN(values.maxRiders) ? Number(values.maxRiders) : undefined,
         };
         const result = await createTraining(trainerId, dataToSubmit);
         if (result.success) {
             toast({
-                title: "Training Created!",
-                description: result.message,
+                title: t('createTraining.form.successToastTitle'),
+                description: t('createTraining.form.successToastDesc', { message: result.message || t('success') }),
                 variant: "default",
                  className: "bg-primary text-primary-foreground"
             });
@@ -123,8 +149,8 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
             router.refresh();
         } else {
              toast({
-                title: "Creation Failed",
-                description: result.message || "An unexpected error occurred.",
+                title: t('createTraining.form.errorToastTitle'),
+                description: t('createTraining.form.errorToastDesc', { message: result.message || t('error') }),
                 variant: "destructive",
             });
         }
@@ -140,9 +166,9 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Training Title</FormLabel>
+              <FormLabel>{t('createTraining.form.titleLabel')}</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Advanced Cornering Techniques" {...field} />
+                <Input placeholder={t('createTraining.form.titlePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -154,7 +180,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date and Time</FormLabel>
+              <FormLabel>{t('createTraining.form.dateLabel')}</FormLabel>
                <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -166,7 +192,8 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(field.value, "PPP p") : <span>Pick a date and time</span>}
+                      {/* TODO: Locale-aware date formatting */}
+                      {field.value ? format(field.value, "PPP p") : <span>{t('createTraining.form.datePlaceholder')}</span>}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -210,23 +237,22 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           )}
         />
 
-        {/* Location Select Field */}
          <FormField
           control={form.control}
           name="locationId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel>{t('createTraining.form.locationLabel')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoadingLocations}>
                 <FormControl>
                   <SelectTrigger>
                     <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <SelectValue placeholder={isLoadingLocations ? "Loading locations..." : "Select a location"} />
+                    <SelectValue placeholder={isLoadingLocations ? t('createTraining.form.locationPlaceholderLoading') : t('createTraining.form.locationPlaceholder')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {!isLoadingLocations && locations.length === 0 && (
-                     <SelectItem value="no-locations" disabled>No locations available</SelectItem>
+                     <SelectItem value="no-locations" disabled>{t('createTraining.form.locationNotAvailable')}</SelectItem>
                   )}
                   {locations.map((location) => (
                     <SelectItem key={location.id} value={location.id}>
@@ -247,9 +273,9 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel className="text-base">Skill Levels</FormLabel>
+                <FormLabel className="text-base">{t('createTraining.form.skillLevelsLabel')}</FormLabel>
                 <FormDescription>
-                  Select all applicable skill levels for this training.
+                  {t('createTraining.form.skillLevelsDesc')}
                 </FormDescription>
               </div>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -279,7 +305,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                               />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              {level}
+                              {translateSkillLevel(level)}
                             </FormLabel>
                           </FormItem>
                         )
@@ -298,9 +324,9 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel className="text-base">Motorcycle Types</FormLabel>
+                <FormLabel className="text-base">{t('createTraining.form.motorcycleTypesLabel')}</FormLabel>
                 <FormDescription>
-                  Select all applicable motorcycle types for this training.
+                  {t('createTraining.form.motorcycleTypesDesc')}
                 </FormDescription>
               </div>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -330,7 +356,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                               />
                             </FormControl>
                              <FormLabel className="font-normal flex items-center gap-1">
-                               <Bike className="h-4 w-4 text-muted-foreground" /> {type}
+                               <Bike className="h-4 w-4 text-muted-foreground" /> {translateMotorcycleType(type)}
                             </FormLabel>
                           </FormItem>
                         )
@@ -349,10 +375,10 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('createTraining.form.descriptionLabel')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Provide details about the training, what riders will learn, any prerequisites, etc."
+                  placeholder={t('createTraining.form.descriptionPlaceholder')}
                   className="resize-y min-h-[100px]"
                   {...field}
                 />
@@ -367,18 +393,19 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           name="maxRiders"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Maximum Riders (Optional)</FormLabel>
+              <FormLabel>{t('createTraining.form.maxRidersLabel')}</FormLabel>
               <FormControl>
                  <Input
                     type="number"
-                    placeholder="e.g., 10"
+                    placeholder={t('createTraining.form.maxRidersPlaceholder')}
                     {...field}
+                    // Ensure value is controlled correctly for optional number
                     value={field.value ?? ""}
                     onChange={event => field.onChange(event.target.value === '' ? undefined : +event.target.value)}
                  />
               </FormControl>
                <FormDescription>
-                 Leave blank for unlimited participants.
+                 {t('createTraining.form.maxRidersDesc')}
                </FormDescription>
               <FormMessage />
             </FormItem>
@@ -387,8 +414,8 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
 
 
         <Button type="submit" className="w-full" disabled={isPending || isLoadingLocations}>
-           {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-           {isLoadingLocations ? 'Loading...' : 'Create Training Session'}
+           {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+           {isLoadingLocations ? t('createTraining.form.submitButtonLoading') : (isPending ? t('createTraining.form.submitButtonCreating') : t('createTraining.form.submitButton'))}
         </Button>
       </form>
     </Form>

@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-
+import { useI18n } from '@/locales/client'; // Import client-side i18n hook
 
 interface UnregisterButtonProps {
   trainingId: string;
@@ -25,6 +25,7 @@ interface UnregisterButtonProps {
 }
 
 export function UnregisterButton({ trainingId, userId }: UnregisterButtonProps) {
+  const t = useI18n(); // Get translation function
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
@@ -34,14 +35,14 @@ export function UnregisterButton({ trainingId, userId }: UnregisterButtonProps) 
       const result = await unregisterFromTraining(userId, trainingId);
       if (result.success) {
         toast({
-          title: "Unregistration Successful!",
-          description: result.message,
+          title: t('unregisterButton.unregistrationSuccessTitle'),
+          description: t('unregisterButton.unregistrationSuccessDesc', { message: result.message || t('success') }),
         });
          router.refresh(); // Refresh data on the page
       } else {
         toast({
-          title: "Unregistration Failed",
-          description: result.message,
+          title: t('unregisterButton.unregistrationErrorTitle'),
+          description: t('unregisterButton.unregistrationErrorDesc', { message: result.message || t('error') }),
           variant: "destructive",
         });
       }
@@ -57,21 +58,21 @@ export function UnregisterButton({ trainingId, userId }: UnregisterButtonProps) 
             ) : (
                 <XCircle className="mr-2 h-4 w-4" />
             )}
-            Unregister
+            {t('unregisterButton.unregister')}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogTitle>{t('unregisterButton.confirmTitle')}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. You will be removed from the registration list for this training session.
+            {t('unregisterButton.confirmDesc')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction onClick={handleUnregister} disabled={isPending} className="bg-destructive hover:bg-destructive/90">
              {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Confirm Unregistration
+            {t('unregisterButton.confirmAction')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
