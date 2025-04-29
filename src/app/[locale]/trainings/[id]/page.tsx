@@ -64,11 +64,15 @@ export async function generateMetadata({ params }: TrainingDetailsPageProps): Pr
         training.skillLevels.map(level => translateSkillLevel(level, params.locale))
     );
 
+   // Format date server-side for metadata, potentially using a less specific format or default locale
+   const formattedDateForMeta = training.date.toLocaleDateString(params.locale, { year: 'numeric', month: 'long', day: 'numeric' });
+
+
   return {
     title: t('trainingDetails.meta.title', { trainingTitle: training.title }),
     description: t('trainingDetails.meta.description', {
         trainingTitle: training.title,
-        date: training.date.toLocaleDateString(params.locale),
+        date: formattedDateForMeta, // Use server-formatted date for metadata
         locationName: training.locationName,
         skillLevels: translatedSkillLevels.join(', ')
     }),
@@ -113,14 +117,16 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
             </Button>
         </Link>
 
-      {/* Re-use TrainingCard for consistent display, adjust props */}
+      {/*
+        Re-use TrainingCard for consistent display.
+        It handles its own client-side date formatting to prevent hydration errors.
+      */}
       <TrainingCard
           training={training}
           currentUser={currentUser}
-          // Let the card handle its internal button logic based on status
-          showRegisterButton={true} // Indicate register *could* be shown
-          showCancelButton={true} // Indicate cancel *could* be shown
-          showViewDetailsLink={false} // Hide the 'View Details' link on the details page itself
+          showRegisterButton={true}
+          showCancelButton={true}
+          showViewDetailsLink={false}
        />
 
         {/* Card for Location Link */}

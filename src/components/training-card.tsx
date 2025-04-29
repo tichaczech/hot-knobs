@@ -11,7 +11,7 @@ import { RegisterButton } from './register-button';
 import { UnregisterButton } from './unregister-button';
 import { useI18n } from '@/locales/client';
 import { getUserRegistration, getRegistrationCounts, isTrainingFull } from '@/lib/placeholder-data'; // Import helpers
-import React from 'react'; // Import React
+import React, { useState, useEffect } from 'react'; // Import React, useState, useEffect
 
 interface TrainingCardProps {
   training: TrainingSession;
@@ -60,6 +60,24 @@ export function TrainingCard({
   showViewDetailsLink = true,
 }: TrainingCardProps) {
   const t = useI18n(); // Get translation function
+  const [formattedDate, setFormattedDate] = useState<string | null>(null);
+
+  // Format date on client after mount to avoid hydration mismatch
+  useEffect(() => {
+    // Ensure training.date is a valid Date object before formatting
+    if (training.date) {
+        try {
+            // Attempt to format. Use 'en-US' locale explicitly if needed, or rely on environment
+            const dateObj = new Date(training.date); // Ensure it's a Date object
+            setFormattedDate(format(dateObj, 'PPP p'));
+        } catch (error) {
+            console.error("Error formatting date:", error);
+            // Fallback or set an error state if needed
+            setFormattedDate(training.date.toString()); // Simple fallback
+        }
+    }
+  }, [training.date]);
+
 
   const userRegistration = getUserRegistration(training, currentUser?.id);
   const userStatus = userRegistration?.status;
@@ -129,7 +147,8 @@ export function TrainingCard({
       <CardContent className="flex-grow space-y-3">
         <div className="flex items-center text-sm text-muted-foreground">
           <Calendar className="mr-2 h-4 w-4" />
-          <span>{format(training.date, 'PPP p')}</span>
+          {/* Display formatted date from state, or loading/fallback */}
+          <span>{formattedDate || t('loading')}</span>
         </div>
         <div className="flex items-center text-sm text-muted-foreground">
           <MapPin className="mr-2 h-4 w-4" />
