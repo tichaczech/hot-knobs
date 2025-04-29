@@ -1,4 +1,4 @@
-import type { TrainingSession, User, SkillLevel, MotorcycleType, Location, RegistrationType, CreateTrainingData, RegistrationStatusReason } from './types'; // Updated imports
+import type { TrainingSession, User, SkillLevel, MotorcycleType, Location, RegistrationType, CreateTrainingData, Registration, RegistrationStatus, RegistrationResult } from './types'; // Updated imports
 
 // --- Placeholder Locations ---
 export const placeholderLocations: Location[] = [
@@ -20,11 +20,13 @@ export const placeholderUsers: User[] = [
   { id: 'user-1', name: 'Alice Rider', email: 'alice@example.com', role: 'rider' },
   { id: 'user-2', name: 'Bob Trainer', email: 'bob@example.com', role: 'trainer' },
   { id: 'user-3', name: 'Charlie Rider', email: 'charlie@example.com', role: 'rider' },
-  { id: 'user-4', name: 'Diana Pending', email: 'diana@example.com', role: 'rider' }, // New user for pending
+  { id: 'user-4', name: 'Diana Requester', email: 'diana@example.com', role: 'rider' }, // Requested closed training
+  { id: 'user-5', name: 'Eve Waitlist', email: 'eve@example.com', role: 'rider' }, // Will be on waiting list
+  { id: 'user-6', name: 'Frank Waitlist', email: 'frank@example.com', role: 'rider' }, // Will be on waiting list
 ];
 
 // --- Placeholder Trainings ---
-// Updated to include new fields
+// Updated to use the new 'registrations' structure
 export let placeholderTrainings: TrainingSession[] = [ // Use let to allow modification
   {
     id: 'ts-1',
@@ -37,12 +39,12 @@ export let placeholderTrainings: TrainingSession[] = [ // Use let to allow modif
     skillLevels: ['Beginner'],
     motorcycleTypes: ['125cc', '250cc', 'Other'],
     description: 'Focus on fundamental enduro techniques: body positioning, braking, and small obstacles. Open registration.',
-    registrationType: 'open', // Explicitly open
-    registeredRiders: ['user-1'],
-    pendingRegistrations: [],
-    rejectedRegistrations: [],
-    cancelledRegistrations: [],
-    maxRiders: 10,
+    registrationType: 'open',
+    registrations: [
+        { userId: 'user-1', status: 'Confirmed', registeredAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) }, // Alice registered yesterday
+        { userId: 'user-3', status: 'Cancelled', registeredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), reason: "Rider cancelled." }, // Charlie cancelled
+    ],
+    maxRiders: 1, // Set low capacity to test waiting list easily
   },
   {
     id: 'ts-2',
@@ -55,11 +57,12 @@ export let placeholderTrainings: TrainingSession[] = [ // Use let to allow modif
     skillLevels: ['Intermediate', 'Advanced'],
     motorcycleTypes: ['250cc', '450cc'],
     description: 'Advanced cornering drills, ruts, and berms. Improve your lap times! Requires trainer approval.',
-    registrationType: 'closed', // Explicitly closed
-    registeredRiders: ['user-3'], // Charlie is pre-approved
-    pendingRegistrations: ['user-4'], // Diana is pending
-    rejectedRegistrations: [{ userId: 'user-1', reason: 'Skill level mismatch' }], // Alice was rejected
-    cancelledRegistrations: [],
+    registrationType: 'closed',
+    registrations: [
+        { userId: 'user-3', status: 'Confirmed', registeredAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) }, // Charlie is confirmed
+        { userId: 'user-4', status: 'Created', registeredAt: new Date(Date.now() - 12 * 60 * 60 * 1000) }, // Diana requested 12 hours ago
+        { userId: 'user-1', status: 'Rejected', registeredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), reason: 'Skill level mismatch' }, // Alice was rejected
+    ],
     maxRiders: 8,
   },
   {
@@ -73,11 +76,11 @@ export let placeholderTrainings: TrainingSession[] = [ // Use let to allow modif
     skillLevels: ['Advanced', 'Pro'],
     motorcycleTypes: ['250cc', '450cc', 'Other'],
     description: 'Learn techniques for tackling challenging ascents, line selection, and throttle control. Open registration.',
-    registrationType: 'open', // Explicitly open
-    registeredRiders: ['user-1', 'user-3'],
-    pendingRegistrations: [],
-    rejectedRegistrations: [],
-    cancelledRegistrations: [],
+    registrationType: 'open',
+    registrations: [
+        { userId: 'user-1', status: 'Confirmed', registeredAt: new Date() },
+        { userId: 'user-3', status: 'Confirmed', registeredAt: new Date() },
+    ],
     maxRiders: 6,
   },
   {
@@ -86,44 +89,77 @@ export let placeholderTrainings: TrainingSession[] = [ // Use let to allow modif
     trainerName: 'Bob Trainer',
     title: 'Introduction to Motocross Jumps (Open)',
     date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
-    locationId: 'loc-2', // Same location as ts-2
+    locationId: 'loc-2',
     locationName: 'MX Speed Park',
     skillLevels: ['Beginner'],
     motorcycleTypes: ['125cc', '250cc', 'Electric'],
     description: 'Safely learn the basics of jumping small tabletops and rollers. Open registration.',
-    registrationType: 'open', // Explicitly open
-    registeredRiders: ['user-3'],
-    pendingRegistrations: [],
-    rejectedRegistrations: [],
-    cancelledRegistrations: [],
+    registrationType: 'open',
+    registrations: [
+        { userId: 'user-3', status: 'Confirmed', registeredAt: new Date() },
+    ],
     maxRiders: 12,
   },
 ];
+
+
+// --- Helper Functions for Registration Status ---
+const isConfirmed = (r: Registration) => r.status === 'Confirmed';
+const isCreated = (r: Registration) => r.status === 'Created';
+const isWaiting = (r: Registration) => r.status === 'Waiting';
+const isRejected = (r: Registration) => r.status === 'Rejected';
+const isCancelled = (r: Registration) => r.status === 'Cancelled';
+const isActiveRegistration = (r: Registration) => isConfirmed(r) || isCreated(r) || isWaiting(r); // User has an active interest
+
+// Helper to get registration counts
+export function getRegistrationCounts(training: TrainingSession | undefined) {
+    if (!training) return { confirmed: 0, waiting: 0, created: 0 };
+    return {
+        confirmed: training.registrations.filter(isConfirmed).length,
+        waiting: training.registrations.filter(isWaiting).length,
+        created: training.registrations.filter(isCreated).length,
+    };
+}
+
+// Helper to check if training is full
+export function isTrainingFull(training: TrainingSession | undefined): boolean {
+    if (!training?.maxRiders) return false; // No limit
+    const confirmedCount = getRegistrationCounts(training).confirmed;
+    return confirmedCount >= training.maxRiders;
+}
+
+// Helper to find the first user on the waiting list
+function getFirstWaitingUser(training: TrainingSession): Registration | undefined {
+    return training.registrations
+        .filter(isWaiting)
+        .sort((a, b) => a.registeredAt.getTime() - b.registeredAt.getTime()) // Oldest waiting first
+        .shift();
+}
 
 // --- Data Fetching Functions ---
 
 // Fetch all available locations
 export async function getLocations(): Promise<Location[]> {
-    await new Promise(resolve => setTimeout(resolve, 40)); // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 40));
     return JSON.parse(JSON.stringify(placeholderLocations));
 }
 
 // Fetch location by ID
 export async function getLocationById(id: string): Promise<Location | undefined> {
-    await new Promise(resolve => setTimeout(resolve, 30)); // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 30));
     const location = placeholderLocations.find(loc => loc.id === id);
     return location ? JSON.parse(JSON.stringify(location)) : undefined;
 }
 
 // Fetch all available skill levels
 export async function getSkillLevels(): Promise<SkillLevel[]> {
-    await new Promise(resolve => setTimeout(resolve, 25)); // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 25));
     return JSON.parse(JSON.stringify(placeholderSkillLevels));
 }
 
 // Fetch all available motorcycle types
 export async function getMotorcycleTypes(): Promise<MotorcycleType[]> {
-    await new Promise(resolve => setTimeout(resolve, 25)); // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 25));
     return JSON.parse(JSON.stringify(placeholderMotorcycleTypes));
 }
 
@@ -131,8 +167,12 @@ export async function getMotorcycleTypes(): Promise<MotorcycleType[]> {
 // Fetch all trainings
 export async function getTrainings(): Promise<TrainingSession[]> {
   await new Promise(resolve => setTimeout(resolve, 50));
-  // Deep copy and ensure date is Date object
-  return JSON.parse(JSON.stringify(placeholderTrainings)).map((t: any) => ({ ...t, date: new Date(t.date) }));
+  // Deep copy and ensure dates are Date objects
+  return JSON.parse(JSON.stringify(placeholderTrainings)).map((t: any) => ({
+      ...t,
+      date: new Date(t.date),
+      registrations: t.registrations.map((r: any) => ({...r, registeredAt: new Date(r.registeredAt)}))
+  }));
 }
 
 // Fetch training by ID
@@ -140,40 +180,50 @@ export async function getTrainingById(id: string): Promise<TrainingSession | und
   await new Promise(resolve => setTimeout(resolve, 50));
    const training = placeholderTrainings.find(t => t.id === id);
    // Ensure date is a Date object and return deep copy
-   return training ? { ...JSON.parse(JSON.stringify(training)), date: new Date(training.date) } : undefined;
+   return training ? {
+       ...JSON.parse(JSON.stringify(training)),
+       date: new Date(training.date),
+       registrations: training.registrations.map(r => ({...r, registeredAt: new Date(r.registeredAt)}))
+    } : undefined;
 }
 
-// Fetch trainings a user is ACTUALLY registered for (approved or open)
-export async function getMyRegisteredTrainings(userId: string): Promise<TrainingSession[]> {
+// Fetch trainings based on user's registration status
+export async function getMyTrainingsByStatus(userId: string, statuses: RegistrationStatus[]): Promise<TrainingSession[]> {
     await new Promise(resolve => setTimeout(resolve, 50));
-    const allTrainings = JSON.parse(JSON.stringify(placeholderTrainings)).map((t: any) => ({ ...t, date: new Date(t.date) }));
+    const allTrainings = await getTrainings(); // Use the deep copy function
     return allTrainings.filter(t =>
-        (t.registrationType === 'open' && t.registeredRiders?.includes(userId) && !t.cancelledRegistrations?.some((cr: RegistrationStatusReason) => cr.userId === userId)) || // Is registered and not cancelled for open
-        (t.registrationType === 'closed' && t.registeredRiders?.includes(userId)) // Is explicitly approved for closed
+        t.registrations.some(r => r.userId === userId && statuses.includes(r.status))
     );
 }
 
-// Fetch trainings a user has pending registration for
-export async function getMyPendingTrainings(userId: string): Promise<TrainingSession[]> {
-    await new Promise(resolve => setTimeout(resolve, 50));
-    const allTrainings = JSON.parse(JSON.stringify(placeholderTrainings)).map((t: any) => ({ ...t, date: new Date(t.date) }));
-    return allTrainings.filter(t => t.registrationType === 'closed' && t.pendingRegistrations?.includes(userId));
+// Fetch trainings a user is CONFIRMED for
+export async function getMyRegisteredTrainings(userId: string): Promise<TrainingSession[]> {
+    return getMyTrainingsByStatus(userId, ['Confirmed']);
 }
 
+// Fetch trainings a user has PENDING registration for (Created status for closed trainings)
+export async function getMyPendingTrainings(userId: string): Promise<TrainingSession[]> {
+     return getMyTrainingsByStatus(userId, ['Created']);
+}
+
+// Fetch trainings a user is on the WAITING list for
+export async function getMyWaitingListTrainings(userId: string): Promise<TrainingSession[]> {
+     return getMyTrainingsByStatus(userId, ['Waiting']);
+}
 
 // Simulate getting the current user
 export async function getCurrentUser(): Promise<User | null> {
     await new Promise(resolve => setTimeout(resolve, 20));
-    const userIndex = 1; // 0: Rider, 1: Trainer, 2: Guest
+    const userIndex = 0; // 0: Alice (Rider), 1: Bob (Trainer), 2: Charlie (Rider), ...
     const user = userIndex < placeholderUsers.length ? placeholderUsers[userIndex] : null;
     // console.log("Current User:", user); // Keep this commented unless debugging
-    return user;
+    return user ? JSON.parse(JSON.stringify(user)) : null;
 }
 
 // --- Action Functions ---
 
-// Register user for training (handles both open and closed types)
-export async function registerForTraining(userId: string, trainingId: string): Promise<{ success: boolean; message: string; pending?: boolean }> {
+// Register user for training (handles open, closed, and waiting list)
+export async function registerForTraining(userId: string, trainingId: string): Promise<RegistrationResult> {
     console.log(`Simulating registration: User ${userId} for Training ${trainingId}`);
     await new Promise(resolve => setTimeout(resolve, 150));
 
@@ -182,83 +232,119 @@ export async function registerForTraining(userId: string, trainingId: string): P
         return { success: false, message: 'Training not found.' };
     }
     const training = placeholderTrainings[trainingIndex];
+    const existingRegistration = training.registrations.find(r => r.userId === userId);
 
-    // Check if already registered, pending, rejected, or cancelled
-    if (training.registeredRiders?.includes(userId)) {
-        return { success: false, message: 'Already registered for this training.' };
-    }
-    if (training.pendingRegistrations?.includes(userId)) {
-        return { success: false, message: 'Registration already pending approval.' };
-    }
-    if (training.rejectedRegistrations?.some(r => r.userId === userId)) {
-        return { success: false, message: 'Your registration for this training was previously rejected.' };
-    }
-     if (training.registrationType === 'open' && training.cancelledRegistrations?.some(c => c.userId === userId)) {
-        return { success: false, message: 'Your registration for this training was previously cancelled by the trainer.' };
+    // Check if user has an active registration already (Created, Confirmed, Waiting)
+    if (existingRegistration && isActiveRegistration(existingRegistration)) {
+        return { success: false, message: `Already ${existingRegistration.status.toLowerCase()} for this training.` };
     }
 
+    // Check if user was previously Rejected or Cancelled (Allow re-registering maybe? Depends on requirements. For now, allow.)
+    // if (existingRegistration && (isRejected(existingRegistration) || isCancelled(existingRegistration))) {
+    //     // Optionally prevent re-registration or handle differently
+    // }
 
-    // Check capacity only for open registrations (closed handled during approval)
-    if (training.registrationType === 'open' && training.maxRiders && (training.registeredRiders?.length ?? 0) >= training.maxRiders) {
-        return { success: false, message: 'Training is full.' };
+    const isFull = isTrainingFull(training);
+    let newStatus: RegistrationStatus;
+    let message: string;
+
+    if (training.registrationType === 'open') {
+        if (isFull) {
+            newStatus = 'Waiting';
+            message = 'Training is full. Added to waiting list.';
+        } else {
+            newStatus = 'Confirmed';
+            message = 'Successfully registered!';
+        }
+    } else { // 'closed'
+        // Capacity check happens during approval for closed trainings, users always start as 'Created'
+        newStatus = 'Created';
+        message = 'Registration submitted for approval.';
+    }
+
+    // Update existing registration or add new one
+    if (existingRegistration) {
+        existingRegistration.status = newStatus;
+        existingRegistration.registeredAt = new Date(); // Update timestamp on re-apply/waitlist
+        existingRegistration.reason = undefined; // Clear previous rejection/cancellation reason
+    } else {
+        const newRegistration: Registration = {
+            userId: userId,
+            status: newStatus,
+            registeredAt: new Date(),
+        };
+        training.registrations.push(newRegistration);
+    }
+
+    console.log(`User ${userId} status for training ${trainingId} set to ${newStatus}. Full: ${isFull}`);
+    console.log("Updated Registrations:", training.registrations);
+    return { success: true, message: message, status: newStatus };
+}
+
+
+// Cancel user's own registration (Rider action)
+export async function cancelMyRegistration(userId: string, trainingId: string): Promise<RegistrationResult> {
+    console.log(`Rider ${userId} cancelling registration for Training ${trainingId}`);
+    await new Promise(resolve => setTimeout(resolve, 150));
+
+    const trainingIndex = placeholderTrainings.findIndex(t => t.id === trainingId);
+    if (trainingIndex === -1) return { success: false, message: 'Training not found.' };
+    const training = placeholderTrainings[trainingIndex];
+    const registrationIndex = training.registrations.findIndex(r => r.userId === userId);
+
+    if (registrationIndex === -1) return { success: false, message: 'Registration not found.' };
+
+    const registration = training.registrations[registrationIndex];
+
+    if (!isActiveRegistration(registration)) {
+         return { success: false, message: `Cannot cancel a registration with status: ${registration.status}` };
+    }
+
+    const previousStatus = registration.status;
+    registration.status = 'Cancelled';
+    registration.reason = 'Rider cancelled.'; // Indicate rider initiated cancellation
+
+    console.log(`Rider ${userId} cancelled. Previous status: ${previousStatus}.`);
+
+    // Check if we need to promote someone from the waiting list
+    if (previousStatus === 'Confirmed') {
+        promoteWaitingUser(training); // Attempt to promote after cancellation
+    }
+
+    console.log("Updated Registrations after rider cancellation:", training.registrations);
+    return { success: true, message: 'Registration successfully cancelled.', status: 'Cancelled' };
+}
+
+
+// --- Trainer Actions ---
+
+// Helper function to promote a waiting user if a spot opens up
+function promoteWaitingUser(training: TrainingSession): boolean {
+    if (isTrainingFull(training)) {
+        return false; // Still full, cannot promote
+    }
+
+    const waitingUser = getFirstWaitingUser(training);
+    if (!waitingUser) {
+        return false; // No one is waiting
     }
 
     if (training.registrationType === 'open') {
-        training.registeredRiders = [...(training.registeredRiders || []), userId];
-        console.log("Updated Registrations (Open):", training.registeredRiders);
-        return { success: true, message: 'Successfully registered!' };
-    } else { // 'closed'
-        training.pendingRegistrations = [...(training.pendingRegistrations || []), userId];
-        console.log("Updated Pending Registrations (Closed):", training.pendingRegistrations);
-        return { success: true, message: 'Registration submitted for approval.', pending: true };
+        // Directly confirm the waiting user for open trainings
+        waitingUser.status = 'Confirmed';
+        console.log(`Promoted waiting user ${waitingUser.userId} to Confirmed (Open Training).`);
+    } else {
+        // Change status to 'Created' for closed trainings, requiring trainer approval
+        waitingUser.status = 'Created';
+        console.log(`Promoted waiting user ${waitingUser.userId} to Created (Closed Training - Requires Approval).`);
+        // TODO: Notify trainer?
     }
+    return true;
 }
 
 
-// Unregister user from training (handles open, closed approved, and closed pending)
-export async function unregisterFromTraining(userId: string, trainingId: string): Promise<{ success: boolean; message: string }> {
-  console.log(`Simulating unregistration: User ${userId} from Training ${trainingId}`);
-  await new Promise(resolve => setTimeout(resolve, 150));
-
-  const trainingIndex = placeholderTrainings.findIndex(t => t.id === trainingId);
-  if (trainingIndex === -1) {
-    return { success: false, message: 'Training not found.' };
-  }
-  const training = placeholderTrainings[trainingIndex];
-
-  let wasRegistered = false;
-  let wasPending = false;
-
-  // Remove from registered list (if applicable)
-  if (training.registeredRiders?.includes(userId)) {
-    training.registeredRiders = training.registeredRiders.filter(id => id !== userId);
-    wasRegistered = true;
-  }
-
-  // Remove from pending list (if applicable)
-  if (training.pendingRegistrations?.includes(userId)) {
-    training.pendingRegistrations = training.pendingRegistrations.filter(id => id !== userId);
-    wasPending = true;
-  }
-
-   // Remove from cancelled list for open trainings (allows re-registering)
-    if (training.registrationType === 'open' && training.cancelledRegistrations?.some(c => c.userId === userId)) {
-        training.cancelledRegistrations = training.cancelledRegistrations.filter(c => c.userId !== userId);
-         // Note: We don't set wasRegistered/wasPending here, as they were cancelled, not actively registered/pending
-    }
-
-
-  if (!wasRegistered && !wasPending) {
-    return { success: false, message: 'You were not registered or pending for this training.' };
-  }
-
-  console.log("Updated Registrations/Pending after unregister:", training.registeredRiders, training.pendingRegistrations);
-  return { success: true, message: wasPending ? 'Registration request withdrawn.' : 'Successfully unregistered.' };
-}
-
-
-// Approve a pending registration (Trainer action)
-export async function approveRegistration(trainerId: string, trainingId: string, riderId: string): Promise<{ success: boolean; message: string }> {
+// Approve a 'Created' or 'Waiting' registration (Trainer action)
+export async function approveRegistration(trainerId: string, trainingId: string, riderId: string): Promise<RegistrationResult> {
     console.log(`Trainer ${trainerId} approving Rider ${riderId} for Training ${trainingId}`);
     await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -267,27 +353,38 @@ export async function approveRegistration(trainerId: string, trainingId: string,
     const training = placeholderTrainings[trainingIndex];
 
     if (training.trainerId !== trainerId) return { success: false, message: 'Unauthorized action.' };
-    if (training.registrationType !== 'closed') return { success: false, message: 'This training does not require approval.' };
-    if (!training.pendingRegistrations?.includes(riderId)) return { success: false, message: 'Rider not found in pending list.' };
 
-    // Check capacity before approving
-     if (training.maxRiders && (training.registeredRiders?.length ?? 0) >= training.maxRiders) {
-        return { success: false, message: 'Training is full. Cannot approve more riders.' };
+    const registration = training.registrations.find(r => r.userId === riderId);
+    if (!registration) return { success: false, message: 'Registration not found for this user.' };
+
+    if (!isCreated(registration) && !isWaiting(registration)) {
+        return { success: false, message: `Cannot approve registration with status: ${registration.status}` };
     }
 
-    // Move from pending to registered
-    training.pendingRegistrations = training.pendingRegistrations.filter(id => id !== riderId);
-    training.registeredRiders = [...(training.registeredRiders || []), riderId];
+     // Check capacity before approving
+    if (isTrainingFull(training)) {
+        // If approving someone from 'Created' state and it's full, move them to 'Waiting' instead.
+        if (isCreated(registration)) {
+            registration.status = 'Waiting';
+             console.log(`Training full. Moved user ${riderId} from Created to Waiting.`);
+             return { success: true, message: 'Training is full. User moved to waiting list.', status: 'Waiting' };
+        }
+        // If trying to approve someone already 'Waiting' but it's still full.
+        return { success: false, message: 'Training is full. Cannot approve from waiting list yet.' };
+    }
 
-    // Remove from rejected list if they were previously rejected and re-applied
-    training.rejectedRegistrations = training.rejectedRegistrations?.filter(r => r.userId !== riderId);
+    // Approve the registration
+    registration.status = 'Confirmed';
+    registration.reason = undefined; // Clear any previous reason
 
-    console.log("Approved:", riderId, "Remaining pending:", training.pendingRegistrations, "Registered:", training.registeredRiders);
-    return { success: true, message: 'Registration approved.' };
+    console.log("Approved:", riderId, "Status:", registration.status);
+    console.log("Updated registrations:", training.registrations);
+    return { success: true, message: 'Registration approved.', status: 'Confirmed' };
 }
 
-// Reject a pending registration (Trainer action)
-export async function rejectRegistration(trainerId: string, trainingId: string, riderId: string, reason?: string): Promise<{ success: boolean; message: string }> {
+
+// Reject a 'Created' or 'Waiting' registration (Trainer action)
+export async function rejectRegistration(trainerId: string, trainingId: string, riderId: string, reason?: string): Promise<RegistrationResult> {
     console.log(`Trainer ${trainerId} rejecting Rider ${riderId} for Training ${trainingId} (Reason: ${reason})`);
     await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -295,44 +392,55 @@ export async function rejectRegistration(trainerId: string, trainingId: string, 
     if (trainingIndex === -1) return { success: false, message: 'Training not found.' };
     const training = placeholderTrainings[trainingIndex];
 
-     if (training.trainerId !== trainerId) return { success: false, message: 'Unauthorized action.' };
-    if (training.registrationType !== 'closed') return { success: false, message: 'This training does not require approval.' };
-     if (!training.pendingRegistrations?.includes(riderId)) return { success: false, message: 'Rider not found in pending list.' };
+    if (training.trainerId !== trainerId) return { success: false, message: 'Unauthorized action.' };
 
-    // Remove from pending and add to rejected
-    training.pendingRegistrations = training.pendingRegistrations.filter(id => id !== riderId);
-    const rejection: RegistrationStatusReason = { userId: riderId, reason };
-    training.rejectedRegistrations = [...(training.rejectedRegistrations || []), rejection];
+    const registration = training.registrations.find(r => r.userId === riderId);
+    if (!registration) return { success: false, message: 'Registration not found for this user.' };
 
-    console.log("Rejected:", riderId, "Remaining pending:", training.pendingRegistrations, "Rejected:", training.rejectedRegistrations);
-    return { success: true, message: 'Registration rejected.' };
+    if (!isCreated(registration) && !isWaiting(registration)) {
+       return { success: false, message: `Cannot reject registration with status: ${registration.status}` };
+    }
+
+    // Reject the registration
+    registration.status = 'Rejected';
+    registration.reason = reason || 'Rejected by trainer.';
+
+    console.log("Rejected:", riderId, "Reason:", registration.reason);
+    console.log("Updated registrations:", training.registrations);
+    return { success: true, message: 'Registration rejected.', status: 'Rejected' };
 }
 
-// Cancel an existing registration for an 'open' training (Trainer action)
-export async function cancelOpenRegistration(trainerId: string, trainingId: string, riderId: string, reason?: string): Promise<{ success: boolean; message: string }> {
-    console.log(`Trainer ${trainerId} cancelling Rider ${riderId}'s registration for Open Training ${trainingId} (Reason: ${reason})`);
+// Cancel a 'Confirmed' registration (Trainer action - e.g., rider no-show, policy violation)
+export async function cancelConfirmedRegistration(trainerId: string, trainingId: string, riderId: string, reason?: string): Promise<RegistrationResult> {
+    console.log(`Trainer ${trainerId} cancelling CONFIRMED registration for Rider ${riderId}, Training ${trainingId} (Reason: ${reason})`);
     await new Promise(resolve => setTimeout(resolve, 100));
 
     const trainingIndex = placeholderTrainings.findIndex(t => t.id === trainingId);
     if (trainingIndex === -1) return { success: false, message: 'Training not found.' };
     const training = placeholderTrainings[trainingIndex];
 
-     if (training.trainerId !== trainerId) return { success: false, message: 'Unauthorized action.' };
-    if (training.registrationType !== 'open') return { success: false, message: 'Cannot cancel registration for a closed training. Use reject/approve.' };
-     if (!training.registeredRiders?.includes(riderId)) return { success: false, message: 'Rider not found in registered list.' };
+    if (training.trainerId !== trainerId) return { success: false, message: 'Unauthorized action.' };
 
-    // Remove from registered and add to cancelled
-    training.registeredRiders = training.registeredRiders.filter(id => id !== riderId);
-     const cancellation: RegistrationStatusReason = { userId: riderId, reason };
-    training.cancelledRegistrations = [...(training.cancelledRegistrations || []), cancellation];
+    const registration = training.registrations.find(r => r.userId === riderId);
+    if (!registration) return { success: false, message: 'Registration not found for this user.' };
 
-    console.log("Cancelled:", riderId, "Remaining registered:", training.registeredRiders, "Cancelled:", training.cancelledRegistrations);
-    return { success: true, message: 'Registration cancelled.' };
+    if (!isConfirmed(registration)) {
+       return { success: false, message: `Cannot cancel registration with status: ${registration.status}. Use Reject for Created/Waiting.` };
+    }
+
+    // Cancel the registration
+    registration.status = 'Cancelled';
+    registration.reason = reason || 'Cancelled by trainer.';
+
+    console.log("Trainer Cancelled:", riderId, "Reason:", registration.reason);
+
+    // Try to promote someone from waiting list
+    promoteWaitingUser(training);
+
+    console.log("Updated registrations after trainer cancellation:", training.registrations);
+    return { success: true, message: 'Registration cancelled by trainer.', status: 'Cancelled' };
 }
 
-
-// Update CreateTrainingData type used in createTraining function
-export type { CreateTrainingData };
 
 // Create a new training session
 export async function createTraining(trainerId: string, data: CreateTrainingData): Promise<{ success: boolean; message: string; trainingId?: string }> {
@@ -355,27 +463,35 @@ export async function createTraining(trainerId: string, data: CreateTrainingData
      if (!data.motorcycleTypes || data.motorcycleTypes.length === 0) {
         return { success: false, message: 'At least one motorcycle type must be selected.' };
     }
-     if (!data.registrationType) { // Ensure registration type is provided
+     if (!data.registrationType) {
         return { success: false, message: 'Registration type must be selected.' };
     }
 
     const newTraining: TrainingSession = {
-        ...data,
         id: `ts-${Date.now()}`, // Simple unique ID
         trainerId: trainer.id,
         trainerName: trainer.name,
-        locationName: location.name, // Add the location name
+        title: data.title,
         date: new Date(data.date), // Ensure date is Date object
-        // Initialize new fields
-        registeredRiders: [],
-        pendingRegistrations: [],
-        rejectedRegistrations: [],
-        cancelledRegistrations: [],
-        // registrationType is already in 'data'
+        locationId: data.locationId,
+        locationName: location.name, // Add the location name
+        skillLevels: data.skillLevels,
+        motorcycleTypes: data.motorcycleTypes,
+        description: data.description,
+        registrationType: data.registrationType,
+        maxRiders: data.maxRiders,
+        registrations: [], // Initialize with empty registrations
     };
 
     placeholderTrainings.push(newTraining);
     console.log('New Training Added:', newTraining);
 
     return { success: true, message: 'Training created successfully!', trainingId: newTraining.id };
+}
+
+
+// Helper to get a user's specific registration for a training
+export function getUserRegistration(training: TrainingSession | undefined, userId: string | undefined): Registration | undefined {
+    if (!training || !userId) return undefined;
+    return training.registrations.find(r => r.userId === userId);
 }

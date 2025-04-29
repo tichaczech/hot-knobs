@@ -12,8 +12,8 @@ export default {
   confirm: 'Confirm',
   save: 'Save',
   optional: 'Optional',
-  reason: 'Reason', // New
-  submit: 'Submit', // New
+  reason: 'Reason',
+  submit: 'Submit',
 
   // Header / Navigation
   nav: {
@@ -50,24 +50,22 @@ export default {
     backToTrainings: 'Back to Trainings',
     location: 'Location',
     fullDescription: 'Full Description',
-    registrationStatus: 'Registration Status', // New
-    registrationTypeLabel: 'Registration:', // New
-    status: 'Status:', // New
-    approved: 'Approved', // New
-    pendingApproval: 'Pending Approval', // New
-    rejected: 'Rejected', // New
-    cancelled: 'Cancelled by Trainer', // New
-    yourStatus: 'Your Status:', // New
-    manageRegistrations: 'Manage Registrations', // New (Trainer View)
-    pending: 'Pending', // New (Trainer View)
-    registered: 'Registered', // New (Trainer View)
-    approve: 'Approve', // New (Trainer Action)
-    reject: 'Reject', // New (Trainer Action)
-    cancelRegistration: 'Cancel Registration', // New (Trainer Action - Open Trainings)
-    rejectionReasonPlaceholder: 'Optional reason for rejection...', // New
-    cancellationReasonPlaceholder: 'Optional reason for cancellation...', // New
-    editTraining: 'Edit Training', // Keep for future
-    deleteTraining: 'Delete Training', // Keep for future
+    registrationStatus: 'Registration Status',
+    registrationTypeLabel: 'Registration:',
+    yourStatus: 'Your Status:',
+    manageRegistrations: 'Manage Registrations',
+    allRegistrations: 'All Registrations', // New
+    capacity: 'Capacity: {confirmed} / {max}', // New
+    unlimitedCapacity: 'Capacity: Unlimited', // New
+    waitingListCount: 'Waiting List: {count}', // New
+    approve: 'Approve',
+    reject: 'Reject',
+    cancelRegistration: 'Cancel Registration', // Trainer cancelling confirmed rider
+    rejectionReasonPlaceholder: 'Optional reason for rejection/cancellation...', // Combined placeholder
+    cancellationReasonPlaceholder: 'Optional reason for cancellation...', // Kept for potential specific use
+    editTraining: 'Edit Training',
+    deleteTraining: 'Delete Training',
+    notRegistered: 'Not registered.', // New
     notFound: {
         title: 'Training Not Found',
         description: 'Could not find the requested training session.',
@@ -82,26 +80,26 @@ export default {
 
     // Location Details Page
     locationDetails: {
-        backToTrainings: 'Back to All Trainings', // Consider a back to Locations page later
-        detailsPlaceholder: 'More details about the location could go here, such as track conditions, amenities, website link, etc.',
+        backToTrainings: 'Back to All Trainings',
+        detailsPlaceholder: 'More details about the location could go here...',
         coordinates: 'Coordinates: {lat}, {lon}',
         mapPreview: 'Map Preview & Links',
-        mapPlaceholder: '(Map preview placeholder - Integration with a map library like Leaflet or an iframe is needed here)',
+        mapPlaceholder: '(Map preview placeholder)',
         mapHint: 'For now, use the links below.',
         viewOnGoogleMaps: 'View on Google Maps',
         viewOnOpenStreetMap: 'View on OpenStreetMap',
         upcomingTrainings: 'Upcoming Trainings Here',
-        upcomingTrainingsPlaceholder: '(Functionality to list trainings for this location is not yet implemented.)',
+        upcomingTrainingsPlaceholder: '(Functionality not yet implemented.)',
         editLocation: 'Edit Location',
         deleteLocation: 'Delete Location',
         notFound: {
             title: 'Location Not Found',
             description: 'Could not find the requested location.',
-            return: 'Return to All Trainings', // Consider a back to Locations page later
+            return: 'Return to All Trainings',
         },
         meta: {
             title: '{locationName} - Mad Sprocket Training Location',
-            description: 'Details for the training location: {locationName}{address}.', // Dynamically add address part
+            description: 'Details for the training location: {locationName}{address}.',
             addressPart: ' at {address}',
             notFoundTitle: 'Location Not Found - Mad Sprocket',
         }
@@ -109,17 +107,17 @@ export default {
 
   // My Trainings Page
   myTrainings: {
-    title: 'My Registered Trainings',
-    upcoming: 'Upcoming Sessions',
-    pending: 'Pending Approval', // New
-    past: 'Past Sessions',
+    title: 'My Registrations',
+    upcomingConfirmed: 'Upcoming Confirmed', // Updated
+    pendingApproval: 'Pending Approval', // 'Created' status
+    waitingList: 'On Waiting List', // 'Waiting' status
+    past: 'Past Sessions', // Shows only confirmed past
     noRegistrations: 'No Registrations Yet!',
-    noRegistrationsDesc: 'You haven\'t registered for any training sessions. Head over to the <link>Available Trainings</link> page to find one.',
-    noPendingRegistrations: 'No pending registrations.', // New
-    viewStatus: 'View Status', // New (Replaces View Details for Pending)
+    noRegistrationsDesc: 'You haven\'t registered for any training sessions or joined any waiting lists. Head over to the <link>Available Trainings</link> page to find one.',
+    noRegistrationsYet: 'No registrations yet.', // Used in trainer view
     meta: {
         title: 'My Registrations - Mad Sprocket',
-        description: 'View the training sessions you are registered for.',
+        description: 'View the training sessions you are registered for, pending approval for, or on the waiting list for.', // Updated description
     }
   },
 
@@ -141,36 +139,35 @@ export default {
         locationNotAvailable: 'No locations available',
         noLocationsAvailableAdmin: 'No locations available. An administrator needs to add some.',
         skillLevelsLabel: 'Skill Levels',
-        skillLevelsDesc: 'Select all applicable skill levels for this training.',
+        skillLevelsDesc: 'Select all applicable skill levels.',
         skillLevelsError: 'Select at least one skill level.',
         noSkillLevelsAvailableAdmin: 'No skill levels available. An administrator needs to add some.',
         invalidSkillLevel: 'An invalid skill level was selected.',
         motorcycleTypesLabel: 'Motorcycle Types',
-        motorcycleTypesDesc: 'Select all applicable motorcycle types for this training.',
+        motorcycleTypesDesc: 'Select all applicable motorcycle types.',
         motorcycleTypesError: 'Select at least one motorcycle type.',
         noMotorcycleTypesAvailableAdmin: 'No motorcycle types available. An administrator needs to add some.',
         invalidMotorcycleType: 'An invalid motorcycle type was selected.',
         descriptionLabel: 'Description',
-        descriptionPlaceholder: 'Provide details about the training, what riders will learn, any prerequisites, etc.',
+        descriptionPlaceholder: 'Provide details about the training...',
         descriptionErrorShort: 'Description must be at least 10 characters.',
         descriptionErrorLong: 'Description cannot exceed 500 characters.',
         maxRidersLabel: 'Maximum Riders (Optional)',
         maxRidersPlaceholder: 'e.g., 10',
         maxRidersDesc: 'Leave blank for unlimited participants.',
-        maxRidersError: 'Must be a positive whole number.', // Zod handles type coercion, message for invalid input
-        registrationTypeLabel: 'Registration Type', // New
-        registrationTypeDesc: 'Open: Anyone can register (up to max). Closed: Requires trainer approval.', // New
-        registrationTypeError: 'Select a registration type.', // New
-        registrationTypeOpen: 'Open', // New
-        registrationTypeClosed: 'Closed (Approval Required)', // New
+        maxRidersError: 'Must be a positive whole number.',
+        registrationTypeLabel: 'Registration Type',
+        registrationTypeDesc: 'Open: Anyone can register (up to max). Closed: Requires trainer approval.',
+        registrationTypeError: 'Select a registration type.',
+        registrationTypeOpen: 'Open',
+        registrationTypeClosed: 'Closed (Approval Required)',
         submitButton: 'Create Training Session',
         submitButtonLoading: 'Loading...',
         submitButtonCreating: 'Creating Training Session',
         successToastTitle: 'Training Created!',
-        successToastDesc: '{message}', // Placeholder for server message
+        successToastDesc: '{message}',
         errorToastTitle: 'Creation Failed',
-        errorToastDesc: '{message}', // Placeholder for server message
-        errorLoadLocations: 'Could not load locations. Please try again later.',
+        errorToastDesc: '{message}',
         errorLoadData: 'Could not load necessary form data. Please try again later.',
     },
      meta: {
@@ -184,60 +181,66 @@ export default {
     taughtBy: 'Taught by {trainerName}',
     levels: 'Levels:',
     bikes: 'Bikes:',
-    registered: '{count} / {max} registered ({spotsLeft} {spotText} left)',
-    registeredOpen: '{count} registered (Open)',
+    registeredCount: '{count} confirmed', // New
+    waitingCount: '{count} waiting', // New
+    registeredOpen: '{count} confirmed (Open)',
     full: 'Full',
-    spot: 'spot',
-    spots: 'spots',
-    registeredBadge: 'Registered',
-    pendingBadge: 'Pending Approval', // New
-    registrationClosed: 'Closed Reg.', // New (Short for Closed Registration)
-    registrationOpen: 'Open Reg.', // New (Short for Open Registration)
+    spot: 'spot', // Kept for spots left calculation if needed elsewhere
+    spots: 'spots', // Kept for spots left calculation if needed elsewhere
+    registrationClosed: 'Closed Reg.',
+    registrationOpen: 'Open Reg.',
   },
 
-  // Register/Unregister Buttons
+  // Register/Cancel Buttons
   registerButton: {
     register: 'Register',
-    requestRegistration: 'Request Registration', // New (for closed trainings)
+    requestRegistration: 'Request Registration', // For closed training
+    joinWaitingList: 'Join Waiting List', // New
     registrationSuccessTitle: 'Registration Successful!',
     registrationSuccessDesc: '{message}',
-    registrationPendingTitle: 'Registration Submitted!', // New
-    registrationPendingDesc: '{message}', // New
+    registrationPendingTitle: 'Registration Submitted!', // 'Created' status
+    registrationPendingDesc: '{message}',
+    waitingListSuccessTitle: 'Added to Waiting List!', // 'Waiting' status
+    waitingListSuccessDesc: '{message}',
     registrationErrorTitle: 'Registration Failed',
     registrationErrorDesc: '{message}',
   },
-  unregisterButton: {
-    unregister: 'Unregister',
-    withdrawRequest: 'Withdraw Request', // New
+  // Renamed from unregisterButton
+  cancelButton: {
+    cancelRegistration: 'Cancel Registration', // For 'Confirmed' status
+    withdrawRequest: 'Withdraw Request', // For 'Created' status
+    leaveWaitingList: 'Leave Waiting List', // For 'Waiting' status
     confirmTitle: 'Are you sure?',
-    confirmDesc: 'This action cannot be undone. You will be removed from the registration list for this training session.',
-    confirmWithdrawDesc: 'This action cannot be undone. Your registration request will be withdrawn.', // New
-    confirmAction: 'Confirm Unregistration',
-    confirmWithdrawAction: 'Confirm Withdrawal', // New
-    unregistrationSuccessTitle: 'Unregistration Successful!',
-    unregistrationSuccessDesc: '{message}',
-    unregistrationErrorTitle: 'Unregistration Failed',
-    unregistrationErrorDesc: '{message}',
-    withdrawSuccessTitle: 'Registration Withdrawn', // New
-    withdrawSuccessDesc: '{message}', // New
-    withdrawErrorTitle: 'Withdrawal Failed', // New
-    withdrawErrorDesc: '{message}', // New
+    confirmDesc: 'This action cannot be undone. Your confirmed registration will be cancelled.',
+    confirmWithdrawDesc: 'This action cannot be undone. Your registration request will be withdrawn.',
+    confirmLeaveWaitingListDesc: 'This action cannot be undone. You will be removed from the waiting list.',
+    confirmAction: 'Confirm Cancellation',
+    confirmWithdrawAction: 'Confirm Withdrawal',
+    confirmLeaveWaitingListAction: 'Confirm Leave',
+    cancelSuccessTitle: 'Registration Cancelled!',
+    cancelSuccessDesc: '{message}',
+    cancelErrorTitle: 'Cancellation Failed',
+    cancelErrorDesc: '{message}',
   },
 
-  // Trainer Actions (Approve/Reject/Cancel)
+   // Trainer Actions
   trainerActions: {
     approveSuccessTitle: 'Registration Approved',
-    approveSuccessDesc: 'Rider approved successfully.',
+    approveSuccessDesc: '{message}', // Use message from backend
     approveErrorTitle: 'Approval Failed',
     approveErrorDesc: '{message}',
     rejectSuccessTitle: 'Registration Rejected',
     rejectSuccessDesc: 'Rider rejected successfully.',
     rejectErrorTitle: 'Rejection Failed',
     rejectErrorDesc: '{message}',
-    cancelSuccessTitle: 'Registration Cancelled',
+    cancelSuccessTitle: 'Registration Cancelled', // Trainer cancelling confirmed
     cancelSuccessDesc: 'Rider registration cancelled successfully.',
     cancelErrorTitle: 'Cancellation Failed',
     cancelErrorDesc: '{message}',
+    approveTooltip: 'Approve this rider', // New Tooltip
+    rejectTooltip: 'Reject this rider', // New Tooltip
+    cancelTooltip: 'Cancel this rider\'s confirmed registration', // New Tooltip
+    approveWaitingFullTooltip: 'Cannot approve from waiting list, training is full', // New Tooltip
   },
 
   // Skill Levels
@@ -270,5 +273,13 @@ export default {
         closed: 'Closed (Approval Required)',
     },
 
-} as const;
+    // Registration Statuses - NEW
+    registrationStatuses: {
+        Created: 'Created', // (Pending approval for Closed)
+        Confirmed: 'Confirmed',
+        Waiting: 'Waiting', // (On waiting list)
+        Rejected: 'Rejected',
+        Cancelled: 'Cancelled',
+    },
 
+} as const;

@@ -3,8 +3,8 @@
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { unregisterFromTraining } from '@/lib/placeholder-data'; // Assuming server action or API call function
-import { Loader2, XCircle, LogOut } from 'lucide-react'; // Added LogOut for withdraw
+import { cancelMyRegistration } from '@/lib/placeholder-data'; // Use the new rider cancellation action
+import { Loader2, XCircle, LogOut, Ban } from 'lucide-react'; // Use Ban icon for general cancellation
 import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
@@ -17,40 +17,62 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useI18n } from '@/locales/client'; // Import client-side i18n hook
+import { useI18n } from '@/locales/client';
+import type { RegistrationStatus, RegistrationResult } from '@/lib/types'; // Import types
 
-interface UnregisterButtonProps {
+// Renamed component to CancelButton
+interface CancelButtonProps {
   trainingId: string;
   userId: string;
-  isPending: boolean; // Is the registration pending approval?
+  currentStatus: RegistrationStatus; // Receive the user's current status
 }
 
-export function UnregisterButton({ trainingId, userId, isPending }: UnregisterButtonProps) {
-  const t = useI18n(); // Get translation function
-  const [isSubmitting, startTransition] = useTransition(); // Renamed for clarity
+export function UnregisterButton({ trainingId, userId, currentStatus }: CancelButtonProps) {
+  const t = useI18n();
+  const [isSubmitting, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
 
-  const buttonText = isPending ? t('unregisterButton.withdrawRequest') : t('unregisterButton.unregister');
-  const ButtonIcon = isPending ? LogOut : XCircle;
-  const confirmTitle = isPending ? t('unregisterButton.confirmTitle') : t('unregisterButton.confirmTitle'); // Same title ok?
-  const confirmDesc = isPending ? t('unregisterButton.confirmWithdrawDesc') : t('unregisterButton.confirmDesc');
-  const confirmActionText = isPending ? t('unregisterButton.confirmWithdrawAction') : t('unregisterButton.confirmAction');
-  const successTitle = isPending ? t('unregisterButton.withdrawSuccessTitle') : t('unregisterButton.unregistrationSuccessTitle');
-  const errorTitle = isPending ? t('unregisterButton.withdrawErrorTitle') : t('unregisterButton.unregistrationErrorTitle');
-  const successDescKey = isPending ? 'unregisterButton.withdrawSuccessDesc' : 'unregisterButton.unregistrationSuccessDesc';
-  const errorDescKey = isPending ? 'unregisterButton.withdrawErrorDesc' : 'unregisterButton.unregistrationErrorDesc';
+  // Determine button text, confirmation messages based on the current status
+  let buttonTextKey = 'cancelButton.cancelRegistration'; // Default
+  let confirmDescKey = 'cancelButton.confirmDesc';
+  let confirmActionKey = 'cancelButton.confirmAction';
+  let successTitleKey = 'cancelButton.cancelSuccessTitle';
+  let successDescKey = 'cancelButton.cancelSuccessDesc';
+  let errorTitleKey = 'cancelButton.cancelErrorTitle';
+  let errorDescKey = 'cancelButton.cancelErrorDesc';
+
+  if (currentStatus === 'Created') {
+      buttonTextKey = 'cancelButton.withdrawRequest';
+      confirmDescKey = 'cancelButton.confirmWithdrawDesc';
+      confirmActionKey = 'cancelButton.confirmWithdrawAction';
+      // Use same success/error messages as general cancellation
+  } else if (currentStatus === 'Waiting') {
+       buttonTextKey = 'cancelButton.leaveWaitingList';
+       confirmDescKey = 'cancelButton.confirmLeaveWaitingListDesc';
+       confirmActionKey = 'cancelButton.confirmLeaveWaitingListAction';
+       // Use same success/error messages
+  }
+  // 'Confirmed' status uses the defaults
+
+  const buttonText = t(buttonTextKey);
+  const confirmTitle = t('cancelButton.confirmTitle'); // Title can be generic
+  const confirmDesc = t(confirmDescKey);
+  const confirmActionText = t(confirmActionKey);
+  const successTitle = t(successTitleKey);
+  const errorTitle = t(errorTitleKey);
 
 
   const handleAction = () => {
     startTransition(async () => {
-      const result = await unregisterFromTraining(userId, trainingId); // Same function handles both
+      // Use the new rider-specific cancellation action
+      const result: RegistrationResult = await cancelMyRegistration(userId, trainingId);
       if (result.success) {
         toast({
           title: successTitle,
           description: t(successDescKey, { message: result.message || t('success') }),
         });
-         router.refresh(); // Refresh data on the page
+         router.refresh();
       } else {
         toast({
           title: errorTitle,
@@ -64,11 +86,12 @@ export function UnregisterButton({ trainingId, userId, isPending }: UnregisterBu
   return (
      <AlertDialog>
       <AlertDialogTrigger asChild>
+         {/* Use outline variant for cancellation */}
          <Button variant="outline" size="sm" disabled={isSubmitting}>
             {isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-                <ButtonIcon className="mr-2 h-4 w-4" />
+                <Ban className="mr-2 h-4 w-4" /> // General cancel icon
             )}
             {buttonText}
         </Button>

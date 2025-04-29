@@ -1,8 +1,6 @@
-
-
 'use client';
 
-import React from 'react'; // Import React
+import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"; // Import RadioGroup
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -29,22 +27,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CalendarIcon, Loader2, Bike, MapPin, AlertCircle, Lock, Unlock } from "lucide-react"; // Added Lock, Unlock
+import { CalendarIcon, Loader2, Bike, MapPin, AlertCircle, Lock, Unlock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns"; // Consider locale-aware formatting later
+import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect, useTransition } from "react";
 import { createTraining, getLocations, getSkillLevels, getMotorcycleTypes } from "@/lib/placeholder-data";
 import { useRouter } from 'next/navigation';
-import type { SkillLevel, MotorcycleType, Location, RegistrationType } from "@/lib/types"; // Added RegistrationType
-import { useI18n } from '@/locales/client'; // Import client-side i18n hook
+import type { SkillLevel, MotorcycleType, Location, RegistrationType, CreateTrainingData as CreateTrainingPayload } from "@/lib/types"; // Use specific payload type
+import { useI18n } from '@/locales/client';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-// Define registration types for the form
 const registrationTypes: RegistrationType[] = ['open', 'closed'];
 
-// We need to dynamically build the enum for Zod based on fetched data
 const createFormSchema = (
     t: ReturnType<typeof useI18n>,
     availableSkills: SkillLevel[],
@@ -61,18 +57,18 @@ const createFormSchema = (
                   .min(10, { message: t('createTraining.form.descriptionErrorShort') })
                   .max(500, {message: t('createTraining.form.descriptionErrorLong')}),
   maxRiders: z.coerce.number().int().positive({message: t('createTraining.form.maxRidersError')}).optional(),
-  registrationType: z.enum(registrationTypes as [RegistrationType, ...RegistrationType[]], { required_error: t('createTraining.form.registrationTypeError') }) // Added registration type field
+  registrationType: z.enum(registrationTypes as [RegistrationType, ...RegistrationType[]], { required_error: t('createTraining.form.registrationTypeError') })
 });
 
-// Update the form values type
-type CreateTrainingData = z.infer<ReturnType<typeof createFormSchema>>;
+// This type represents the data coming *from* the form
+type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface CreateTrainingFormProps {
     trainerId: string;
 }
 
 export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
-  const t = useI18n(); // Get translation function
+  const t = useI18n();
   const [isPending, startTransition] = useTransition();
   const [locations, setLocations] = useState<Location[]>([]);
   const [skillLevels, setSkillLevels] = useState<SkillLevel[]>([]);
@@ -82,7 +78,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
-  // Fetch initial data (locations, skills, types)
+  // Fetch initial data
   useEffect(() => {
     async function fetchData() {
       setIsLoadingData(true);
@@ -111,48 +107,24 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
     fetchData();
   }, [t, toast]);
 
-   // Create the form schema dynamically once data is loaded
    const formSchema = React.useMemo(() => {
-    // Provide empty arrays if still loading to prevent Zod errors
     return createFormSchema(t, skillLevels.length > 0 ? skillLevels : ['Beginner'], motorcycleTypes.length > 0 ? motorcycleTypes : ['125cc']);
    }, [t, skillLevels, motorcycleTypes]);
 
 
-  // Helper function to translate SkillLevel safely
-    const translateSkillLevel = (level: SkillLevel): string => {
-    try {
-        return t(`skillLevels.${level}`);
-    } catch (e) {
-        console.warn(`Missing translation for skill level: ${level}`);
-        return level; // Fallback
-    }
+  const translateSkillLevel = (level: SkillLevel): string => {
+    try { return t(`skillLevels.${level}`); } catch { return level; }
     };
-
-    // Helper function to translate MotorcycleType safely
     const translateMotorcycleType = (type: MotorcycleType): string => {
-        try {
-        return t(`motorcycleTypes.${type}`);
-        } catch (e) {
-        console.warn(`Missing translation for motorcycle type: ${type}`);
-        return type; // Fallback
-        }
+        try { return t(`motorcycleTypes.${type}`); } catch { return type; }
     };
-
-     // Helper function to translate RegistrationType safely
-    const translateRegistrationType = (type: RegistrationType): string => {
-        try {
-        return t(`registrationTypes.${type}`);
-        } catch (e) {
-        console.warn(`Missing translation for registration type: ${type}`);
-        return type; // Fallback
-        }
+     const translateRegistrationType = (type: RegistrationType): string => {
+        try { return t(`registrationTypes.${type}`); } catch { return type; }
     };
 
 
-  const form = useForm<CreateTrainingData>({
+  const form = useForm<FormValues>({ // Use FormValues type here
     resolver: zodResolver(formSchema),
-    // We need to re-initialize the form when the schema changes (data loads)
-    // However, react-hook-form handles schema updates, so defaultValues is enough.
     defaultValues: {
       title: "",
       date: undefined,
@@ -160,19 +132,14 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
       skillLevels: [],
       motorcycleTypes: [],
       description: "",
-      maxRiders: undefined, // Set undefined as default for optional number
-      registrationType: 'open', // Default to open registration
+      maxRiders: undefined,
+      registrationType: 'open',
     },
-     // Re-validate when schema changes (data loads)
     mode: "onChange",
   });
 
-   // Watch for changes in fetched data to potentially reset form if needed (optional)
-    // useEffect(() => {
-    //     form.reset(undefined, { keepValues: true }); // Keep existing values if user started typing
-    // }, [skillLevels, motorcycleTypes, form]);
 
-  function onSubmit(values: CreateTrainingData) {
+  function onSubmit(values: FormValues) { // values are of FormValues type
     startTransition(async () => {
         // Ensure skill levels and types are valid based on fetched data
         const validSkillLevels = values.skillLevels.filter(sl => skillLevels.includes(sl));
@@ -187,17 +154,16 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
              return;
         }
 
-
-        const dataToSubmit = {
+        // Prepare the payload for the createTraining function, matching CreateTrainingPayload
+        const dataToSubmit: CreateTrainingPayload = {
           ...values,
-          date: values.date,
-           skillLevels: validSkillLevels,
-           motorcycleTypes: validMotorcycleTypes,
           // Ensure maxRiders is number or undefined
           maxRiders: values.maxRiders !== undefined && !isNaN(values.maxRiders) ? Number(values.maxRiders) : undefined,
         };
-        // Pass the complete validated data including registrationType
+
+        // Call the backend function with the correctly typed payload
         const result = await createTraining(trainerId, dataToSubmit);
+
         if (result.success) {
             toast({
                 title: t('createTraining.form.successToastTitle'),
@@ -218,7 +184,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                 variant: "destructive",
             });
         }
-
     });
   }
 
@@ -251,7 +216,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
          </div>
          <Skeleton className="h-24 w-full" />
          <Skeleton className="h-10 w-full" />
-         <Skeleton className="h-10 w-full" />
          {/* Skeleton for registration type */}
          <div className="space-y-2">
             <Skeleton className="h-6 w-1/4" />
@@ -261,6 +225,7 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                  <Skeleton className="h-10 w-1/3" />
              </div>
          </div>
+         <Skeleton className="h-10 w-full" /> {/* Submit button skeleton */}
       </div>
     );
   }
@@ -310,7 +275,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {/* TODO: Locale-aware date formatting */}
                       {field.value ? format(field.value, "PPP p") : <span>{t('createTraining.form.datePlaceholder')}</span>}
                     </Button>
                   </FormControl>
@@ -532,7 +496,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
                     type="number"
                     placeholder={t('createTraining.form.maxRidersPlaceholder')}
                     {...field}
-                    // Ensure value is controlled correctly for optional number
                     value={field.value ?? ""}
                     onChange={event => field.onChange(event.target.value === '' ? undefined : +event.target.value)}
                  />
@@ -545,7 +508,6 @@ export function CreateTrainingForm({ trainerId }: CreateTrainingFormProps) {
           )}
         />
 
-        {/* Registration Type Selection */}
         <FormField
             control={form.control}
             name="registrationType"

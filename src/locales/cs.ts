@@ -12,9 +12,8 @@ export default {
   confirm: 'Potvrdit',
   save: 'Uložit',
   optional: 'Volitelné',
-  reason: 'Důvod', // New
-  submit: 'Odeslat', // New
-
+  reason: 'Důvod',
+  submit: 'Odeslat',
 
   // Hlavička / Navigace
   nav: {
@@ -51,24 +50,22 @@ export default {
     backToTrainings: 'Zpět na tréninky',
     location: 'Místo konání',
     fullDescription: 'Úplný popis',
-    registrationStatus: 'Stav registrace', // New
-    registrationTypeLabel: 'Registrace:', // New
-    status: 'Stav:', // New
-    approved: 'Schváleno', // New
-    pendingApproval: 'Čeká na schválení', // New
-    rejected: 'Zamítnuto', // New
-    cancelled: 'Zrušeno trenérem', // New
-    yourStatus: 'Váš stav:', // New
-    manageRegistrations: 'Spravovat registrace', // New (Trainer View)
-    pending: 'Čekající', // New (Trainer View)
-    registered: 'Registrovaní', // New (Trainer View)
-    approve: 'Schválit', // New (Trainer Action)
-    reject: 'Zamítnout', // New (Trainer Action)
-    cancelRegistration: 'Zrušit registraci', // New (Trainer Action - Open Trainings)
-    rejectionReasonPlaceholder: 'Volitelný důvod zamítnutí...', // New
-    cancellationReasonPlaceholder: 'Volitelný důvod zrušení...', // New
+    registrationStatus: 'Stav registrace',
+    registrationTypeLabel: 'Registrace:',
+    yourStatus: 'Váš stav:',
+    manageRegistrations: 'Spravovat registrace',
+    allRegistrations: 'Všechny registrace', // New
+    capacity: 'Kapacita: {confirmed} / {max}', // New
+    unlimitedCapacity: 'Kapacita: Neomezená', // New
+    waitingListCount: 'Čekající listina: {count}', // New
+    approve: 'Schválit',
+    reject: 'Zamítnout',
+    cancelRegistration: 'Zrušit registraci', // Trainer cancelling confirmed rider
+    rejectionReasonPlaceholder: 'Volitelný důvod zamítnutí/zrušení...', // Combined placeholder
+    cancellationReasonPlaceholder: 'Volitelný důvod zrušení...', // Kept for potential specific use, but above is primary
     editTraining: 'Upravit trénink',
     deleteTraining: 'Smazat trénink',
+    notRegistered: 'Nejste registrován.', // New
      notFound: {
         title: 'Trénink nenalezen',
         description: 'Požadovaný trénink nebyl nalezen.',
@@ -83,26 +80,26 @@ export default {
 
   // Stránka Detail Lokality
    locationDetails: {
-        backToTrainings: 'Zpět na všechny tréninky', // Později změnit na zpět na Lokality
-        detailsPlaceholder: 'Zde by mohly být další podrobnosti o lokalitě, jako jsou podmínky tratě, vybavení, odkaz na webové stránky atd.',
+        backToTrainings: 'Zpět na všechny tréninky',
+        detailsPlaceholder: 'Zde by mohly být další podrobnosti o lokalitě...',
         coordinates: 'Souřadnice: {lat}, {lon}',
         mapPreview: 'Náhled mapy a odkazy',
-        mapPlaceholder: '(Placeholder pro náhled mapy - Je potřeba integrace s mapovou knihovnou jako Leaflet nebo iframe)',
+        mapPlaceholder: '(Placeholder pro náhled mapy)',
         mapHint: 'Prozatím použijte odkazy níže.',
         viewOnGoogleMaps: 'Zobrazit na Google Maps',
         viewOnOpenStreetMap: 'Zobrazit na OpenStreetMap',
         upcomingTrainings: 'Nadcházející tréninky zde',
-        upcomingTrainingsPlaceholder: '(Funkce pro výpis tréninků pro tuto lokalitu zatím není implementována.)',
+        upcomingTrainingsPlaceholder: '(Funkce zatím není implementována.)',
         editLocation: 'Upravit lokalitu',
         deleteLocation: 'Smazat lokalitu',
         notFound: {
             title: 'Lokalita nenalezena',
             description: 'Požadovaná lokalita nebyla nalezena.',
-            return: 'Zpět na všechny tréninky', // Později změnit na zpět na Lokality
+            return: 'Zpět na všechny tréninky',
         },
         meta: {
             title: '{locationName} - Mad Sprocket Tréninková lokalita',
-            description: 'Detaily tréninkové lokality: {locationName}{address}.', // Dynamicky přidat část s adresou
+            description: 'Detaily tréninkové lokality: {locationName}{address}.',
             addressPart: ' na adrese {address}',
             notFoundTitle: 'Lokalita nenalezena - Mad Sprocket',
         }
@@ -111,17 +108,17 @@ export default {
 
   // Stránka Moje tréninky
   myTrainings: {
-    title: 'Moje registrované tréninky',
-    upcoming: 'Nadcházející',
-    pending: 'Čeká na schválení', // New
-    past: 'Minulé',
+    title: 'Moje registrace',
+    upcomingConfirmed: 'Nadcházející potvrzené', // Updated
+    pendingApproval: 'Čeká na schválení', // 'Created' status
+    waitingList: 'Na čekací listině', // 'Waiting' status
+    past: 'Minulé', // Shows only confirmed past
     noRegistrations: 'Zatím žádné registrace!',
-    noRegistrationsDesc: 'Zatím jste se nezaregistrovali na žádný trénink. Přejděte na stránku <link>Dostupné tréninky</link> a nějaký si vyberte.',
-    noPendingRegistrations: 'Žádné čekající registrace.', // New
-    viewStatus: 'Zobrazit stav', // New (Replaces View Details for Pending)
+    noRegistrationsDesc: 'Zatím jste se nezaregistrovali na žádný trénink ani nejste na čekací listině. Přejděte na stránku <link>Dostupné tréninky</link> a nějaký si vyberte.',
+    noRegistrationsYet: 'Zatím žádné registrace.', // Used in trainer view
      meta: {
         title: 'Moje registrace - Mad Sprocket',
-        description: 'Zobrazte si tréninky, na které jste zaregistrováni.',
+        description: 'Zobrazte si tréninky, na které jste zaregistrováni, čekáte na schválení nebo jste na čekací listině.', // Updated description
     }
   },
 
@@ -143,28 +140,28 @@ export default {
         locationNotAvailable: 'Nejsou k dispozici žádné lokality',
         noLocationsAvailableAdmin: 'Nejsou k dispozici žádné lokality. Administrátor musí nějaké přidat.',
         skillLevelsLabel: 'Úrovně dovedností',
-        skillLevelsDesc: 'Vyberte všechny relevantní úrovně dovedností pro tento trénink.',
+        skillLevelsDesc: 'Vyberte všechny relevantní úrovně dovedností.',
         skillLevelsError: 'Vyberte alespoň jednu úroveň dovedností.',
-        noSkillLevelsAvailableAdmin: 'Nejsou k dispozici žádné úrovně dovedností. Administrátor musí nějaké přidat.',
+        noSkillLevelsAvailableAdmin: 'Nejsou k dispozici žádné úrovně. Administrátor musí nějaké přidat.',
         invalidSkillLevel: 'Vybraná úroveň dovedností je neplatná.',
         motorcycleTypesLabel: 'Typy motocyklů',
-        motorcycleTypesDesc: 'Vyberte všechny relevantní typy motocyklů pro tento trénink.',
+        motorcycleTypesDesc: 'Vyberte všechny relevantní typy motocyklů.',
         motorcycleTypesError: 'Vyberte alespoň jeden typ motocyklu.',
-        noMotorcycleTypesAvailableAdmin: 'Nejsou k dispozici žádné typy motocyklů. Administrátor musí nějaké přidat.',
+        noMotorcycleTypesAvailableAdmin: 'Nejsou k dispozici žádné typy. Administrátor musí nějaké přidat.',
         invalidMotorcycleType: 'Vybraný typ motocyklu je neplatný.',
         descriptionLabel: 'Popis',
-        descriptionPlaceholder: 'Uveďte podrobnosti o tréninku, co se jezdci naučí, jakékoliv předpoklady atd.',
+        descriptionPlaceholder: 'Uveďte podrobnosti o tréninku...',
         descriptionErrorShort: 'Popis musí mít alespoň 10 znaků.',
         descriptionErrorLong: 'Popis nesmí překročit 500 znaků.',
         maxRidersLabel: 'Maximální počet jezdců (Volitelné)',
         maxRidersPlaceholder: 'např. 10',
-        maxRidersDesc: 'Ponechte prázdné pro neomezený počet účastníků.',
+        maxRidersDesc: 'Ponechte prázdné pro neomezený počet.',
         maxRidersError: 'Musí být kladné celé číslo.',
-        registrationTypeLabel: 'Typ registrace', // New
-        registrationTypeDesc: 'Otevřená: Kdokoliv se může registrovat (do max). Uzavřená: Vyžaduje schválení trenérem.', // New
-        registrationTypeError: 'Vyberte typ registrace.', // New
-        registrationTypeOpen: 'Otevřená', // New
-        registrationTypeClosed: 'Uzavřená (Vyžaduje schválení)', // New
+        registrationTypeLabel: 'Typ registrace',
+        registrationTypeDesc: 'Otevřená: Kdokoliv se může registrovat (do max). Uzavřená: Vyžaduje schválení trenérem.',
+        registrationTypeError: 'Vyberte typ registrace.',
+        registrationTypeOpen: 'Otevřená',
+        registrationTypeClosed: 'Uzavřená (Vyžaduje schválení)',
         submitButton: 'Vytvořit trénink',
         submitButtonLoading: 'Načítání...',
         submitButtonCreating: 'Vytváření tréninku',
@@ -172,7 +169,6 @@ export default {
         successToastDesc: '{message}',
         errorToastTitle: 'Vytvoření selhalo',
         errorToastDesc: '{message}',
-        errorLoadLocations: 'Nelze načíst lokality. Zkuste to prosím později.',
         errorLoadData: 'Nelze načíst potřebná data pro formulář. Zkuste to prosím později.',
     },
      meta: {
@@ -186,60 +182,66 @@ export default {
     taughtBy: 'Vede {trainerName}',
     levels: 'Úrovně:',
     bikes: 'Motorky:',
-    registered: '{count} / {max} registrováno ({spotsLeft} {spotText} zbývá)',
-    registeredOpen: '{count} registrováno (Otevřeno)',
+    registeredCount: '{count} potvrzeno', // New
+    waitingCount: '{count} čeká', // New
+    registeredOpen: '{count} potvrzeno (Otevřeno)',
     full: 'Plno',
-    spot: 'místo',
-    spots: 'místa',
-    registeredBadge: 'Registrován',
-    pendingBadge: 'Čeká na schválení', // New
-    registrationClosed: 'Uzavř. reg.', // New
-    registrationOpen: 'Otevř. reg.', // New
+    spot: 'místo', // Kept for spots left calculation if needed elsewhere
+    spots: 'místa', // Kept for spots left calculation if needed elsewhere
+    registrationClosed: 'Uzavř. reg.',
+    registrationOpen: 'Otevř. reg.',
   },
 
-  // Tlačítka Registrovat/Odregistrovat
+  // Tlačítka Registrovat/Zrušit
   registerButton: {
     register: 'Registrovat',
-    requestRegistration: 'Požádat o registraci', // New
+    requestRegistration: 'Požádat o registraci', // For closed training
+    joinWaitingList: 'Přidat se na čekací listinu', // New
     registrationSuccessTitle: 'Registrace úspěšná!',
     registrationSuccessDesc: '{message}',
-    registrationPendingTitle: 'Žádost odeslána!', // New
-    registrationPendingDesc: '{message}', // New
+    registrationPendingTitle: 'Žádost odeslána!', // 'Created' status
+    registrationPendingDesc: '{message}',
+    waitingListSuccessTitle: 'Přidán na čekací listinu!', // 'Waiting' status
+    waitingListSuccessDesc: '{message}',
     registrationErrorTitle: 'Registrace selhala',
     registrationErrorDesc: '{message}',
   },
-  unregisterButton: {
-    unregister: 'Odregistrovat',
-    withdrawRequest: 'Stáhnout žádost', // New
+  // Renamed from unregisterButton
+  cancelButton: {
+    cancelRegistration: 'Zrušit registraci', // For 'Confirmed' status
+    withdrawRequest: 'Stáhnout žádost', // For 'Created' status
+    leaveWaitingList: 'Opustit čekací listinu', // For 'Waiting' status
     confirmTitle: 'Jste si jistý?',
-    confirmDesc: 'Tuto akci nelze vrátit zpět. Budete odstraněni ze seznamu registrací pro tento trénink.',
-    confirmWithdrawDesc: 'Tuto akci nelze vrátit zpět. Vaše žádost o registraci bude stažena.', // New
-    confirmAction: 'Potvrdit odregistraci',
-    confirmWithdrawAction: 'Potvrdit stažení', // New
-    unregistrationSuccessTitle: 'Odregistrace úspěšná!',
-    unregistrationSuccessDesc: '{message}',
-    unregistrationErrorTitle: 'Odregistrace selhala',
-    unregistrationErrorDesc: '{message}',
-    withdrawSuccessTitle: 'Žádost stažena', // New
-    withdrawSuccessDesc: '{message}', // New
-    withdrawErrorTitle: 'Stažení žádosti selhalo', // New
-    withdrawErrorDesc: '{message}', // New
+    confirmDesc: 'Tuto akci nelze vrátit zpět. Vaše potvrzená registrace bude zrušena.',
+    confirmWithdrawDesc: 'Tuto akci nelze vrátit zpět. Vaše žádost o registraci bude stažena.',
+    confirmLeaveWaitingListDesc: 'Tuto akci nelze vrátit zpět. Budete odebráni z čekací listiny.',
+    confirmAction: 'Potvrdit zrušení',
+    confirmWithdrawAction: 'Potvrdit stažení',
+    confirmLeaveWaitingListAction: 'Potvrdit opuštění',
+    cancelSuccessTitle: 'Registrace zrušena!',
+    cancelSuccessDesc: '{message}',
+    cancelErrorTitle: 'Zrušení selhalo',
+    cancelErrorDesc: '{message}',
   },
 
-   // Akce trenéra (Schválit/Zamítnout/Zrušit)
+   // Akce trenéra
   trainerActions: {
     approveSuccessTitle: 'Registrace schválena',
-    approveSuccessDesc: 'Jezdec úspěšně schválen.',
+    approveSuccessDesc: '{message}', // Use message from backend
     approveErrorTitle: 'Schválení selhalo',
     approveErrorDesc: '{message}',
     rejectSuccessTitle: 'Registrace zamítnuta',
     rejectSuccessDesc: 'Jezdec úspěšně zamítnut.',
     rejectErrorTitle: 'Zamítnutí selhalo',
     rejectErrorDesc: '{message}',
-    cancelSuccessTitle: 'Registrace zrušena',
+    cancelSuccessTitle: 'Registrace zrušena', // Trainer cancelling confirmed
     cancelSuccessDesc: 'Registrace jezdce úspěšně zrušena.',
     cancelErrorTitle: 'Zrušení selhalo',
     cancelErrorDesc: '{message}',
+    approveTooltip: 'Schválit tohoto jezdce', // New Tooltip
+    rejectTooltip: 'Zamítnout tohoto jezdce', // New Tooltip
+    cancelTooltip: 'Zrušit potvrzenou registraci tohoto jezdce', // New Tooltip
+    approveWaitingFullTooltip: 'Nelze schválit z čekací listiny, trénink je plný', // New Tooltip
   },
 
   // Úrovně dovedností
@@ -272,5 +274,13 @@ export default {
         closed: 'Uzavřená (Vyžaduje schválení)',
     },
 
-} as const;
+    // Stavy registrace - NEW
+    registrationStatuses: {
+        Created: 'Vytvořeno', // (Čeká na schválení u Uzavřené)
+        Confirmed: 'Potvrzeno',
+        Waiting: 'Čekající', // (Na čekací listině)
+        Rejected: 'Zamítnuto',
+        Cancelled: 'Zrušeno',
+    },
 
+} as const;

@@ -3,52 +3,82 @@
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { registerForTraining } from '@/lib/placeholder-data'; // Assuming server action or API call function
-import { Loader2, CheckCircle, Send } from 'lucide-react'; // Added Send icon
+import { registerForTraining } from '@/lib/placeholder-data';
+import { Loader2, CheckCircle, Send, Hourglass } from 'lucide-react'; // Added Hourglass for waiting list
 import { useRouter } from 'next/navigation';
-import { useI18n } from '@/locales/client'; // Import client-side i18n hook
-import type { RegistrationType } from '@/lib/types'; // Import RegistrationType
+import { useI18n } from '@/locales/client';
+import type { RegistrationType, RegistrationResult, RegistrationStatus } from '@/lib/types';
 
 
 interface RegisterButtonProps {
   trainingId: string;
   userId: string;
-  registrationType: RegistrationType; // Add registration type
+  registrationType: RegistrationType;
+  isFull: boolean; // Is the training currently full (confirmed == maxRiders)?
 }
 
-export function RegisterButton({ trainingId, userId, registrationType }: RegisterButtonProps) {
-  const t = useI18n(); // Get translation function
+export function RegisterButton({ trainingId, userId, registrationType, isFull }: RegisterButtonProps) {
+  const t = useI18n();
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
 
-  const isClosedRegistration = registrationType === 'closed';
-  const buttonText = isClosedRegistration ? t('registerButton.requestRegistration') : t('registerButton.register');
-  const ButtonIcon = isClosedRegistration ? Send : CheckCircle;
+  // Determine button text and icon based on registration type and fullness
+  let buttonTextKey = 'registerButton.register'; // Default for open, not full
+  let ButtonIcon = CheckCircle;
+  let toastSuccessTitleKey = 'registerButton.registrationSuccessTitle';
+  let toastSuccessDescKey = 'registerButton.registrationSuccessDesc';
+
+  if (registrationType === 'closed') {
+      buttonTextKey = 'registerButton.requestRegistration';
+      ButtonIcon = Send;
+      toastSuccessTitleKey = 'registerButton.registrationPendingTitle'; // Closed always starts as 'Created' (pending)
+      toastSuccessDescKey = 'registerButton.registrationPendingDesc';
+  } else if (isFull) { // Open and Full
+      buttonTextKey = 'registerButton.joinWaitingList';
+      ButtonIcon = Hourglass;
+      toastSuccessTitleKey = 'registerButton.waitingListSuccessTitle';
+      toastSuccessDescKey = 'registerButton.waitingListSuccessDesc';
+  }
+
+  const buttonText = t(buttonTextKey);
+  const toastSuccessTitle = t(toastSuccessTitleKey);
+  // Error messages remain the same regardless of initial action type
+  const toastErrorTitle = t('registerButton.registrationErrorTitle');
+  const toastErrorDescKey = 'registerButton.registrationErrorDesc';
 
   const handleRegister = () => {
     startTransition(async () => {
-      const result = await registerForTraining(userId, trainingId);
+      const result: RegistrationResult = await registerForTraining(userId, trainingId);
       if (result.success) {
-          if (result.pending) {
-             toast({
-                title: t('registerButton.registrationPendingTitle'),
-                description: t('registerButton.registrationPendingDesc', { message: result.message || t('success') }),
-                 variant: "default",
-            });
-          } else {
-             toast({
-                title: t('registerButton.registrationSuccessTitle'),
-                description: t('registerButton.registrationSuccessDesc', { message: result.message || t('success') }), // Provide fallback message
-                 variant: "default", // Use default styling (often green or neutral)
-                 className: "bg-primary text-primary-foreground"
-            });
+          // Use appropriate success message based on the *actual* resulting status
+           let finalSuccessTitle = toastSuccessTitle; // Default to pre-calculated title
+           let finalSuccessDescKey = toastSuccessDescKey; // Default to pre-calculated desc key
+
+          if (result.status === 'Confirmed') {
+               finalSuccessTitle = t('registerButton.registrationSuccessTitle');
+               finalSuccessDescKey = 'registerButton.registrationSuccessDesc';
+          } else if (result.status === 'Waiting') {
+              finalSuccessTitle = t('registerButton.waitingListSuccessTitle');
+              finalSuccessDescKey = 'registerButton.waitingListSuccessDesc';
+          } else if (result.status === 'Created') {
+              finalSuccessTitle = t('registerButton.registrationPendingTitle');
+              finalSuccessDescKey = 'registerButton.registrationPendingDesc';
           }
-        router.refresh(); // Refresh data on the page
+          // Add more else if blocks here if other success scenarios arise
+
+          toast({
+             title: finalSuccessTitle,
+             description: t(finalSuccessDescKey, { message: result.message || t('success') }),
+             variant: "default",
+             // Optional: Different styling based on status
+             // className: result.status === 'Confirmed' ? "bg-primary text-primary-foreground" : undefined
+          });
+        router.refresh();
       } else {
         toast({
-          title: t('registerButton.registrationErrorTitle'),
-          description: t('registerButton.registrationErrorDesc', { message: result.message || t('error') }), // Provide fallback message
+          title: toastErrorTitle,
+          description: t(toastErrorDescKey, { message: result.message || t('error') }),
           variant: "destructive",
         });
       }

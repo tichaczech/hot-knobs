@@ -1,20 +1,20 @@
-import { getTrainingById, getCurrentUser, placeholderUsers } from '@/lib/placeholder-data'; // Import users for lookup
+import { getTrainingById, getCurrentUser, placeholderUsers, getUserRegistration, getRegistrationCounts } from '@/lib/placeholder-data'; // Import helpers
 import { TrainingCard } from '@/components/training-card';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, MapPin, CheckCircle, Clock, XCircle, UserX, Users, Edit, Trash2, UserCheck, Ban } from 'lucide-react'; // Added status icons, management icons
+import { ArrowLeft, MapPin, CheckCircle, Clock, XCircle, Ban, Users, Edit, Trash2, UserCheck, Hourglass, ListChecks } from 'lucide-react'; // Added status icons
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { getI18n } from '@/locales/server'; // Import server-side i18n
-import type { Locale } from '@/locales/config'; // Import Locale type
-import type { SkillLevel, RegistrationType } from '@/lib/types'; // Import SkillLevel type & RegistrationType
+import { getI18n } from '@/locales/server';
+import type { Locale } from '@/locales/config';
+import type { SkillLevel, RegistrationType, RegistrationStatus } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator'; // Import Separator
-import { RegistrationManagement } from './_components/registration-management'; // Import new component
+import { Separator } from '@/components/ui/separator';
+import { RegistrationManagement } from './_components/registration-management';
 
 interface TrainingDetailsPageProps {
-  params: { id: string; locale: Locale }; // Add locale to params
+  params: { id: string; locale: Locale };
 }
 
 // Helper function to translate SkillLevel safely
@@ -24,7 +24,7 @@ const translateSkillLevel = async (level: SkillLevel, locale: Locale): Promise<s
       return t(`skillLevels.${level}`);
     } catch (e) {
       console.warn(`Missing translation for skill level: ${level} in locale: ${locale}`);
-      return level; // Fallback to the key
+      return level;
     }
   };
 
@@ -35,9 +35,20 @@ const translateRegistrationType = async (type: RegistrationType, locale: Locale)
         return t(`registrationTypes.${type}`);
     } catch (e) {
         console.warn(`Missing translation for registration type: ${type} in locale: ${locale}`);
-        return type; // Fallback to the key
+        return type;
     }
 };
+
+// Helper function to translate RegistrationStatus safely
+const translateRegistrationStatus = async (status: RegistrationStatus, locale: Locale): Promise<string> => {
+    const t = await getI18n(locale);
+    try {
+      return t(`registrationStatuses.${status}`);
+    } catch (e) {
+      console.warn(`Missing translation for status: ${status} in locale: ${locale}`);
+      return status;
+    }
+  };
 
 
 export async function generateMetadata({ params }: TrainingDetailsPageProps): Promise<Metadata> {
@@ -49,7 +60,6 @@ export async function generateMetadata({ params }: TrainingDetailsPageProps): Pr
     };
   }
 
-  // Translate skill levels for description
    const translatedSkillLevels = await Promise.all(
         training.skillLevels.map(level => translateSkillLevel(level, params.locale))
     );
@@ -58,8 +68,7 @@ export async function generateMetadata({ params }: TrainingDetailsPageProps): Pr
     title: t('trainingDetails.meta.title', { trainingTitle: training.title }),
     description: t('trainingDetails.meta.description', {
         trainingTitle: training.title,
-        // TODO: Consider locale-aware date formatting
-        date: training.date.toLocaleDateString(params.locale), // Basic locale date string
+        date: training.date.toLocaleDateString(params.locale),
         locationName: training.locationName,
         skillLevels: translatedSkillLevels.join(', ')
     }),
@@ -68,33 +77,33 @@ export async function generateMetadata({ params }: TrainingDetailsPageProps): Pr
 
 
 export default async function TrainingDetailsPage({ params }: TrainingDetailsPageProps) {
-  const t = await getI18n(params.locale); // Get translation function for the current locale
+  const t = await getI18n(params.locale);
   const training = await getTrainingById(params.id);
   const currentUser = await getCurrentUser();
 
   if (!training) {
-    notFound(); // Redirect to 404 if training doesn't exist
+    notFound();
   }
 
-   // Determine user's status relative to this training
-   const isRegistered = !!currentUser && !!training.registeredRiders?.includes(currentUser.id);
-   const isPending = !!currentUser && training.registrationType === 'closed' && !!training.pendingRegistrations?.includes(currentUser.id);
-   const isRejected = !!currentUser && training.registrationType === 'closed' && !!training.rejectedRegistrations?.some(r => r.userId === currentUser.id);
-   const rejectionReason = isRejected ? training.rejectedRegistrations?.find(r => r.userId === currentUser.id)?.reason : undefined;
-   const isCancelled = !!currentUser && training.registrationType === 'open' && !!training.cancelledRegistrations?.some(c => c.userId === currentUser.id);
-   const cancellationReason = isCancelled ? training.cancelledRegistrations?.find(c => c.userId === currentUser.id)?.reason : undefined;
+   // Get user's registration details for this training
+   const userRegistration = getUserRegistration(training, currentUser?.id);
+   const userStatus = userRegistration?.status;
+   const userReason = userRegistration?.reason;
 
-   const canRegister = currentUser?.role === 'rider' && !isRegistered && !isPending && !isRejected && !isCancelled;
-   const canUnregister = currentUser?.role === 'rider' && (isRegistered || isPending); // Can unregister if approved or pending
+   // Determine capabilities based on user role and status
+   const canRegister = currentUser?.role === 'rider' && (!userStatus || userStatus === 'Rejected' || userStatus === 'Cancelled');
+   const canCancel = currentUser?.role === 'rider' && userStatus && (userStatus === 'Confirmed' || userStatus === 'Created' || userStatus === 'Waiting');
    const isTrainerOwner = currentUser?.role === 'trainer' && currentUser.id === training.trainerId;
 
    const translatedRegType = await translateRegistrationType(training.registrationType, params.locale);
+   const translatedUserStatus = userStatus ? await translateRegistrationStatus(userStatus, params.locale) : null;
 
-    // Fetch user details for pending/registered lists (example placeholder lookup)
-    const getUsername = (userId: string) => placeholderUsers.find(u => u.id === userId)?.name || 'Unknown User';
+   const { confirmed, waiting } = getRegistrationCounts(training);
+   const capacityString = training.maxRiders
+     ? t('trainingDetails.capacity', { confirmed, max: training.maxRiders })
+     : t('trainingDetails.unlimitedCapacity');
+   const waitingListString = waiting > 0 ? t('trainingDetails.waitingListCount', { count: waiting }) : '';
 
-    const pendingUsernames = (training.pendingRegistrations ?? []).map(getUsername);
-    const registeredUsernames = (training.registeredRiders ?? []).map(getUsername);
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -103,32 +112,34 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
                  <ArrowLeft className="mr-2 h-4 w-4" /> {t('trainingDetails.backToTrainings')}
             </Button>
         </Link>
-      {/* Re-use TrainingCard for consistent display, but hide redundant elements */}
+
+      {/* Re-use TrainingCard for consistent display, adjust props */}
       <TrainingCard
           training={training}
           currentUser={currentUser}
-          showRegisterButton={canRegister} // Show if rider can register
-          showUnregisterButton={canUnregister} // Show if rider can unregister/withdraw
-          showViewDetailsLink={false} // Hide the 'View Details' link on the details page
+          // Let the card handle its internal button logic based on status
+          showRegisterButton={true} // Indicate register *could* be shown
+          showCancelButton={true} // Indicate cancel *could* be shown
+          showViewDetailsLink={false} // Hide the 'View Details' link on the details page itself
        />
 
         {/* Card for Location Link */}
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center text-base"> {/* Reduced size */}
+                <CardTitle className="flex items-center text-base">
                     <MapPin className="mr-2 h-4 w-4" /> {t('trainingDetails.location')}
                 </CardTitle>
             </CardHeader>
              <CardContent>
                 <Link href={`/locations/${training.locationId}`} passHref legacyBehavior>
-                    <Button variant="link" className="p-0 h-auto text-base"> {/* Adjust link styling */}
+                    <Button variant="link" className="p-0 h-auto text-base">
                          {training.locationName}
                     </Button>
                 </Link>
             </CardContent>
         </Card>
 
-        {/* Card for User's Registration Status */}
+        {/* Card for User's Registration Status (if logged in as rider) */}
          {currentUser && currentUser.role === 'rider' && (
             <Card>
                 <CardHeader>
@@ -140,35 +151,40 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
                     </CardDescription>
                 </CardHeader>
                  <CardContent className="space-y-2">
-                   {isRegistered && (
-                     <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-base">
-                       <CheckCircle className="mr-2 h-4 w-4" /> {t('trainingDetails.approved')}
-                     </Badge>
-                   )}
-                   {isPending && (
-                     <Badge variant="secondary" className="text-yellow-800 bg-yellow-100 border-yellow-300 text-base">
-                       <Clock className="mr-2 h-4 w-4" /> {t('trainingDetails.pendingApproval')}
-                     </Badge>
-                   )}
-                   {isRejected && (
-                     <div className="space-y-1">
-                         <Badge variant="destructive" className="text-base">
-                            <XCircle className="mr-2 h-4 w-4" /> {t('trainingDetails.rejected')}
-                        </Badge>
-                        {rejectionReason && <p className="text-sm text-muted-foreground">{t('reason')}: {rejectionReason}</p>}
-                     </div>
-                   )}
-                    {isCancelled && (
-                     <div className="space-y-1">
-                         <Badge variant="destructive" className="text-base">
-                            <Ban className="mr-2 h-4 w-4" /> {t('trainingDetails.cancelled')}
-                        </Badge>
-                        {cancellationReason && <p className="text-sm text-muted-foreground">{t('reason')}: {cancellationReason}</p>}
-                     </div>
-                   )}
-                    {!isRegistered && !isPending && !isRejected && !isCancelled && (
-                         <p className="text-sm text-muted-foreground">Not registered.</p>
+                   {!userStatus && (
+                       <p className="text-sm text-muted-foreground">{t('trainingDetails.notRegistered')}</p>
                     )}
+                   {userStatus === 'Confirmed' && (
+                     <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-base">
+                       <CheckCircle className="mr-2 h-4 w-4" /> {translatedUserStatus}
+                     </Badge>
+                   )}
+                   {userStatus === 'Created' && ( // Pending Approval
+                     <Badge variant="secondary" className="text-blue-800 bg-blue-100 border-blue-300 text-base">
+                       <ListChecks className="mr-2 h-4 w-4" /> {translatedUserStatus}
+                     </Badge>
+                   )}
+                   {userStatus === 'Waiting' && (
+                     <Badge variant="secondary" className="text-yellow-800 bg-yellow-100 border-yellow-300 text-base">
+                       <Hourglass className="mr-2 h-4 w-4" /> {translatedUserStatus}
+                     </Badge>
+                   )}
+                   {userStatus === 'Rejected' && (
+                     <div className="space-y-1">
+                         <Badge variant="destructive" className="text-base">
+                            <XCircle className="mr-2 h-4 w-4" /> {translatedUserStatus}
+                        </Badge>
+                        {userReason && <p className="text-sm text-muted-foreground">{t('reason')}: {userReason}</p>}
+                     </div>
+                   )}
+                    {userStatus === 'Cancelled' && (
+                     <div className="space-y-1">
+                         <Badge variant="outline" className="text-muted-foreground text-base">
+                            <Ban className="mr-2 h-4 w-4" /> {translatedUserStatus}
+                        </Badge>
+                        {userReason && <p className="text-sm text-muted-foreground">{t('reason')}: {userReason}</p>}
+                     </div>
+                   )}
                 </CardContent>
             </Card>
          )}
@@ -190,15 +206,17 @@ export default async function TrainingDetailsPage({ params }: TrainingDetailsPag
                     <CardTitle className="flex items-center">
                          <Users className="mr-2 h-5 w-5"/> {t('trainingDetails.manageRegistrations')}
                     </CardTitle>
-                     <CardDescription>
-                        {t('trainingDetails.registrationTypeLabel')} {translatedRegType}
+                     <CardDescription className="flex flex-col sm:flex-row sm:gap-4">
+                        <span>{t('trainingDetails.registrationTypeLabel')} {translatedRegType}</span>
+                        <span>{capacityString}</span>
+                         {waiting > 0 && <span>{waitingListString}</span>}
                     </CardDescription>
                  </CardHeader>
                 <CardContent>
                    <RegistrationManagement
                         training={training}
                         trainerId={currentUser.id}
-                        locale={params.locale} // Pass locale for translations inside management component
+                        locale={params.locale}
                     />
 
                    {/* Placeholder buttons for editing/deleting the training itself */}
