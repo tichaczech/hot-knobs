@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "875409099173",
+    "project_id": "hot-knobs-dev",
+    "storage_bucket": "hot-knobs-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875409099173:android:feeddaa12b20c3bf95404c",
+        "android_client_info": {
+          "package_name": "app.hotknobs.v1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875409099173-2pi5sug639h786dcd9d9o1lj0iuso77d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAHM0j5CgArfPLdKWbphr-6gRjbwSYdEc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875409099173-2pi5sug639h786dcd9d9o1lj0iuso77d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

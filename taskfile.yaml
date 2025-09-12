@@ -1,0 +1,13 @@
+version: "3"
+
+vars:
+
+tasks:
+  l10n:generate:
+    aliases: [gen-l10n]
+    cmds:
+      - flutter gen-l10n --arb-dir ./lib/ui/core/l10n --template-arb-file en.arb --output-localization-file core_localizations.dart --output-class CoreLocalizations
+      - flutter gen-l10n --arb-dir ./lib/ui/sites/l10n --template-arb-file en.arb --output-localization-file sites_localizations.dart --output-class SitesLocalizations
+    desc: "Generate localization files"
+
+# dart run build_runner build
