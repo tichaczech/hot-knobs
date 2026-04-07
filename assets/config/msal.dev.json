@@ -1,0 +1,12 @@
+{
+    "account_mode": "SINGLE",
+    "authorities": [
+        {
+            "type": "CIAM",
+            "authority_url": "https://hotknobsdev.ciamlogin.com/099336d3-2e34-4bf2-be23-a507e86cee6e"
+        }
+    ],
+    "authorization_user_agent": "DEFAULT",
+    "client_id": "e19c3441-3d78-49ae-917a-43b3c32852ad",
+    "redirect_uri": "msauth://app.hotknobs.v1/ghCPg%2FgSZi0PrA1gFfvCh09Cs6E%3D"
+}

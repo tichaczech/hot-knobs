@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/domain/models/types.dart';
 
+import '../../../domain/models/types.dart';
 import '../l10n/core_localizations.dart';
 
 class OpeningHoursView extends StatelessWidget {

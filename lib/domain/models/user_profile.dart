@@ -1,17 +1,19 @@
 import 'package:dart_mappable/dart_mappable.dart';
 
+// import '../mappers/opening_hours.dart';
 import 'entity.dart';
 import 'types.dart';
 
 part 'user_profile.mapper.dart';
 
+// @MappableClass(discriminatorValue: 'userProfile', includeCustomMappers: [DeviceRegistrationDecoderOnlyMapper()])
 @MappableClass(discriminatorValue: 'userProfile')
-abstract class UserProfile extends Entity with UserProfileMappable {
+class UserProfile extends Entity with UserProfileMappable {
   final List<DeviceRegistration> deviceRegistrations;
-  final String? displayName;
+  final String displayName;
   final String email;
   final String? phoneNumber;
-  final String? photoUrl;
+  final String? photoURL;
 
   UserProfile({
     required super.id,
@@ -20,35 +22,39 @@ abstract class UserProfile extends Entity with UserProfileMappable {
     required super.createdAt,
     required super.createdBy,
     this.deviceRegistrations = const [],
-    this.displayName,
+    required this.displayName,
     required this.email,
     required super.etag,
     this.phoneNumber,
-    this.photoUrl,
+    this.photoURL,
     required super.updatedAt,
-    required super.updatedBy,
-  });
+    required super.updatedBy
+  }) : super() {
+    print('UserProfile created: $id');
+  }
 }
 
+// @MappableClass(includeCustomMappers: [DeviceRegistrationDecoderOnlyMapper()])
 @MappableClass()
 class UserProfileCreateModel extends CreateModel with UserProfileCreateModelMappable {
   final DeviceRegistration deviceRegistration;
-  final String? displayName;
+  final String displayName;
   final String email;
   final String? phoneNumber;
-  final String? photoUrl;
+  final String? photoURL;
   final String uid;
 
-  UserProfileCreateModel({required this.deviceRegistration, this.displayName, required this.email, this.phoneNumber, this.photoUrl, required this.uid});
+  UserProfileCreateModel({required this.deviceRegistration, required this.displayName, required this.email, this.phoneNumber, this.photoURL, required this.uid});
 }
 
+// @MappableClass(includeCustomMappers: [DeviceRegistrationDecoderOnlyMapper()])
 @MappableClass()
 class UserProfileUpdateModel extends UpdateModel with UserProfileUpdateModelMappable {
   final DeviceRegistration deviceRegistration;
-  final String? displayName;
+  final String displayName;
   final String email;
   final String? phoneNumber;
-  final String? photoUrl;
+  final String? photoURL;
 
-  UserProfileUpdateModel({required this.deviceRegistration, this.displayName, required this.email, this.phoneNumber, this.photoUrl});
+  UserProfileUpdateModel({required this.deviceRegistration, required this.displayName, required this.email, this.phoneNumber, this.photoURL});
 }

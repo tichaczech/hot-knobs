@@ -1,26 +1,18 @@
-import 'package:frontend/data/repositories/repository.dart';
-import 'package:frontend/data/services/local/local_service.dart';
-import 'package:frontend/domain/models/entity.dart';
-import 'package:frontend/utils/result.dart';
+
+import '../../../domain/models/entity.dart';
+import '../../repositories/repository.dart';
+import 'local_service.dart';
 
 abstract class DummyService<TEntity extends Entity> implements LocalService<TEntity> {
   @override
-  Future<Result<TEntity>> createOrUpdate(TEntity entity) {
-    return Future.value(Result.ok(entity));
-  }
+  Future<TEntity> createOrUpdate(TEntity entity) => Future.value(entity);
 
   @override
-  Future<Result<void>> delete(String id) {
-    return Future.value(Result.ok(null));
-  }
+  Future<void> delete(String id) => Future.value(null);
 
   @override
-  Future<Result<TEntity?>> get(String id, {bool onlyActive = true}) {
-    return Future.value(Result.ok(null));
-  }
+  Future<TEntity?> get(String id, {bool onlyActive = true}) => Future.value(null);
 
   @override
-  Future<Result<List<String>>> list({String? query, bool onlyActive = true, Duration maxAge = cacheTTL}) {
-    return Future.value(Result.ok([]));
-  }
+  Future<List<String>> list({String? query, bool onlyActive = true, Duration maxAge = cacheTTL}) => Future.value([]);
 }

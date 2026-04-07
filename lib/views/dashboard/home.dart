@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:msal_auth/msal_auth.dart';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../../ui/core/l10n/core_localizations.dart';
@@ -22,7 +25,7 @@ class DashboardHome extends StatefulWidget {
 class _DashboardHomeState extends State<DashboardHome> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  Future<void> _incrementCounter() async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -31,6 +34,47 @@ class _DashboardHomeState extends State<DashboardHome> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+
+    final msalAuth = await MultipleAccountPca.create(
+      clientId: 'e19c3441-3d78-49ae-917a-43b3c32852ad',
+      androidConfig: AndroidConfig(
+        configFilePath: 'assets/msal_config.json',
+        redirectUri: 'msauth://app.hotknobs.v1/ghCPg%2FgSZi0PrA1gFfvCh09Cs6E%3D'
+      ),
+      appleConfig: AppleConfig(
+        authority: 'https://hotknobsdev.ciamlogin.com/099336d3-2e34-4bf2-be23-a507e86cee6e',
+        // Change authority type to 'b2c' for business to customer flow.
+        authorityType: AuthorityType.b2c,
+        // Change broker if you need. Applicable only for iOS platform.
+        broker: Broker.webView,
+      ),
+    );
+
+    final authResult = await msalAuth.acquireToken(
+      scopes: <String>[
+        // 'https://graph.microsoft.com/email',
+        // 'https://graph.microsoft.com/offline_access',
+        // 'https://graph.microsoft.com/openid',
+        // 'https://graph.microsoft.com/profile',
+        // 'https://graph.microsoft.us/.default'
+        // 'email',
+        // 'offline_access',
+        // 'openid',
+        // 'profile',
+        '.default' // Use '.default' to request all the scopes that are configured for the application in the portal.
+        // Add other scopes here if required.
+      ],
+      // UI option for authentication, default is [Prompt.whenRequired]
+      prompt: Prompt.whenRequired,
+      // Provide 'loginHint' if you have.
+      loginHint: '<Email Id / Username / Unique Identifier>',
+      // Optional: Custom authority URL for B2C or different tenant scenarios
+      authority: 'https://hotknobsdev.ciamlogin.com/099336d3-2e34-4bf2-be23-a507e86cee6e',
+    );
+
+    log('ID token: ${authResult.idToken}');
+    log('Access token: ${authResult.accessToken}');
+    log('Auth result: ${authResult.toJson()}');
   }
 
   @override
@@ -80,7 +124,9 @@ class _DashboardHomeState extends State<DashboardHome> {
       ),
       drawer: const NavigationDrawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () async {
+          await _incrementCounter();
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

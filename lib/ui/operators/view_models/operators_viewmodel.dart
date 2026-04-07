@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/data/repositories/operator_repository.dart';
 
+import '../../../data/repositories/operator_repository.dart';
 import '../../../domain/models/operator.dart';
 import '../../../utils/command.dart';
 import '../../../utils/result.dart';

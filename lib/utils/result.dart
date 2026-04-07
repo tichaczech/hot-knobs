@@ -19,7 +19,7 @@ sealed class Result<T> {
   const Result();
 
   /// Creates a successful [Result], completed with the specified [value].
-  const factory Result.ok(T value) = Ok._;
+  const factory Result.ok(T? value) = Ok._;
 
   /// Creates an error [Result], completed with the specified [error].
   const factory Result.error(Exception error) = Error._;

@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/providers/auth_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:msal_auth/msal_auth.dart';
+import 'package:provider/provider.dart';
 
 import '../routes/routes.dart';
 import '../ui/core/l10n/core_localizations.dart';
@@ -13,12 +15,7 @@ class NavigationDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
-      throw Exception('User not logged in');
-    }
-
-    print(currentUser.email.hashCode);
+    final authProvider = context.read<AuthProvider>();
 
     return Drawer(
       child: SafeArea(
@@ -28,22 +25,38 @@ class NavigationDrawer extends StatelessWidget {
           shrinkWrap: true,
           children: <Widget>[
             InkWell(
-              child: DrawerHeader(
-                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(
-                        // TODO: Cache photo for performance improvements
-                        // TODO: Cache Gravatar URL for performance improvements
-                        currentUser.photoURL ?? 'https://www.gravatar.com/avatar/${sha256.convert(utf8.encode(currentUser.email!.toLowerCase().trim()))}',
-                      ),
+              child: FutureBuilder<Account?>(
+                future: authProvider.getCurrentUser(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  final currentUser = snapshot.data;
+                  if (currentUser == null) {
+                    throw Exception('User not logged in');
+                  }
+                  return DrawerHeader(
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundImage: NetworkImage(
+                            // TODO: Cache photo for performance improvements
+                            // TODO: Cache Gravatar URL for performance improvements
+                            currentUser.name ?? 'https://www.gravatar.com/avatar/${sha256.convert(utf8.encode(currentUser.username!.toLowerCase().trim()))}',
+                          ),
+                          foregroundColor: Colors.blue,
+                        ),
+                        Text(currentUser.name ?? currentUser.username!.split('@').first, style: Theme.of(context).textTheme.headlineMedium),
+                        Text(currentUser.username!, style: Theme.of(context).textTheme.bodyMedium),
+                      ],
                     ),
-                    Text(currentUser.displayName ?? currentUser.email!.split('@').first, style: Theme.of(context).textTheme.headlineMedium),
-                    Text(currentUser.email!, style: Theme.of(context).textTheme.bodyMedium),
-                  ],
-                ),
+                  );
+                },
               ),
               onTap: () {
                 Scaffold.of(context).closeDrawer();

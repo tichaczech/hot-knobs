@@ -2,85 +2,127 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../domain/models/entity.dart';
 import '../../../domain/target_mapping.dart';
-import '../../../utils/result.dart';
 import '../../repositories/repository.dart';
 import 'remote_service.dart';
+
+class DocumentNotFoundException implements Exception {
+  final String message;
+  DocumentNotFoundException(this.message);
+
+  @override
+  String toString() => 'DocumentNotFoundException: $message';
+}
+
+class ETagMismatchException implements Exception {
+  final String message;
+  ETagMismatchException(this.message);
+
+  @override
+  String toString() => 'ETagMismatchException: $message';
+}
+
+abstract class RestAPIService<TEntity extends Entity, TCreateModel extends CreateModel, TUpdateModel extends UpdateModel> implements RemoteService<TEntity, TCreateModel, TUpdateModel> {
+  late final String _endpoint;
+
+  RestAPIService({String? endpoint}) {
+    _endpoint = endpoint ?? TEntity.toString().toLowerCase();
+  }
+
+  TEntity fromMap(Map<String, dynamic> map);
+
+  @override
+  Future<TEntity> create(TCreateModel createModel) async {
+    // Implement REST API call to create entity
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> delete(String id, String etag) async {
+    // Implement REST API call to delete entity
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TEntity?> get(String id, {bool onlyActive = true, String? etag}) async {
+    // Implement REST API call to get entity by ID
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<String>> list({String? query, bool onlyActive = true}) async {
+    // Implement REST API call to list entities
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TEntity> update(String id, TUpdateModel updateModel, String etag) async {
+    // Implement REST API call to update entity
+    throw UnimplementedError();
+  }
+}
 
 abstract class FirebaseService<TEntity extends Entity, TCreateModel extends CreateModel, TUpdateModel extends UpdateModel> implements RemoteService<TEntity, TCreateModel, TUpdateModel> {
   late final String _collectionName;
   late final FirebaseFirestore _db;
 
-  FirebaseService({required FirebaseFirestore firestore}) {
-    _collectionName = TEntity.toString().toLowerCase();
+  Map<String, dynamic> Function(TCreateModel)? mapCreateModel;
+  Map<String, dynamic> Function(TUpdateModel)? mapUpdateModel;
+
+  FirebaseService({required FirebaseFirestore firestore, String? collectionName}) {
+    _collectionName = collectionName ?? TEntity.toString().toLowerCase();
 
     _db = firestore;
   }
 
-  Result<TEntity> fromMap(Map<String, dynamic> map);
+  TEntity fromMap(Map<String, dynamic> map);
 
   @override
-  Future<Result<TEntity>> create(TCreateModel model) async {
-    final entity = model.toTargetMap(MapTarget.firestore);
-    entity['active'] = true;
-    entity['createdAt'] = DateTime.now();
-    entity['createdBy'] = 'user_id';
-    entity['etag'] = uuid.v4();
-    entity['updatedAt'] = DateTime.now();
-    entity['updatedBy'] = 'user_id';
+  Future<TEntity> create(TCreateModel createModel) async {
+    final createMap = (mapCreateModel != null) ? mapCreateModel!(createModel) : createModel.toTargetMap(MapTarget.firestore);
 
-    final ref = await _db.collection(_collectionName).add(entity);
-    final snap = await ref.get();
-    final result = fromMap({...snap.data()!, 'id': snap.id, 'cachedAt': DateTime.now()});
+    createMap['active'] = true;
+    createMap['createdAt'] = DateTime.now();
+    createMap['createdBy'] = 'user_id';
+    createMap['etag'] = uuid.v4();
+    createMap['updatedAt'] = DateTime.now();
+    createMap['updatedBy'] = 'user_id';
 
-    return result;
+    final id = createMap.remove('id') ?? _db.collection(_collectionName).doc().id;
+    final ref = _db.collection(_collectionName).doc(id);
+    await ref.set(createMap);
+
+    final entity = await get(id);
+    if (entity == null) {
+      throw Exception('Failed to create entity');
+    }
+
+    return entity;
   }
 
   @override
-  Future<Result<void>> delete(String id, String etag) async {
-    final ref = _db.collection(_collectionName).doc(id);
-    final snap = await ref.get();
-    if (!snap.exists) {
-      return Result.error(Exception('Document not found'));
-    }
-
-    final doc = snap.data();
-    if (doc == null) {
-      return Result.error(Exception('Document not found!'));
-    }
-
-    if (doc['etag'] != etag) {
-      return Result.error(Exception('ETag mismatch!'));
+  Future<void> delete(String id, String etag) async {
+    final (ref, snap, entityMap) = await getDocumentSnapshot(id);
+    if (entityMap['etag'] != etag) {
+      throw ETagMismatchException('ETag mismatch!');
     }
 
     await ref.update({'active': false, 'updatedAt': DateTime.now(), 'updatedBy': 'user_id'});
-
-    return Result.ok(null);
   }
 
   @override
-  Future<Result<TEntity?>> get(String id, {bool onlyActive = true, String? etag}) async {
-    final ref = _db.collection(_collectionName).doc(id);
-    final snap = await ref.get();
-    if (!snap.exists) {
-      return Result.error(Exception('Document not found'));
+  Future<TEntity?> get(String id, {bool onlyActive = true, String? etag}) async {
+    final (ref, snap, entityMap) = await getDocumentSnapshot(id);
+    if (etag != null && entityMap['etag'] == etag) {
+      return null;
     }
 
-    final doc = snap.data();
-    if (doc == null) {
-      return Result.error(Exception('Document not found'));
-    }
-
-    if (etag != null && doc['etag'] != etag) {
-      return Result.error(Exception('ETag mismatch'));
-    }
-
-    final result = fromMap({...snap.data()!, 'id': snap.id, 'cachedAt': DateTime.now()});
+    final result = fromMap({...entityMap, 'id': snap.id, 'cachedAt': DateTime.now()});
 
     return result;
   }
 
   @override
-  Future<Result<List<String>>> list({String? query, bool onlyActive = true}) async {
+  Future<List<String>> list({String? query, bool onlyActive = true}) async {
     final ref = _db.collection(_collectionName);
     Query fQuery = ref.where('active', isEqualTo: onlyActive);
     if (query != null && query.isNotEmpty) {
@@ -88,35 +130,39 @@ abstract class FirebaseService<TEntity extends Entity, TCreateModel extends Crea
     }
 
     QuerySnapshot snap = await fQuery.get();
+    final results = snap.docs.map((doc) => doc.id).toList();
 
-    final docs = snap.docs;
-    final results = docs.map((doc) => doc.id).toList();
-
-    return Result.ok(results);
+    return results;
   }
 
   @override
-  Future<Result<TEntity>> update(String id, TUpdateModel model, String etag) async {
+  Future<TEntity> update(String id, TUpdateModel updateModel, String etag) async {
+    final (ref, snap, entityMap) = await getDocumentSnapshot(id);
+    if (entityMap['etag'] != etag) {
+      throw ETagMismatchException('ETag mismatch');
+    }
+
+    final updateMap = (mapUpdateModel != null) ? mapUpdateModel!(updateModel) : updateModel.toTargetMap(MapTarget.firestore);
+    final updates = {...updateMap, 'active': true, 'etag': uuid.v4(), 'updatedAt': Timestamp.now(), 'updatedBy': 'user_id'};
+    await ref.update(updates);
+
+    final result = fromMap({...entityMap, ...updates, 'id': snap.id, 'cachedAt': DateTime.now()});
+
+    return result;
+  }
+
+  Future<(DocumentReference ref, DocumentSnapshot snap, Map<String, dynamic> data)> getDocumentSnapshot(String id) async {
     final ref = _db.collection(_collectionName).doc(id);
     final snap = await ref.get();
     if (!snap.exists) {
-      return Result.error(Exception('Document not found'));
+      throw DocumentNotFoundException('Document not found!');
     }
 
-    final doc = snap.data();
-    if (doc == null) {
-      return Result.error(Exception('Document not found'));
+    final entityMap = snap.data();
+    if (entityMap == null) {
+      throw Exception('Document empty!');
     }
 
-    if (doc['etag'] != etag) {
-      return Result.error(Exception('ETag mismatch'));
-    }
-
-    final updates = {...model.toTargetMap(MapTarget.firestore), 'active': true, 'etag': uuid.v4(), 'updatedAt': Timestamp.now(), 'updatedBy': 'user_id'};
-    await ref.update(updates);
-
-    final result = fromMap({...doc, ...updates, 'id': snap.id, 'cachedAt': DateTime.now()});
-
-    return result;
+    return (ref, snap, entityMap);
   }
 }

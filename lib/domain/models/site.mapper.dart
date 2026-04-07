@@ -15,16 +15,9 @@ class SiteMapper extends SubClassMapperBase<Site> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = SiteMapper._());
       EntityMapper.ensureInitialized().addSubMapper(_instance!);
-      MapperContainer.globals.useAll([
-        LatLngDecoderOnlyMapper(),
-        LocationDecoderOnlyMapper(),
-        OpeningHoursDecoderOnlyMapper(),
-      ]);
-      _t$_R0Mapper.ensureInitialized();
-      _t$_R1Mapper.ensureInitialized();
-      _t$_R2Mapper.ensureInitialized();
-      DayOfWeekMapper.ensureInitialized();
-      SeasonMapper.ensureInitialized();
+      MapperContainer.globals.useAll([LatLngDecoderOnlyMapper()]);
+      LocationMapper.ensureInitialized();
+      OpeningHoursMapper.ensureInitialized();
       SiteTypeMapper.ensureInitialized();
       SkillLevelMapper.ensureInitialized();
     }
@@ -73,17 +66,22 @@ class SiteMapper extends SubClassMapperBase<Site> {
   );
   static String _$etag(Site v) => v.etag;
   static const Field<Site, String> _f$etag = Field('etag', _$etag);
+  static List<String>? _$images(Site v) => v.images;
+  static const Field<Site, List<String>> _f$images = Field(
+    'images',
+    _$images,
+    opt: true,
+  );
   static int? _$length(Site v) => v.length;
   static const Field<Site, int> _f$length = Field(
     'length',
     _$length,
     opt: true,
   );
-  static Location? _$location(Site v) => v.location;
+  static Location _$location(Site v) => v.location;
   static const Field<Site, Location> _f$location = Field(
     'location',
     _$location,
-    opt: true,
   );
   static OpeningHours? _$openingHours(Site v) => v.openingHours;
   static const Field<Site, OpeningHours> _f$openingHours = Field(
@@ -97,17 +95,15 @@ class SiteMapper extends SubClassMapperBase<Site> {
     _$parking,
     opt: true,
   );
-  static SiteType? _$siteType(Site v) => v.siteType;
+  static SiteType _$siteType(Site v) => v.siteType;
   static const Field<Site, SiteType> _f$siteType = Field(
     'siteType',
     _$siteType,
-    opt: true,
   );
-  static SkillLevel? _$skillLevel(Site v) => v.skillLevel;
+  static SkillLevel _$skillLevel(Site v) => v.skillLevel;
   static const Field<Site, SkillLevel> _f$skillLevel = Field(
     'skillLevel',
     _$skillLevel,
-    opt: true,
   );
   static DateTime _$updatedAt(Site v) => v.updatedAt;
   static const Field<Site, DateTime> _f$updatedAt = Field(
@@ -133,6 +129,7 @@ class SiteMapper extends SubClassMapperBase<Site> {
     #createdBy: _f$createdBy,
     #description: _f$description,
     #etag: _f$etag,
+    #images: _f$images,
     #length: _f$length,
     #location: _f$location,
     #openingHours: _f$openingHours,
@@ -162,6 +159,7 @@ class SiteMapper extends SubClassMapperBase<Site> {
       createdBy: data.dec(_f$createdBy),
       description: data.dec(_f$description),
       etag: data.dec(_f$etag),
+      images: data.dec(_f$images),
       length: data.dec(_f$length),
       location: data.dec(_f$location),
       openingHours: data.dec(_f$openingHours),
@@ -220,6 +218,11 @@ extension SiteValueCopy<$R, $Out> on ObjectCopyWith<$R, Site, $Out> {
 
 abstract class SiteCopyWith<$R, $In extends Site, $Out>
     implements EntityCopyWith<$R, $In, $Out> {
+  LocationCopyWith<$R, Location, Location>? get arrival;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get images;
+  LocationCopyWith<$R, Location, Location> get location;
+  OpeningHoursCopyWith<$R, OpeningHours, OpeningHours>? get openingHours;
+  LocationCopyWith<$R, Location, Location>? get parking;
   @override
   $R call({
     String? id,
@@ -231,6 +234,7 @@ abstract class SiteCopyWith<$R, $In extends Site, $Out>
     String? createdBy,
     String? description,
     String? etag,
+    List<String>? images,
     int? length,
     Location? location,
     OpeningHours? openingHours,
@@ -251,6 +255,27 @@ class _SiteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Site, $Out>
   @override
   late final ClassMapperBase<Site> $mapper = SiteMapper.ensureInitialized();
   @override
+  LocationCopyWith<$R, Location, Location>? get arrival =>
+      $value.arrival?.copyWith.$chain((v) => call(arrival: v));
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get images =>
+      $value.images != null
+      ? ListCopyWith(
+          $value.images!,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(images: v),
+        )
+      : null;
+  @override
+  LocationCopyWith<$R, Location, Location> get location =>
+      $value.location.copyWith.$chain((v) => call(location: v));
+  @override
+  OpeningHoursCopyWith<$R, OpeningHours, OpeningHours>? get openingHours =>
+      $value.openingHours?.copyWith.$chain((v) => call(openingHours: v));
+  @override
+  LocationCopyWith<$R, Location, Location>? get parking =>
+      $value.parking?.copyWith.$chain((v) => call(parking: v));
+  @override
   $R call({
     String? id,
     bool? active,
@@ -261,12 +286,13 @@ class _SiteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Site, $Out>
     String? createdBy,
     Object? description = $none,
     String? etag,
+    Object? images = $none,
     Object? length = $none,
-    Object? location = $none,
+    Location? location,
     Object? openingHours = $none,
     Object? parking = $none,
-    Object? siteType = $none,
-    Object? skillLevel = $none,
+    SiteType? siteType,
+    SkillLevel? skillLevel,
     DateTime? updatedAt,
     String? updatedBy,
     String? name,
@@ -281,12 +307,13 @@ class _SiteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Site, $Out>
       if (createdBy != null) #createdBy: createdBy,
       if (description != $none) #description: description,
       if (etag != null) #etag: etag,
+      if (images != $none) #images: images,
       if (length != $none) #length: length,
-      if (location != $none) #location: location,
+      if (location != null) #location: location,
       if (openingHours != $none) #openingHours: openingHours,
       if (parking != $none) #parking: parking,
-      if (siteType != $none) #siteType: siteType,
-      if (skillLevel != $none) #skillLevel: skillLevel,
+      if (siteType != null) #siteType: siteType,
+      if (skillLevel != null) #skillLevel: skillLevel,
       if (updatedAt != null) #updatedAt: updatedAt,
       if (updatedBy != null) #updatedBy: updatedBy,
       if (name != null) #name: name,
@@ -303,6 +330,7 @@ class _SiteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Site, $Out>
     createdBy: data.get(#createdBy, or: $value.createdBy),
     description: data.get(#description, or: $value.description),
     etag: data.get(#etag, or: $value.etag),
+    images: data.get(#images, or: $value.images),
     length: data.get(#length, or: $value.length),
     location: data.get(#location, or: $value.location),
     openingHours: data.get(#openingHours, or: $value.openingHours),
@@ -327,11 +355,8 @@ class SiteCreateModelMapper extends ClassMapperBase<SiteCreateModel> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = SiteCreateModelMapper._());
       CreateModelMapper.ensureInitialized();
-      _t$_R0Mapper.ensureInitialized();
-      _t$_R1Mapper.ensureInitialized();
-      _t$_R2Mapper.ensureInitialized();
-      DayOfWeekMapper.ensureInitialized();
-      SeasonMapper.ensureInitialized();
+      LocationMapper.ensureInitialized();
+      OpeningHoursMapper.ensureInitialized();
       SiteTypeMapper.ensureInitialized();
       SkillLevelMapper.ensureInitialized();
     }
@@ -488,6 +513,10 @@ extension SiteCreateModelValueCopy<$R, $Out>
 
 abstract class SiteCreateModelCopyWith<$R, $In extends SiteCreateModel, $Out>
     implements CreateModelCopyWith<$R, $In, $Out> {
+  LocationCopyWith<$R, Location, Location>? get arrival;
+  LocationCopyWith<$R, Location, Location>? get location;
+  OpeningHoursCopyWith<$R, OpeningHours, OpeningHours>? get openingHours;
+  LocationCopyWith<$R, Location, Location>? get parking;
   @override
   $R call({
     String? address,
@@ -514,6 +543,18 @@ class _SiteCreateModelCopyWithImpl<$R, $Out>
   @override
   late final ClassMapperBase<SiteCreateModel> $mapper =
       SiteCreateModelMapper.ensureInitialized();
+  @override
+  LocationCopyWith<$R, Location, Location>? get arrival =>
+      $value.arrival?.copyWith.$chain((v) => call(arrival: v));
+  @override
+  LocationCopyWith<$R, Location, Location>? get location =>
+      $value.location?.copyWith.$chain((v) => call(location: v));
+  @override
+  OpeningHoursCopyWith<$R, OpeningHours, OpeningHours>? get openingHours =>
+      $value.openingHours?.copyWith.$chain((v) => call(openingHours: v));
+  @override
+  LocationCopyWith<$R, Location, Location>? get parking =>
+      $value.parking?.copyWith.$chain((v) => call(parking: v));
   @override
   $R call({
     Object? address = $none,
@@ -568,11 +609,8 @@ class SiteUpdateModelMapper extends ClassMapperBase<SiteUpdateModel> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = SiteUpdateModelMapper._());
       UpdateModelMapper.ensureInitialized();
-      _t$_R0Mapper.ensureInitialized();
-      _t$_R1Mapper.ensureInitialized();
-      _t$_R2Mapper.ensureInitialized();
-      DayOfWeekMapper.ensureInitialized();
-      SeasonMapper.ensureInitialized();
+      LocationMapper.ensureInitialized();
+      OpeningHoursMapper.ensureInitialized();
       SiteTypeMapper.ensureInitialized();
       SkillLevelMapper.ensureInitialized();
     }
@@ -729,6 +767,10 @@ extension SiteUpdateModelValueCopy<$R, $Out>
 
 abstract class SiteUpdateModelCopyWith<$R, $In extends SiteUpdateModel, $Out>
     implements UpdateModelCopyWith<$R, $In, $Out> {
+  LocationCopyWith<$R, Location, Location>? get arrival;
+  LocationCopyWith<$R, Location, Location>? get location;
+  OpeningHoursCopyWith<$R, OpeningHours, OpeningHours>? get openingHours;
+  LocationCopyWith<$R, Location, Location>? get parking;
   @override
   $R call({
     String? address,
@@ -755,6 +797,18 @@ class _SiteUpdateModelCopyWithImpl<$R, $Out>
   @override
   late final ClassMapperBase<SiteUpdateModel> $mapper =
       SiteUpdateModelMapper.ensureInitialized();
+  @override
+  LocationCopyWith<$R, Location, Location>? get arrival =>
+      $value.arrival?.copyWith.$chain((v) => call(arrival: v));
+  @override
+  LocationCopyWith<$R, Location, Location>? get location =>
+      $value.location?.copyWith.$chain((v) => call(location: v));
+  @override
+  OpeningHoursCopyWith<$R, OpeningHours, OpeningHours>? get openingHours =>
+      $value.openingHours?.copyWith.$chain((v) => call(openingHours: v));
+  @override
+  LocationCopyWith<$R, Location, Location>? get parking =>
+      $value.parking?.copyWith.$chain((v) => call(parking: v));
   @override
   $R call({
     Object? address = $none,
@@ -799,224 +853,5 @@ class _SiteUpdateModelCopyWithImpl<$R, $Out>
   SiteUpdateModelCopyWith<$R2, SiteUpdateModel, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _SiteUpdateModelCopyWithImpl<$R2, $Out2>($value, $cast, t);
-}
-
-typedef _t$_R2<A, B, C, D, E> = ({
-  A closingTime,
-  B dayOfWeek,
-  C description,
-  D openingTime,
-  E season,
-});
-
-class _t$_R2Mapper extends RecordMapperBase<_t$_R2> {
-  static _t$_R2Mapper? _instance;
-  _t$_R2Mapper._();
-
-  static _t$_R2Mapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = _t$_R2Mapper._());
-      MapperBase.addType(
-        <A, B, C, D, E>(f) =>
-            f<
-              ({
-                A closingTime,
-                B dayOfWeek,
-                C description,
-                D openingTime,
-                E season,
-              })
-            >(),
-      );
-    }
-    return _instance!;
-  }
-
-  static dynamic _$closingTime(_t$_R2 v) => v.closingTime;
-  static dynamic _arg$closingTime<A, B, C, D, E>(f) => f<A>();
-  static const Field<_t$_R2, dynamic> _f$closingTime = Field(
-    'closingTime',
-    _$closingTime,
-    arg: _arg$closingTime,
-  );
-  static dynamic _$dayOfWeek(_t$_R2 v) => v.dayOfWeek;
-  static dynamic _arg$dayOfWeek<A, B, C, D, E>(f) => f<B>();
-  static const Field<_t$_R2, dynamic> _f$dayOfWeek = Field(
-    'dayOfWeek',
-    _$dayOfWeek,
-    arg: _arg$dayOfWeek,
-  );
-  static dynamic _$description(_t$_R2 v) => v.description;
-  static dynamic _arg$description<A, B, C, D, E>(f) => f<C>();
-  static const Field<_t$_R2, dynamic> _f$description = Field(
-    'description',
-    _$description,
-    arg: _arg$description,
-  );
-  static dynamic _$openingTime(_t$_R2 v) => v.openingTime;
-  static dynamic _arg$openingTime<A, B, C, D, E>(f) => f<D>();
-  static const Field<_t$_R2, dynamic> _f$openingTime = Field(
-    'openingTime',
-    _$openingTime,
-    arg: _arg$openingTime,
-  );
-  static dynamic _$season(_t$_R2 v) => v.season;
-  static dynamic _arg$season<A, B, C, D, E>(f) => f<E>();
-  static const Field<_t$_R2, dynamic> _f$season = Field(
-    'season',
-    _$season,
-    arg: _arg$season,
-  );
-
-  @override
-  final MappableFields<_t$_R2> fields = const {
-    #closingTime: _f$closingTime,
-    #dayOfWeek: _f$dayOfWeek,
-    #description: _f$description,
-    #openingTime: _f$openingTime,
-    #season: _f$season,
-  };
-
-  @override
-  Function get typeFactory =>
-      <A, B, C, D, E>(f) => f<_t$_R2<A, B, C, D, E>>();
-
-  static _t$_R2<A, B, C, D, E> _instantiate<A, B, C, D, E>(
-    DecodingData<_t$_R2> data,
-  ) {
-    return (
-      closingTime: data.dec(_f$closingTime),
-      dayOfWeek: data.dec(_f$dayOfWeek),
-      description: data.dec(_f$description),
-      openingTime: data.dec(_f$openingTime),
-      season: data.dec(_f$season),
-    );
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static _t$_R2<A, B, C, D, E> fromMap<A, B, C, D, E>(
-    Map<String, dynamic> map,
-  ) {
-    return ensureInitialized().decodeMap<_t$_R2<A, B, C, D, E>>(map);
-  }
-
-  static _t$_R2<A, B, C, D, E> fromJson<A, B, C, D, E>(String json) {
-    return ensureInitialized().decodeJson<_t$_R2<A, B, C, D, E>>(json);
-  }
-}
-
-typedef _t$_R0<A, B> = ({A coordinates, B description});
-
-class _t$_R0Mapper extends RecordMapperBase<_t$_R0> {
-  static _t$_R0Mapper? _instance;
-  _t$_R0Mapper._();
-
-  static _t$_R0Mapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = _t$_R0Mapper._());
-      MapperBase.addType(<A, B>(f) => f<({A coordinates, B description})>());
-    }
-    return _instance!;
-  }
-
-  static dynamic _$coordinates(_t$_R0 v) => v.coordinates;
-  static dynamic _arg$coordinates<A, B>(f) => f<A>();
-  static const Field<_t$_R0, dynamic> _f$coordinates = Field(
-    'coordinates',
-    _$coordinates,
-    arg: _arg$coordinates,
-  );
-  static dynamic _$description(_t$_R0 v) => v.description;
-  static dynamic _arg$description<A, B>(f) => f<B>();
-  static const Field<_t$_R0, dynamic> _f$description = Field(
-    'description',
-    _$description,
-    arg: _arg$description,
-  );
-
-  @override
-  final MappableFields<_t$_R0> fields = const {
-    #coordinates: _f$coordinates,
-    #description: _f$description,
-  };
-
-  @override
-  Function get typeFactory =>
-      <A, B>(f) => f<_t$_R0<A, B>>();
-
-  static _t$_R0<A, B> _instantiate<A, B>(DecodingData<_t$_R0> data) {
-    return (
-      coordinates: data.dec(_f$coordinates),
-      description: data.dec(_f$description),
-    );
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static _t$_R0<A, B> fromMap<A, B>(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<_t$_R0<A, B>>(map);
-  }
-
-  static _t$_R0<A, B> fromJson<A, B>(String json) {
-    return ensureInitialized().decodeJson<_t$_R0<A, B>>(json);
-  }
-}
-
-typedef _t$_R1<A, B> = ({A description, B items});
-
-class _t$_R1Mapper extends RecordMapperBase<_t$_R1> {
-  static _t$_R1Mapper? _instance;
-  _t$_R1Mapper._();
-
-  static _t$_R1Mapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = _t$_R1Mapper._());
-      MapperBase.addType(<A, B>(f) => f<({A description, B items})>());
-    }
-    return _instance!;
-  }
-
-  static dynamic _$description(_t$_R1 v) => v.description;
-  static dynamic _arg$description<A, B>(f) => f<A>();
-  static const Field<_t$_R1, dynamic> _f$description = Field(
-    'description',
-    _$description,
-    arg: _arg$description,
-  );
-  static dynamic _$items(_t$_R1 v) => v.items;
-  static dynamic _arg$items<A, B>(f) => f<B>();
-  static const Field<_t$_R1, dynamic> _f$items = Field(
-    'items',
-    _$items,
-    arg: _arg$items,
-  );
-
-  @override
-  final MappableFields<_t$_R1> fields = const {
-    #description: _f$description,
-    #items: _f$items,
-  };
-
-  @override
-  Function get typeFactory =>
-      <A, B>(f) => f<_t$_R1<A, B>>();
-
-  static _t$_R1<A, B> _instantiate<A, B>(DecodingData<_t$_R1> data) {
-    return (description: data.dec(_f$description), items: data.dec(_f$items));
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static _t$_R1<A, B> fromMap<A, B>(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<_t$_R1<A, B>>(map);
-  }
-
-  static _t$_R1<A, B> fromJson<A, B>(String json) {
-    return ensureInitialized().decodeJson<_t$_R1<A, B>>(json);
-  }
 }
 

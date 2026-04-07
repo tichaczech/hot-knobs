@@ -1,4 +1,4 @@
-import 'package:frontend/domain/models/types.dart';
+import '../domain/models/types.dart';
 
 enum Routes implements TranslatableEnum {
   // Auth

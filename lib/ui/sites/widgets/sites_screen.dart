@@ -25,11 +25,11 @@ class _SitesScreenState extends State<SitesScreen> {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(SitesLocalizations.of(context)!.sitesScreenName),
         actions: [
-          IconButton(
-            onPressed: () => context.pushNamed(Routes.siteEdit.name, pathParameters: {'id': 'new'}),
-            icon: const Icon(Icons.add),
-            tooltip: 'Add Site', // AppLocalizations.of(context)!.refresh,
-          ),
+          // IconButton(
+          //   onPressed: () => context.pushNamed(Routes.siteEdit.name, pathParameters: {'id': 'new'}),
+          //   icon: const Icon(Icons.add),
+          //   tooltip: 'Add Site', // AppLocalizations.of(context)!.refresh,
+          // ),
         ],
       ),
       body: ListenableBuilder(

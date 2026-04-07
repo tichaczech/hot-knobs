@@ -1,32 +1,34 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/ui/operators/view_models/operators_viewmodel.dart';
-import 'package:frontend/ui/operators/widgets/operators_screen.dart';
-import 'package:frontend/ui/sites/view_models/sites_viewmodel.dart';
-import 'package:frontend/ui/sites/widgets/sites_screen.dart';
-import 'package:frontend/views/auth/profile.dart';
-import 'package:frontend/views/auth/sign_in.dart';
-import 'package:frontend/views/participants/home.dart';
-import 'package:frontend/views/registrations/home.dart';
+import 'package:frontend/providers/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../ui/auth/view_models/signin_viewmodel.dart';
+import '../ui/auth/widgets/sign_in_screen.dart';
+import '../ui/operators/view_models/operators_viewmodel.dart';
+import '../ui/operators/widgets/operators_screen.dart';
 import '../ui/sites/view_models/site_viewmodel.dart';
+import '../ui/sites/view_models/sites_viewmodel.dart';
 import '../ui/sites/widgets/site_edit_screen.dart';
 import '../ui/sites/widgets/site_view_screen.dart';
+import '../ui/sites/widgets/sites_screen.dart';
 import '../views/events/home.dart';
 import '../views/dashboard/home.dart';
+import '../views/participants/home.dart';
+import '../views/registrations/home.dart';
 import 'routes.dart';
 
 final router = GoRouter(
   debugLogDiagnostics: true,
   errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Error: ${state.error}'))),
   initialLocation: Routes.dashboard.path,
-  refreshListenable: GoRouterRefreshListenable(FirebaseAuth.instance.authStateChanges()),
-  redirect: (BuildContext context, GoRouterState state) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+  // TODO: Implement change notifier for auth state in AuthService and use it here to automatically refresh the router.
+  // refreshListenable: GoRouterRefreshListenable(FirebaseAuth.instance.authStateChanges()),
+  redirect: (BuildContext context, GoRouterState state) async {
+    final authProvider = context.read<AuthProvider>();
+    final currentUser = await authProvider.getCurrentUser();
     if (currentUser == null) {
       return Routes.authSignIn.path;
     } else {
@@ -35,8 +37,15 @@ final router = GoRouter(
   },
   routes: [
     // Auth
-    GoRoute(path: Routes.authProfile.path, name: Routes.authProfile.name, builder: (context, state) => const Profile()),
-    GoRoute(name: Routes.authSignIn.name, path: Routes.authSignIn.path, builder: (context, state) => SignIn()),
+    // GoRoute(path: Routes.authProfile.path, name: Routes.authProfile.name, builder: (context, state) => const Profile()),
+    GoRoute(
+      name: Routes.authSignIn.name,
+      path: Routes.authSignIn.path,
+      builder: (context, state) {
+        final viewModel = SignInViewModel(authProvider: context.read(), userProfileUseCases: context.read());
+        return SignInScreen(viewModel: viewModel);
+      },
+    ),
 
     // Dashboard
     GoRoute(name: Routes.dashboard.name, path: Routes.dashboard.path, builder: (context, state) => const DashboardHome()),

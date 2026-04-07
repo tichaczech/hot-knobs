@@ -27,26 +27,26 @@ class _SiteViewScreenState extends State<SiteViewScreen> {
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
-            // actions: [
-            //   IconButton(
-            //     icon: const Icon(Icons.navigation),
-            //     onPressed: () {
-            //       // Handle navigation action
-            //     },
-            //   ),
-            //   IconButton(
-            //     icon: const Icon(Icons.directions_car),
-            //     onPressed: () {
-            //       // Handle navigation action
-            //     },
-            //   ),
-            //   IconButton(
-            //     icon: const Icon(Icons.directions_boat),
-            //     onPressed: () {
-            //       // Handle navigation action
-            //     },
-            //   ),
-            // ],
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.calendar_month),
+                onPressed: () {
+                  // Handle navigation action
+                },
+              ),
+              //   IconButton(
+              //     icon: const Icon(Icons.directions_car),
+              //     onPressed: () {
+              //       // Handle navigation action
+              //     },
+              //   ),
+              //   IconButton(
+              //     icon: const Icon(Icons.directions_boat),
+              //     onPressed: () {
+              //       // Handle navigation action
+              //     },
+              //   ),
+            ],
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             title: Text(widget.viewModel.nameController.text),
           ),
@@ -57,10 +57,12 @@ class _SiteViewScreenState extends State<SiteViewScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [Flexible(child: ImageCarousel(widget: widget))],
-                    ),
-                    Row(children: [const SizedBox(height: 8)]),
+                    if (widget.viewModel.images != null && widget.viewModel.images!.isNotEmpty) ...[
+                      Row(
+                        children: [Flexible(child: ImageCarousel(imageUrls: widget.viewModel.images!))],
+                      ),
+                      Row(children: [const SizedBox(height: 8)]),
+                    ],
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -266,9 +268,9 @@ class _SiteViewScreenState extends State<SiteViewScreen> {
 }
 
 class ImageCarousel extends StatelessWidget {
-  const ImageCarousel({super.key, required this.widget});
+  const ImageCarousel({super.key, required this.imageUrls});
 
-  final SiteViewScreen widget;
+  final List<String> imageUrls;
 
   @override
   Widget build(BuildContext context) {
@@ -276,16 +278,10 @@ class ImageCarousel extends StatelessWidget {
       borderRadius: BorderRadius.circular(8.0),
       child: CarouselSlider(
         options: CarouselOptions(height: 200.0),
-        items: [1, 2, 3].map((i) {
+        items: imageUrls.map((url) {
           return Builder(
             builder: (BuildContext context) {
-              return Center(
-                child: Image.network(
-                  'https://firebasestorage.googleapis.com/v0/b/hot-knobs-dev.firebasestorage.app/o/sites%2F${widget.viewModel.id}%2Fimages%2F${widget.viewModel.id}-0$i.webp?alt=media&token=a9e47aec-cd38-4f81-bed7-d5d5d813b7fb',
-                  fit: BoxFit.cover,
-                  width: 512,
-                ),
-              );
+              return Center(child: Image.network(url, fit: BoxFit.cover, width: 512));
             },
           );
         }).toList(),

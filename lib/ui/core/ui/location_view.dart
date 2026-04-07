@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/ui/core/ui/map_view.dart';
 
 import '../../../domain/models/types.dart';
+import 'map_view.dart';
 
 class LocationView extends StatelessWidget {
   LocationView({super.key, required Location location}) {

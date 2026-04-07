@@ -1,4 +1,3 @@
-
 // import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter/material.dart';
@@ -9,19 +8,12 @@
 //   @override
 //   bool isSupported(Locale locale) {
 //     super.isSupported(locale);
-//     return const <String>[
-//       'cs',
-//     ].contains(locale.languageCode);
+//     return const <String>['cs'].contains(locale.languageCode);
 //   }
 
 //   @override
 //   Future<FirebaseUILocalizations> load(Locale locale) {
-//     return SynchronousFuture<FirebaseUILocalizations>(
-//       FirebaseUILocalizations(
-//         locale: locale,
-//         labels: const CsLocalizations(),
-//       ),
-//     );
+//     return SynchronousFuture<FirebaseUILocalizations>(FirebaseUILocalizations(locale, const CsLocalizations()));
 //   }
 
 //   @override
@@ -32,8 +24,7 @@
 //   const CsLocalizations();
 
 //   @override
-//   String get accessDisabledErrorText =>
-//       'Přístup k tomuto účtu byl dočasně zakázán';
+//   String get accessDisabledErrorText => 'Přístup k tomuto účtu byl dočasně zakázán';
 
 //   @override
 //   String get arrayLabel => 'pole';
@@ -63,15 +54,13 @@
 //   String get countryCode => 'Code';
 
 //   @override
-//   String get credentialAlreadyInUseErrorText =>
-//       'This provider is associated with a different user account.';
+//   String get credentialAlreadyInUseErrorText => 'This provider is associated with a different user account.';
 
 //   @override
 //   String get deleteAccount => 'Delete account';
 
 //   @override
-//   String get differentMethodsSignInTitleText =>
-//       'Use one of the following methods to sign in';
+//   String get differentMethodsSignInTitleText => 'Use one of the following methods to sign in';
 
 //   @override
 //   String get disable => 'Disable';
@@ -107,8 +96,7 @@
 //   String get forgotPasswordButtonLabel => 'Forgotten password?';
 
 //   @override
-//   String get forgotPasswordHintText =>
-//       'Provide your email and we will send you a link to reset your password';
+//   String get forgotPasswordHintText => 'Provide your email and we will send you a link to reset your password';
 
 //   @override
 //   String get forgotPasswordViewTitle => 'Forgotten password';
@@ -165,8 +153,7 @@
 //   String get passwordIsRequiredErrorText => 'Password is required';
 
 //   @override
-//   String get passwordResetEmailSentText =>
-//       "We've sent you an email with a link to reset your password. Please check your emails.";
+//   String get passwordResetEmailSentText => "We've sent you an email with a link to reset your password. Please check your emails.";
 
 //   @override
 //   String get phoneInputLabel => 'Phone number';
@@ -220,8 +207,7 @@
 //   String get signInWithAppleButtonText => 'Sign in with Apple';
 
 //   @override
-//   String get signInWithEmailLinkSentText =>
-//       "We've sent you an email with a magic link. Check your email and follow the link to sign in";
+//   String get signInWithEmailLinkSentText => "We've sent you an email with a magic link. Check your email and follow the link to sign in";
 
 //   @override
 //   String get signInWithEmailLinkViewTitleText => 'Sign in with magic link';
@@ -242,8 +228,7 @@
 //   String get signOutButtonText => 'Odhlásit';
 
 //   @override
-//   String get smsAutoresolutionFailedError =>
-//       'Failed to resolve SMS code automatically. Please enter your code manually';
+//   String get smsAutoresolutionFailedError => 'Failed to resolve SMS code automatically. Please enter your code manually';
 
 //   @override
 //   String get southInitialLabel => 'S';
@@ -285,8 +270,7 @@
 //   String get westInitialLabel => 'W';
 
 //   @override
-//   String get wrongOrNoPasswordErrorText =>
-//       'The password is invalid or the user does not have a password';
+//   String get wrongOrNoPasswordErrorText => 'The password is invalid or the user does not have a password';
 
 //   @override
 //   String get uploadButtonText => 'Upload file';
@@ -295,12 +279,10 @@
 //   String get verifyEmailTitle => 'Verify your email';
 
 //   @override
-//   String get verificationEmailSentText =>
-//       'A verification email has been sent to your email address. Please check your email and click on the link to verify your email address.';
+//   String get verificationEmailSentText => 'A verification email has been sent to your email address. Please check your email and click on the link to verify your email address.';
 
 //   @override
-//   String get verificationFailedText =>
-//       "We couldn't verify your email address. ";
+//   String get verificationFailedText => "We couldn't verify your email address. ";
 
 //   @override
 //   String get resendVerificationEmailButtonLabel => 'Resend verification email';
@@ -312,8 +294,7 @@
 //   String get emailIsNotVerifiedText => 'Email is not verified';
 
 //   @override
-//   String get waitingForEmailVerificationText =>
-//       'Waiting for email verification';
+//   String get waitingForEmailVerificationText => 'Waiting for email verification';
 
 //   @override
 //   String get dismissButtonLabel => 'Dismiss';
@@ -322,15 +303,13 @@
 //   String get okButtonLabel => 'OK';
 
 //   @override
-//   String get checkEmailHintText =>
-//       'Please check your email and click the link to verify your email address.';
+//   String get checkEmailHintText => 'Please check your email and click the link to verify your email address.';
 
 //   @override
 //   String get doneButtonLabel => 'Done';
 
 //   @override
-//   String get invalidVerificationCodeErrorText =>
-//       'The code you entered is invalid. Please try again.';
+//   String get invalidVerificationCodeErrorText => 'The code you entered is invalid. Please try again.';
 
 //   @override
 //   String get ulinkProviderAlertTitle => 'Unlink provider';
@@ -342,19 +321,16 @@
 //   String get cancelButtonLabel => 'Cancel';
 
 //   @override
-//   String get unlinkProviderAlertMessage =>
-//       'Are you sure you want to unlink this provider?';
+//   String get unlinkProviderAlertMessage => 'Are you sure you want to unlink this provider?';
 
 //   @override
-//   String get weakPasswordErrorText =>
-//       'Password should be at least 6 characters';
+//   String get weakPasswordErrorText => 'Password should be at least 6 characters';
 
 //   @override
 //   String get confirmDeleteAccountAlertTitle => 'Confirm account deletion';
 
 //   @override
-//   String get confirmDeleteAccountAlertMessage =>
-//       'Are you sure you want to delete your account?';
+//   String get confirmDeleteAccountAlertMessage => 'Are you sure you want to delete your account?';
 
 //   @override
 //   String get confirmDeleteAccountButtonLabel => 'Yes, delete';

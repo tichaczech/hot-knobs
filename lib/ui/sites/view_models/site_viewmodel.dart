@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import '../../../data/repositories/site_repository.dart';
+import '../../../data/services/remote/firebase_service.dart';
 import '../../../domain/models/site.dart';
 import '../../../domain/models/types.dart';
 import '../../../utils/command.dart';
@@ -22,16 +24,18 @@ class SiteViewModel extends ChangeNotifier {
   late final bool isEdit;
   late final Command1<void, bool> load;
   late final Command0<void> save;
+  late final SiteRepository _siteRepository;
 
   final TextEditingController descriptionController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
 
-  late final SiteRepository _siteRepository;
+  final _log = Logger('SiteViewModel');
 
   String? _etag;
   // TODO: implement editing for following fields (with controller etc.)
   Location? arrival;
+  List<String>? images;
   int? length;
   Location? location;
   OpeningHours? openingHours;
@@ -51,6 +55,7 @@ class SiteViewModel extends ChangeNotifier {
         arrival = site.arrival;
         nameController.text = site.name;
         descriptionController.text = site.description ?? '';
+        images = site.images;
         length = site.length;
         location = site.location;
         openingHours = site.openingHours;
@@ -60,8 +65,12 @@ class SiteViewModel extends ChangeNotifier {
         notifyListeners();
         return Result.ok(null);
       case Ok():
+        _log.warning('Invalid operation branch! This should not happen.');
+        return Result.error(Exception('Site not found'));
+      case Error(error: final e) when e is DocumentNotFoundException:
         return Result.error(Exception('Site not found'));
       case Error(error: final e):
+        _log.warning('Error fetching Site: $e');
         return Result.error(e);
     }
   }

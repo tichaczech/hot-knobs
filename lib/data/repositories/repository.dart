@@ -18,14 +18,11 @@ abstract class Repository<TEntity extends Entity, TCreateModel extends CreateMod
   Future<Result<TEntity>> create(TCreateModel model) async {
     try {
       final apiResult = await remoteService.create(model);
-      if (apiResult is! Ok) {
-        return apiResult;
-      }
+      final dbResult = await localService.createOrUpdate(apiResult);
 
-      final dbResult = await localService.createOrUpdate((apiResult as Ok<TEntity>).value!);
-      return dbResult;
+      return Result.ok(dbResult);
     } on Exception catch (e) {
-      throw Exception(e);
+      throw Result.error(e);
     }
   }
 
@@ -33,7 +30,9 @@ abstract class Repository<TEntity extends Entity, TCreateModel extends CreateMod
   Future<Result<void>> delete(String id, String etag) async {
     try {
       await remoteService.delete(id, etag);
-      return localService.delete(id);
+      await localService.delete(id);
+
+      return Result.ok(null);
     } on Exception catch (e) {
       return Result.error(e);
     }
@@ -47,31 +46,27 @@ abstract class Repository<TEntity extends Entity, TCreateModel extends CreateMod
 
       if (!forceRefresh) {
         final dbResult = await localService.get(id);
-        if (dbResult is Ok<TEntity> && dbResult.value != null) {
-          if (dbResult.value!.cachedAt.isAfter(DateTime.now().subtract(cacheTTL))) {
-            return dbResult;
+        if (dbResult != null) {
+          if (dbResult.cachedAt.isAfter(DateTime.now().subtract(cacheTTL))) {
+            return Result.ok(dbResult);
           }
 
-          cachedEntity = dbResult.value;
-          etag = dbResult.value?.etag;
+          cachedEntity = dbResult;
+          etag = dbResult.etag;
         }
       }
 
       final apiResult = await remoteService.get(id, onlyActive: true, etag: etag);
-      switch (apiResult) {
-        case Ok():
-          if (apiResult.value != null) {
-            return await localService.createOrUpdate(apiResult.value!);
-          }
-
-          if (cachedEntity == null) {
-            throw Exception('Invalid operation branch! This should not happen.');
-          }
-
-          return Result.ok(cachedEntity);
-        case Error():
-          return Result.error(apiResult.error);
+      if (apiResult != null) {
+        final refreshedEntity = await localService.createOrUpdate(apiResult);
+        return Result.ok(refreshedEntity);
       }
+
+      // if (cachedEntity == null) {
+      //   throw Exception('Invalid operation branch! This should not happen.');
+      // }
+
+      return Result.ok(cachedEntity);
     } on Exception catch (e) {
       return Result.error(e);
     }
@@ -82,12 +77,13 @@ abstract class Repository<TEntity extends Entity, TCreateModel extends CreateMod
     try {
       if (!forceRefresh) {
         final dbResult = await localService.list(query: query);
-        if (dbResult is Ok<List<String>> && dbResult.value?.isNotEmpty == true) {
-          return dbResult;
+        if (dbResult.isNotEmpty == true) {
+          return Result.ok(dbResult);
         }
       }
 
-      return await remoteService.list(query: query);
+      final apiResult = await remoteService.list(query: query);
+      return Result.ok(apiResult);
     } on Exception catch (e) {
       return Result.error(e);
     }
@@ -96,11 +92,9 @@ abstract class Repository<TEntity extends Entity, TCreateModel extends CreateMod
   Future<Result<TEntity>> update(String id, TUpdateModel model, String etag) async {
     try {
       final apiResult = await remoteService.update(id, model, etag);
-      if (apiResult is! Ok) {
-        return apiResult;
-      }
+      final dbResult = await localService.createOrUpdate(apiResult);
 
-      return localService.createOrUpdate((apiResult as Ok<TEntity>).value!);
+      return Result.ok(dbResult);
     } on Exception catch (e) {
       return Result.error(e);
     }

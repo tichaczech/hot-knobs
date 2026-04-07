@@ -1,16 +1,20 @@
 import '../../../domain/models/user_profile.dart';
-import '../../../utils/result.dart';
+import '../../../domain/target_mapping.dart';
 import 'firebase_service.dart';
 
 class UserProfileFirebaseService extends FirebaseService<UserProfile, UserProfileCreateModel, UserProfileUpdateModel> {
-  UserProfileFirebaseService({required super.firestore});
+  UserProfileFirebaseService({required super.firestore}) : super(collectionName: 'userProfiles') {
+    super.mapCreateModel = onMapCreateModel;
+  }
+
+  Map<String, dynamic> onMapCreateModel(UserProfileCreateModel model) {
+    final entity = model.toTargetMap(MapTarget.firestore);
+    entity['deviceRegistrations'] = [entity.remove('deviceRegistration')];
+    entity['id'] = entity.remove('uid');
+
+    return entity;
+  }
 
   @override
-  Result<UserProfile> fromMap(Map<String, dynamic> map) {
-    try {
-      return Result.ok(UserProfileMapper.fromMap(map));
-    } on Exception catch (e) {
-      return Result.error(e);
-    }
-  }
+  UserProfile fromMap(Map<String, dynamic> map) => UserProfileMapper.fromMap(map);
 }

@@ -1,41 +1,76 @@
 {
-    "flutter": {
-        "platforms": {
-            "android": {
-                "default": {
-                    "projectId": "hot-knobs-dev",
-                    "appId": "1:875409099173:android:feeddaa12b20c3bf95404c",
-                    "fileOutput": "android/app/google-services.json"
-                }
-            },
-            "ios": {
-                "default": {
-                    "projectId": "hot-knobs-dev",
-                    "appId": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
-                    "uploadDebugSymbols": false,
-                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
-                }
-            },
-            "macos": {
-                "default": {
-                    "projectId": "hot-knobs-dev",
-                    "appId": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
-                    "uploadDebugSymbols": false,
-                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
-                }
-            },
-            "dart": {
-                "lib/firebase_options.dart": {
-                    "projectId": "hot-knobs-dev",
-                    "configurations": {
-                        "android": "1:875409099173:android:feeddaa12b20c3bf95404c",
-                        "ios": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
-                        "macos": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
-                        "web": "1:875409099173:web:ac25801e49405ca795404c",
-                        "windows": "1:875409099173:web:77d219ca0380301695404c"
-                    }
-                }
-            }
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "hot-knobs-dev",
+          "appId": "1:875409099173:android:feeddaa12b20c3bf95404c",
+          "fileOutput": "android/app/google-services.json"
         }
+      },
+      "ios": {
+        "default": {
+          "projectId": "hot-knobs-dev",
+          "appId": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "hot-knobs-dev",
+          "appId": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "hot-knobs-dev",
+          "configurations": {
+            "android": "1:875409099173:android:feeddaa12b20c3bf95404c",
+            "ios": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
+            "macos": "1:875409099173:ios:9d6f4df9f2dc5fb495404c",
+            "web": "1:875409099173:web:ac25801e49405ca795404c",
+            "windows": "1:875409099173:web:77d219ca0380301695404c"
+          }
+        }
+      }
     }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true,
+    "auth": {
+      "port": 9099
+    },
+    "storage": {
+      "port": 9199
+    },
+    "pubsub": {
+      "port": 8085
+    }
+  }
 }

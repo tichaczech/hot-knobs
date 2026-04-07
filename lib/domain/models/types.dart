@@ -1,7 +1,8 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/widgets.dart';
-import 'package:frontend/ui/core/l10n/core_localizations.dart';
 import 'package:latlong2/latlong.dart';
+
+import '../../ui/core/l10n/core_localizations.dart';
 
 part 'types.mapper.dart';
 
@@ -49,7 +50,7 @@ enum DayOfWeek with TranslatableEnum {
 }
 
 @MappableClass()
-class DeviceRegistration extends DeviceRegistrationMappable {
+class DeviceRegistration with DeviceRegistrationMappable {
   final String? apnsToken;
   final String fcmToken;
   final String name;
@@ -58,11 +59,32 @@ class DeviceRegistration extends DeviceRegistrationMappable {
   DeviceRegistration({this.apnsToken, required this.fcmToken, required this.name, required this.platform});
 }
 
-typedef Location = ({String? description, LatLng? coordinates});
+@MappableClass()
+class Location with LocationMappable {
+  final String? description;
+  final LatLng? coordinates;
 
-typedef OpeningHours = ({List<OpeningHoursItem>? items, String? description});
+  Location({this.description, this.coordinates});
+}
 
-typedef OpeningHoursItem = ({Season? season, DayOfWeek dayOfWeek, int openingTime, int closingTime, String? description});
+@MappableClass()
+class OpeningHours with OpeningHoursMappable {
+  final List<OpeningHoursItem>? items;
+  final String? description;
+
+  OpeningHours({this.items, this.description});
+}
+
+@MappableClass()
+class OpeningHoursItem with OpeningHoursItemMappable {
+  final Season? season;
+  final DayOfWeek dayOfWeek;
+  final int openingTime;
+  final int closingTime;
+  final String? description;
+
+  OpeningHoursItem({this.season, required this.dayOfWeek, required this.openingTime, required this.closingTime, this.description});
+}
 
 @MappableEnum()
 enum Season with TranslatableEnum {

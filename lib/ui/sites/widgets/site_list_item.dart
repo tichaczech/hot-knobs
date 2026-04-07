@@ -12,7 +12,6 @@ class SiteListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isActive = site.active;
 
     return Material(
       color: Colors.transparent,
@@ -24,9 +23,7 @@ class SiteListItem extends StatelessWidget {
             color: colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: colorScheme.outlineVariant.withOpacity(.5)),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 4, offset: const Offset(0, 2)),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 4, offset: const Offset(0, 2))],
           ),
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -50,9 +47,9 @@ class SiteListItem extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        _StatusChip(isActive: isActive),
-                        const SizedBox(width: 4),
-                        _Menu(onEdit: onEdit, onDelete: onDelete),
+                        _StatusChip(label: site.siteType.displayName),
+                        // const SizedBox(width: 4),
+                        // _Menu(onEdit: onEdit, onDelete: onDelete),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -67,7 +64,7 @@ class SiteListItem extends StatelessWidget {
                     // _MetaRow(site: site),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -85,59 +82,65 @@ class _Avatar extends StatelessWidget {
     return CircleAvatar(
       radius: 28,
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(.5),
-      child: Text(
-        site.name.isNotEmpty ? site.name.substring(0, 1).toUpperCase() : '?',
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
+      child: Text(site.name.isNotEmpty ? site.name.substring(0, 1).toUpperCase() : '?', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
     );
   }
 }
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.isActive});
-  final bool isActive;
+  const _StatusChip({required this.label});
+  final String label;
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final (bg, fg, label) = isActive
-        ? (colorScheme.primaryContainer, colorScheme.onPrimaryContainer, 'Active')
-        : (colorScheme.surfaceContainerHighest, colorScheme.onSurfaceVariant, 'Inactive');
+    // final (bg, fg, label) = isActive
+    //     ? (colorScheme.primaryContainer, colorScheme.onPrimaryContainer, 'Active')
+    //     : (colorScheme.surfaceContainerHighest, colorScheme.onSurfaceVariant, 'Inactive');
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: bg,
+        color: colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: colorScheme.outlineVariant.withOpacity(.4)),
       ),
-      child: Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: fg, fontWeight: FontWeight.w600)),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }
 
-class _Menu extends StatelessWidget {
-  const _Menu({this.onEdit, this.onDelete});
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      tooltip: 'Actions',
-      onSelected: (value) {
-        switch (value) {
-          case 'edit':
-            onEdit?.call();
-          case 'delete':
-            onDelete?.call();
-        }
-      },
-      itemBuilder: (context) => [
-        const PopupMenuItem(value: 'edit', child: ListTile(leading: Icon(Icons.edit_outlined), title: Text('Edit'))),
-        const PopupMenuItem(value: 'delete', child: ListTile(leading: Icon(Icons.delete_outline), title: Text('Delete'))),
-      ],
-      child: const Padding(padding: EdgeInsets.all(4.0), child: Icon(Icons.more_vert)),
-    );
-  }
-}
+// class _Menu extends StatelessWidget {
+//   const _Menu({this.onEdit, this.onDelete});
+//   final VoidCallback? onEdit;
+//   final VoidCallback? onDelete;
+//   @override
+//   Widget build(BuildContext context) {
+//     return PopupMenuButton<String>(
+//       tooltip: 'Actions',
+//       onSelected: (value) {
+//         switch (value) {
+//           case 'edit':
+//             onEdit?.call();
+//           case 'delete':
+//             onDelete?.call();
+//         }
+//       },
+//       itemBuilder: (context) => [
+//         const PopupMenuItem(
+//           value: 'edit',
+//           child: ListTile(leading: Icon(Icons.edit_outlined), title: Text('Edit')),
+//         ),
+//         const PopupMenuItem(
+//           value: 'delete',
+//           child: ListTile(leading: Icon(Icons.delete_outline), title: Text('Delete')),
+//         ),
+//       ],
+//       child: const Padding(padding: EdgeInsets.all(4.0), child: Icon(Icons.more_vert)),
+//     );
+//   }
+// }
 
 // class _MetaRow extends StatelessWidget {
 //   const _MetaRow({required this.site});

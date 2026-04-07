@@ -15,6 +15,7 @@ class UserProfileMapper extends SubClassMapperBase<UserProfile> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = UserProfileMapper._());
       EntityMapper.ensureInitialized().addSubMapper(_instance!);
+      DeviceRegistrationMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -41,11 +42,19 @@ class UserProfileMapper extends SubClassMapperBase<UserProfile> {
     'createdBy',
     _$createdBy,
   );
-  static String? _$displayName(UserProfile v) => v.displayName;
+  static List<DeviceRegistration> _$deviceRegistrations(UserProfile v) =>
+      v.deviceRegistrations;
+  static const Field<UserProfile, List<DeviceRegistration>>
+  _f$deviceRegistrations = Field(
+    'deviceRegistrations',
+    _$deviceRegistrations,
+    opt: true,
+    def: const [],
+  );
+  static String _$displayName(UserProfile v) => v.displayName;
   static const Field<UserProfile, String> _f$displayName = Field(
     'displayName',
     _$displayName,
-    opt: true,
   );
   static String _$email(UserProfile v) => v.email;
   static const Field<UserProfile, String> _f$email = Field('email', _$email);
@@ -57,10 +66,10 @@ class UserProfileMapper extends SubClassMapperBase<UserProfile> {
     _$phoneNumber,
     opt: true,
   );
-  static String? _$photoUrl(UserProfile v) => v.photoUrl;
-  static const Field<UserProfile, String> _f$photoUrl = Field(
-    'photoUrl',
-    _$photoUrl,
+  static String? _$photoURL(UserProfile v) => v.photoURL;
+  static const Field<UserProfile, String> _f$photoURL = Field(
+    'photoURL',
+    _$photoURL,
     opt: true,
   );
   static DateTime _$updatedAt(UserProfile v) => v.updatedAt;
@@ -81,11 +90,12 @@ class UserProfileMapper extends SubClassMapperBase<UserProfile> {
     #cachedAt: _f$cachedAt,
     #createdAt: _f$createdAt,
     #createdBy: _f$createdBy,
+    #deviceRegistrations: _f$deviceRegistrations,
     #displayName: _f$displayName,
     #email: _f$email,
     #etag: _f$etag,
     #phoneNumber: _f$phoneNumber,
-    #photoUrl: _f$photoUrl,
+    #photoURL: _f$photoURL,
     #updatedAt: _f$updatedAt,
     #updatedBy: _f$updatedBy,
   };
@@ -98,7 +108,21 @@ class UserProfileMapper extends SubClassMapperBase<UserProfile> {
   late final ClassMapperBase superMapper = EntityMapper.ensureInitialized();
 
   static UserProfile _instantiate(DecodingData data) {
-    throw MapperException.missingConstructor('UserProfile');
+    return UserProfile(
+      id: data.dec(_f$id),
+      active: data.dec(_f$active),
+      cachedAt: data.dec(_f$cachedAt),
+      createdAt: data.dec(_f$createdAt),
+      createdBy: data.dec(_f$createdBy),
+      deviceRegistrations: data.dec(_f$deviceRegistrations),
+      displayName: data.dec(_f$displayName),
+      email: data.dec(_f$email),
+      etag: data.dec(_f$etag),
+      phoneNumber: data.dec(_f$phoneNumber),
+      photoURL: data.dec(_f$photoURL),
+      updatedAt: data.dec(_f$updatedAt),
+      updatedBy: data.dec(_f$updatedBy),
+    );
   }
 
   @override
@@ -114,13 +138,59 @@ class UserProfileMapper extends SubClassMapperBase<UserProfile> {
 }
 
 mixin UserProfileMappable {
-  String toJson();
-  Map<String, dynamic> toMap();
-  UserProfileCopyWith<UserProfile, UserProfile, UserProfile> get copyWith;
+  String toJson() {
+    return UserProfileMapper.ensureInitialized().encodeJson<UserProfile>(
+      this as UserProfile,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return UserProfileMapper.ensureInitialized().encodeMap<UserProfile>(
+      this as UserProfile,
+    );
+  }
+
+  UserProfileCopyWith<UserProfile, UserProfile, UserProfile> get copyWith =>
+      _UserProfileCopyWithImpl<UserProfile, UserProfile>(
+        this as UserProfile,
+        $identity,
+        $identity,
+      );
+  @override
+  String toString() {
+    return UserProfileMapper.ensureInitialized().stringifyValue(
+      this as UserProfile,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return UserProfileMapper.ensureInitialized().equalsValue(
+      this as UserProfile,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return UserProfileMapper.ensureInitialized().hashValue(this as UserProfile);
+  }
+}
+
+extension UserProfileValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, UserProfile, $Out> {
+  UserProfileCopyWith<$R, UserProfile, $Out> get $asUserProfile =>
+      $base.as((v, t, t2) => _UserProfileCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
 abstract class UserProfileCopyWith<$R, $In extends UserProfile, $Out>
     implements EntityCopyWith<$R, $In, $Out> {
+  ListCopyWith<
+    $R,
+    DeviceRegistration,
+    DeviceRegistrationCopyWith<$R, DeviceRegistration, DeviceRegistration>
+  >
+  get deviceRegistrations;
   @override
   $R call({
     String? id,
@@ -128,15 +198,94 @@ abstract class UserProfileCopyWith<$R, $In extends UserProfile, $Out>
     DateTime? cachedAt,
     DateTime? createdAt,
     String? createdBy,
+    List<DeviceRegistration>? deviceRegistrations,
     String? displayName,
     String? email,
     String? etag,
     String? phoneNumber,
-    String? photoUrl,
+    String? photoURL,
     DateTime? updatedAt,
     String? updatedBy,
   });
   UserProfileCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _UserProfileCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, UserProfile, $Out>
+    implements UserProfileCopyWith<$R, UserProfile, $Out> {
+  _UserProfileCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<UserProfile> $mapper =
+      UserProfileMapper.ensureInitialized();
+  @override
+  ListCopyWith<
+    $R,
+    DeviceRegistration,
+    DeviceRegistrationCopyWith<$R, DeviceRegistration, DeviceRegistration>
+  >
+  get deviceRegistrations => ListCopyWith(
+    $value.deviceRegistrations,
+    (v, t) => v.copyWith.$chain(t),
+    (v) => call(deviceRegistrations: v),
+  );
+  @override
+  $R call({
+    String? id,
+    bool? active,
+    DateTime? cachedAt,
+    DateTime? createdAt,
+    String? createdBy,
+    List<DeviceRegistration>? deviceRegistrations,
+    String? displayName,
+    String? email,
+    String? etag,
+    Object? phoneNumber = $none,
+    Object? photoURL = $none,
+    DateTime? updatedAt,
+    String? updatedBy,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (active != null) #active: active,
+      if (cachedAt != null) #cachedAt: cachedAt,
+      if (createdAt != null) #createdAt: createdAt,
+      if (createdBy != null) #createdBy: createdBy,
+      if (deviceRegistrations != null)
+        #deviceRegistrations: deviceRegistrations,
+      if (displayName != null) #displayName: displayName,
+      if (email != null) #email: email,
+      if (etag != null) #etag: etag,
+      if (phoneNumber != $none) #phoneNumber: phoneNumber,
+      if (photoURL != $none) #photoURL: photoURL,
+      if (updatedAt != null) #updatedAt: updatedAt,
+      if (updatedBy != null) #updatedBy: updatedBy,
+    }),
+  );
+  @override
+  UserProfile $make(CopyWithData data) => UserProfile(
+    id: data.get(#id, or: $value.id),
+    active: data.get(#active, or: $value.active),
+    cachedAt: data.get(#cachedAt, or: $value.cachedAt),
+    createdAt: data.get(#createdAt, or: $value.createdAt),
+    createdBy: data.get(#createdBy, or: $value.createdBy),
+    deviceRegistrations: data.get(
+      #deviceRegistrations,
+      or: $value.deviceRegistrations,
+    ),
+    displayName: data.get(#displayName, or: $value.displayName),
+    email: data.get(#email, or: $value.email),
+    etag: data.get(#etag, or: $value.etag),
+    phoneNumber: data.get(#phoneNumber, or: $value.phoneNumber),
+    photoURL: data.get(#photoURL, or: $value.photoURL),
+    updatedAt: data.get(#updatedAt, or: $value.updatedAt),
+    updatedBy: data.get(#updatedBy, or: $value.updatedBy),
+  );
+
+  @override
+  UserProfileCopyWith<$R2, UserProfile, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _UserProfileCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class UserProfileCreateModelMapper
@@ -148,6 +297,7 @@ class UserProfileCreateModelMapper
     if (_instance == null) {
       MapperContainer.globals.use(_instance = UserProfileCreateModelMapper._());
       CreateModelMapper.ensureInitialized();
+      DeviceRegistrationMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -155,11 +305,14 @@ class UserProfileCreateModelMapper
   @override
   final String id = 'UserProfileCreateModel';
 
-  static String? _$displayName(UserProfileCreateModel v) => v.displayName;
+  static DeviceRegistration _$deviceRegistration(UserProfileCreateModel v) =>
+      v.deviceRegistration;
+  static const Field<UserProfileCreateModel, DeviceRegistration>
+  _f$deviceRegistration = Field('deviceRegistration', _$deviceRegistration);
+  static String _$displayName(UserProfileCreateModel v) => v.displayName;
   static const Field<UserProfileCreateModel, String> _f$displayName = Field(
     'displayName',
     _$displayName,
-    opt: true,
   );
   static String _$email(UserProfileCreateModel v) => v.email;
   static const Field<UserProfileCreateModel, String> _f$email = Field(
@@ -172,27 +325,36 @@ class UserProfileCreateModelMapper
     _$phoneNumber,
     opt: true,
   );
-  static String? _$photoUrl(UserProfileCreateModel v) => v.photoUrl;
-  static const Field<UserProfileCreateModel, String> _f$photoUrl = Field(
-    'photoUrl',
-    _$photoUrl,
+  static String? _$photoURL(UserProfileCreateModel v) => v.photoURL;
+  static const Field<UserProfileCreateModel, String> _f$photoURL = Field(
+    'photoURL',
+    _$photoURL,
     opt: true,
+  );
+  static String _$uid(UserProfileCreateModel v) => v.uid;
+  static const Field<UserProfileCreateModel, String> _f$uid = Field(
+    'uid',
+    _$uid,
   );
 
   @override
   final MappableFields<UserProfileCreateModel> fields = const {
+    #deviceRegistration: _f$deviceRegistration,
     #displayName: _f$displayName,
     #email: _f$email,
     #phoneNumber: _f$phoneNumber,
-    #photoUrl: _f$photoUrl,
+    #photoURL: _f$photoURL,
+    #uid: _f$uid,
   };
 
   static UserProfileCreateModel _instantiate(DecodingData data) {
     return UserProfileCreateModel(
+      deviceRegistration: data.dec(_f$deviceRegistration),
       displayName: data.dec(_f$displayName),
       email: data.dec(_f$email),
       phoneNumber: data.dec(_f$phoneNumber),
-      photoUrl: data.dec(_f$photoUrl),
+      photoURL: data.dec(_f$photoURL),
+      uid: data.dec(_f$uid),
     );
   }
 
@@ -266,12 +428,16 @@ abstract class UserProfileCreateModelCopyWith<
   $Out
 >
     implements CreateModelCopyWith<$R, $In, $Out> {
+  DeviceRegistrationCopyWith<$R, DeviceRegistration, DeviceRegistration>
+  get deviceRegistration;
   @override
   $R call({
+    DeviceRegistration? deviceRegistration,
     String? displayName,
     String? email,
     String? phoneNumber,
-    String? photoUrl,
+    String? photoURL,
+    String? uid,
   });
   UserProfileCreateModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
@@ -288,25 +454,39 @@ class _UserProfileCreateModelCopyWithImpl<$R, $Out>
   late final ClassMapperBase<UserProfileCreateModel> $mapper =
       UserProfileCreateModelMapper.ensureInitialized();
   @override
+  DeviceRegistrationCopyWith<$R, DeviceRegistration, DeviceRegistration>
+  get deviceRegistration => $value.deviceRegistration.copyWith.$chain(
+    (v) => call(deviceRegistration: v),
+  );
+  @override
   $R call({
-    Object? displayName = $none,
+    DeviceRegistration? deviceRegistration,
+    String? displayName,
     String? email,
     Object? phoneNumber = $none,
-    Object? photoUrl = $none,
+    Object? photoURL = $none,
+    String? uid,
   }) => $apply(
     FieldCopyWithData({
-      if (displayName != $none) #displayName: displayName,
+      if (deviceRegistration != null) #deviceRegistration: deviceRegistration,
+      if (displayName != null) #displayName: displayName,
       if (email != null) #email: email,
       if (phoneNumber != $none) #phoneNumber: phoneNumber,
-      if (photoUrl != $none) #photoUrl: photoUrl,
+      if (photoURL != $none) #photoURL: photoURL,
+      if (uid != null) #uid: uid,
     }),
   );
   @override
   UserProfileCreateModel $make(CopyWithData data) => UserProfileCreateModel(
+    deviceRegistration: data.get(
+      #deviceRegistration,
+      or: $value.deviceRegistration,
+    ),
     displayName: data.get(#displayName, or: $value.displayName),
     email: data.get(#email, or: $value.email),
     phoneNumber: data.get(#phoneNumber, or: $value.phoneNumber),
-    photoUrl: data.get(#photoUrl, or: $value.photoUrl),
+    photoURL: data.get(#photoURL, or: $value.photoURL),
+    uid: data.get(#uid, or: $value.uid),
   );
 
   @override
@@ -324,6 +504,7 @@ class UserProfileUpdateModelMapper
     if (_instance == null) {
       MapperContainer.globals.use(_instance = UserProfileUpdateModelMapper._());
       UpdateModelMapper.ensureInitialized();
+      DeviceRegistrationMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -331,11 +512,14 @@ class UserProfileUpdateModelMapper
   @override
   final String id = 'UserProfileUpdateModel';
 
-  static String? _$displayName(UserProfileUpdateModel v) => v.displayName;
+  static DeviceRegistration _$deviceRegistration(UserProfileUpdateModel v) =>
+      v.deviceRegistration;
+  static const Field<UserProfileUpdateModel, DeviceRegistration>
+  _f$deviceRegistration = Field('deviceRegistration', _$deviceRegistration);
+  static String _$displayName(UserProfileUpdateModel v) => v.displayName;
   static const Field<UserProfileUpdateModel, String> _f$displayName = Field(
     'displayName',
     _$displayName,
-    opt: true,
   );
   static String _$email(UserProfileUpdateModel v) => v.email;
   static const Field<UserProfileUpdateModel, String> _f$email = Field(
@@ -348,27 +532,29 @@ class UserProfileUpdateModelMapper
     _$phoneNumber,
     opt: true,
   );
-  static String? _$photoUrl(UserProfileUpdateModel v) => v.photoUrl;
-  static const Field<UserProfileUpdateModel, String> _f$photoUrl = Field(
-    'photoUrl',
-    _$photoUrl,
+  static String? _$photoURL(UserProfileUpdateModel v) => v.photoURL;
+  static const Field<UserProfileUpdateModel, String> _f$photoURL = Field(
+    'photoURL',
+    _$photoURL,
     opt: true,
   );
 
   @override
   final MappableFields<UserProfileUpdateModel> fields = const {
+    #deviceRegistration: _f$deviceRegistration,
     #displayName: _f$displayName,
     #email: _f$email,
     #phoneNumber: _f$phoneNumber,
-    #photoUrl: _f$photoUrl,
+    #photoURL: _f$photoURL,
   };
 
   static UserProfileUpdateModel _instantiate(DecodingData data) {
     return UserProfileUpdateModel(
+      deviceRegistration: data.dec(_f$deviceRegistration),
       displayName: data.dec(_f$displayName),
       email: data.dec(_f$email),
       phoneNumber: data.dec(_f$phoneNumber),
-      photoUrl: data.dec(_f$photoUrl),
+      photoURL: data.dec(_f$photoURL),
     );
   }
 
@@ -442,12 +628,15 @@ abstract class UserProfileUpdateModelCopyWith<
   $Out
 >
     implements UpdateModelCopyWith<$R, $In, $Out> {
+  DeviceRegistrationCopyWith<$R, DeviceRegistration, DeviceRegistration>
+  get deviceRegistration;
   @override
   $R call({
+    DeviceRegistration? deviceRegistration,
     String? displayName,
     String? email,
     String? phoneNumber,
-    String? photoUrl,
+    String? photoURL,
   });
   UserProfileUpdateModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
@@ -464,25 +653,36 @@ class _UserProfileUpdateModelCopyWithImpl<$R, $Out>
   late final ClassMapperBase<UserProfileUpdateModel> $mapper =
       UserProfileUpdateModelMapper.ensureInitialized();
   @override
+  DeviceRegistrationCopyWith<$R, DeviceRegistration, DeviceRegistration>
+  get deviceRegistration => $value.deviceRegistration.copyWith.$chain(
+    (v) => call(deviceRegistration: v),
+  );
+  @override
   $R call({
-    Object? displayName = $none,
+    DeviceRegistration? deviceRegistration,
+    String? displayName,
     String? email,
     Object? phoneNumber = $none,
-    Object? photoUrl = $none,
+    Object? photoURL = $none,
   }) => $apply(
     FieldCopyWithData({
-      if (displayName != $none) #displayName: displayName,
+      if (deviceRegistration != null) #deviceRegistration: deviceRegistration,
+      if (displayName != null) #displayName: displayName,
       if (email != null) #email: email,
       if (phoneNumber != $none) #phoneNumber: phoneNumber,
-      if (photoUrl != $none) #photoUrl: photoUrl,
+      if (photoURL != $none) #photoURL: photoURL,
     }),
   );
   @override
   UserProfileUpdateModel $make(CopyWithData data) => UserProfileUpdateModel(
+    deviceRegistration: data.get(
+      #deviceRegistration,
+      or: $value.deviceRegistration,
+    ),
     displayName: data.get(#displayName, or: $value.displayName),
     email: data.get(#email, or: $value.email),
     phoneNumber: data.get(#phoneNumber, or: $value.phoneNumber),
-    photoUrl: data.get(#photoUrl, or: $value.photoUrl),
+    photoURL: data.get(#photoURL, or: $value.photoURL),
   );
 
   @override

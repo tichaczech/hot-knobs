@@ -1,0 +1,20 @@
+{
+    "base_url": "https://dev.hotknobs.app/api",
+    "endpoints": {
+        "users": {
+            "path": "/users",
+            "scopes": [
+                "users.device.read",
+                "users.device.write",
+                "users.profile.read",
+                "users.profile.write"
+            ]
+        },
+        "sites": {
+            "path": "/sites",
+            "scopes": [
+                "sites.read"
+            ]
+        }
+    }
+}
