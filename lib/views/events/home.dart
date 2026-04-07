@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart' hide NavigationDrawer;
+import 'package:flutter/material.dart';
 
 import '../../ui/core/l10n/core_localizations.dart';
-import '../../widgets/navigation_drawer.dart';
 
 class EventsHome extends StatefulWidget {
   const EventsHome({super.key});
@@ -34,7 +33,6 @@ class _EventsHomeState extends State<EventsHome> {
           Center(child: Text("It's rainy here")),
           Center(child: Text("It's sunny here")),
         ]),
-        drawer: const NavigationDrawer(),
       ),
     );
   }

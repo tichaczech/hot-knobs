@@ -1,9 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart' hide NavigationDrawer;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../ui/core/l10n/core_localizations.dart';
-import '../../widgets/navigation_drawer.dart';
 
 class ParticipantsHome extends StatefulWidget {
   const ParticipantsHome({super.key});
@@ -64,7 +63,6 @@ class _ParticipantsHomeState extends State<ParticipantsHome> {
           ),
         ],
       ),
-      drawer: const NavigationDrawer(),
     );
   }
 }

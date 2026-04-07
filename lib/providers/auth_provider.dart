@@ -24,6 +24,17 @@ final class AuthProvider {
 
   final AuthorityType _authorityType = AuthorityType.b2c;
   final List<String> _scopes = ['https://graph.microsoft.com/.default']; // Use '.default' to request all the scopes that are configured for the application in the portal. Add specific scopes here if you don't want to request all of them.
+  // 'https://graph.microsoft.com/user.read',
+  // 'https://graph.microsoft.com/email',
+  // 'https://graph.microsoft.com/offline_access',
+  // 'https://graph.microsoft.com/openid',
+  // 'https://graph.microsoft.com/profile',
+  // 'https://graph.microsoft.us/.default'
+  // 'email',
+  // 'offline_access',
+  // 'openid',
+  // 'profile',
+  // '.default' // Use '.default' to request all the scopes that are configured for the application in the portal.
 
   SingleAccountPca? _publicClientApplication;
 

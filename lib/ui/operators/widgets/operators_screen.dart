@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart' hide NavigationDrawer;
-
-import '../../../widgets/navigation_drawer.dart';
+import 'package:flutter/material.dart';
 import '../../core/l10n/core_localizations.dart';
 import '../../core/ui/error_indicator.dart';
 import '../view_models/operators_viewmodel.dart';
@@ -103,7 +101,6 @@ class _OperatorsScreenState extends State<OperatorsScreen> {
           },
         ),
       ),
-      drawer: const NavigationDrawer(),
     );
   }
 }

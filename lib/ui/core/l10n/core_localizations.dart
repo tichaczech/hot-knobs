@@ -173,6 +173,12 @@ abstract class CoreLocalizations {
   /// **'Upcoming'**
   String get eventsScreenUpcomingTab;
 
+  /// No description provided for @navigationChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get navigationChat;
+
   /// No description provided for @navigationDashboard.
   ///
   /// In en, this message translates to:
@@ -196,6 +202,12 @@ abstract class CoreLocalizations {
   /// In en, this message translates to:
   /// **'Participants'**
   String get navigationParticipants;
+
+  /// No description provided for @navigationProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navigationProfile;
 
   /// No description provided for @navigationRegistrations.
   ///

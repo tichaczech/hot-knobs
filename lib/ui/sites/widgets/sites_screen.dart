@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart' hide NavigationDrawer;
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../routes/routes.dart';
-import '../../../widgets/navigation_drawer.dart';
 import '../../core/l10n/core_localizations.dart';
 import '../../core/ui/error_indicator.dart';
 import '../l10n/sites_localizations.dart';
@@ -114,7 +113,6 @@ class _SitesScreenState extends State<SitesScreen> {
           },
         ),
       ),
-      drawer: const NavigationDrawer(),
     );
   }
 }

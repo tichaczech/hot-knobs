@@ -5,6 +5,9 @@ enum Routes implements TranslatableEnum {
   authProfile(path: '/auth/profile'),
   authSignIn(path: '/auth/sign-in'),
 
+  // Chat
+  chat(path: '/chat'),
+
   // Dashboard
   dashboard(path: '/'),
 
@@ -33,6 +36,7 @@ enum Routes implements TranslatableEnum {
   String get displayName => switch (this) {
     Routes.authProfile => 'Profile',
     Routes.authSignIn => 'Sign In',
+    Routes.chat => 'Chat',
     Routes.dashboard => 'Dashboard',
     Routes.events => 'Events',
     Routes.operators => 'Operators',

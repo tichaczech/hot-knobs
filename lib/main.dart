@@ -60,48 +60,6 @@ void main() async {
   // Logger.root.info('FCM token: $fcmToken');
   // Logger.root.info('Notification settings: $notificationSettings');
 
-  // final publicClientApplication = await SingleAccountPca.create(
-  //   clientId: 'e19c3441-3d78-49ae-917a-43b3c32852ad',
-  //   androidConfig: AndroidConfig(
-  //     configFilePath: 'assets/msal-config.json',
-  //     redirectUri: 'msauth://app.hotknobs.v1/ghCPg%2FgSZi0PrA1gFfvCh09Cs6E%3D'
-  //   ),
-  //   appleConfig: AppleConfig(
-  //     authority: 'https://hotknobsdev.ciamlogin.com/099336d3-2e34-4bf2-be23-a507e86cee6e',
-  //     // Change authority type to 'b2c' for business to customer flow.
-  //     authorityType: AuthorityType.b2c,
-  //     // Change broker if you need. Applicable only for iOS platform.
-  //     broker: Broker.webView,
-  //   ),
-  // );
-
-  // final authResult = await publicClientApplication.acquireToken(
-  //   scopes: <String>[
-  //     'https://graph.microsoft.com/user.read',
-  //     // 'https://graph.microsoft.com/email',
-  //     // 'https://graph.microsoft.com/offline_access',
-  //     // 'https://graph.microsoft.com/openid',
-  //     // 'https://graph.microsoft.com/profile',
-  //     // 'https://graph.microsoft.us/.default'
-  //     // 'email',
-  //     // 'offline_access',
-  //     // 'openid',
-  //     // 'profile',
-  //     // '.default' // Use '.default' to request all the scopes that are configured for the application in the portal.
-  //     // Add other scopes here if required.
-  //   ],
-  //   // UI option for authentication, default is [Prompt.whenRequired]
-  //   prompt: Prompt.whenRequired,
-  //   // Provide 'loginHint' if you have.
-  //   // loginHint: '<Email Id / Username / Unique Identifier>',
-  //   // Optional: Custom authority URL for B2C or different tenant scenarios
-  //   // authority: 'https://hotknobsdev.ciamlogin.com/099336d3-2e34-4bf2-be23-a507e86cee6e',
-  // );
-
-  // log('ID token: ${authResult.idToken}');
-  // log('Access token: ${authResult.accessToken}');
-  // log('Auth result: ${authResult.toJson()}');
-
   final providers = Providers.get(configProvider: configProvider, authProvider: authService, localServiceType: LocalServiceType.dummy, remoteServiceType: RemoteServiceType.firebase);
   runApp(MultiProvider(providers: providers, child: Application()));
 }

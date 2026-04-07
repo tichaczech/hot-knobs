@@ -48,6 +48,9 @@ class CoreLocalizationsEn extends CoreLocalizations {
   String get eventsScreenUpcomingTab => 'Upcoming';
 
   @override
+  String get navigationChat => 'Chat';
+
+  @override
   String get navigationDashboard => 'Dashboard';
 
   @override
@@ -58,6 +61,9 @@ class CoreLocalizationsEn extends CoreLocalizations {
 
   @override
   String get navigationParticipants => 'Participants';
+
+  @override
+  String get navigationProfile => 'Profile';
 
   @override
   String get navigationRegistrations => 'Registrations';

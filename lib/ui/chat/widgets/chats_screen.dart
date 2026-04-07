@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../ui/core/l10n/core_localizations.dart';
+import '../../core/l10n/core_localizations.dart';
 
-class RegistrationsHome extends StatefulWidget {
-  const RegistrationsHome({super.key});
+class ChatsScreen extends StatefulWidget {
+  const ChatsScreen({super.key});
 
   @override
-  State<RegistrationsHome> createState() => _RegistrationsHomeState();
+  State<ChatsScreen> createState() => _ChatsScreenState();
 }
 
-class _RegistrationsHomeState extends State<RegistrationsHome> {
+class _ChatsScreenState extends State<ChatsScreen> {
 
   @override
   Widget build(BuildContext context) {

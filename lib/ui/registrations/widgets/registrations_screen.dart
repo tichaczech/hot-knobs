@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../ui/core/l10n/core_localizations.dart';
+import '../../core/l10n/core_localizations.dart';
 
 class RegistrationsHome extends StatefulWidget {
   const RegistrationsHome({super.key});

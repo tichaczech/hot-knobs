@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../ui/auth/view_models/signin_viewmodel.dart';
 import '../ui/auth/widgets/sign_in_screen.dart';
+import '../ui/chat/widgets/chats_screen.dart';
 import '../ui/operators/view_models/operators_viewmodel.dart';
 import '../ui/operators/widgets/operators_screen.dart';
 import '../ui/sites/view_models/site_viewmodel.dart';
@@ -17,7 +18,8 @@ import '../ui/sites/widgets/sites_screen.dart';
 import '../views/events/home.dart';
 import '../views/dashboard/home.dart';
 import '../views/participants/home.dart';
-import '../views/registrations/home.dart';
+import '../ui/registrations/widgets/registrations_screen.dart';
+import '../widgets/app_shell.dart';
 import 'routes.dart';
 
 final router = GoRouter(
@@ -47,56 +49,65 @@ final router = GoRouter(
       },
     ),
 
-    // Dashboard
-    GoRoute(name: Routes.dashboard.name, path: Routes.dashboard.path, builder: (context, state) => const DashboardHome()),
-
-    // Events
-    GoRoute(name: Routes.events.name, path: Routes.events.path, builder: (context, state) => const EventsHome()),
-
-    // Operators
-    GoRoute(
-      name: Routes.operators.name,
-      path: Routes.operators.path,
-      builder: (context, state) {
-        final viewModel = OperatorsViewModel(operatorRepository: context.read());
-        return OperatorsScreen(viewModel: viewModel);
-      },
-    ),
-
-    // Participants
-    GoRoute(name: Routes.participants.name, path: Routes.participants.path, builder: (context, state) => const ParticipantsHome()),
-
-    // Registrations
-    GoRoute(name: Routes.registrations.name, path: Routes.registrations.path, builder: (context, state) => const RegistrationsHome()),
-
-    // Sites
-    GoRoute(
-      name: Routes.sites.name,
-      path: Routes.sites.path,
-      builder: (context, state) {
-        final viewModel = SitesViewModel(siteRepository: context.read());
-        return SitesScreen(viewModel: viewModel);
-      },
+    // Main shell with NavigationBar
+    ShellRoute(
+      builder: (context, state, child) => AppShell(child: child),
       routes: [
+        // Chat
+        GoRoute(name: Routes.chat.name, path: Routes.chat.path, builder: (context, state) => const ChatsScreen()),
+
+        // Dashboard
+        GoRoute(name: Routes.dashboard.name, path: Routes.dashboard.path, builder: (context, state) => const DashboardHome()),
+
+        // Events
+        GoRoute(name: Routes.events.name, path: Routes.events.path, builder: (context, state) => const EventsHome()),
+
+        // Operators
         GoRoute(
-          name: Routes.siteView.name,
-          path: Routes.siteView.path,
+          name: Routes.operators.name,
+          path: Routes.operators.path,
           builder: (context, state) {
-            final siteId = state.pathParameters['id'];
-            final viewModel = SiteViewModel(siteRepository: context.read(), id: siteId!);
-            viewModel.load.execute(false);
-            return SiteViewScreen(viewModel: viewModel);
+            final viewModel = OperatorsViewModel(operatorRepository: context.read());
+            return OperatorsScreen(viewModel: viewModel);
           },
         ),
+
+        // Participants
+        GoRoute(name: Routes.participants.name, path: Routes.participants.path, builder: (context, state) => const ParticipantsHome()),
+
+        // Registrations
+        GoRoute(name: Routes.registrations.name, path: Routes.registrations.path, builder: (context, state) => const RegistrationsHome()),
+
+        // Sites
         GoRoute(
-          name: Routes.siteEdit.name,
-          path: Routes.siteEdit.path,
+          name: Routes.sites.name,
+          path: Routes.sites.path,
           builder: (context, state) {
-            final siteId = state.pathParameters['id'];
-            final viewModel = SiteViewModel(siteRepository: context.read(), id: siteId!);
-            viewModel.load.execute(false);
-            return SiteEditScreen(viewModel: viewModel);
+            final viewModel = SitesViewModel(siteRepository: context.read());
+            return SitesScreen(viewModel: viewModel);
           },
+          routes: [
+            GoRoute(
+              name: Routes.siteView.name,
+              path: Routes.siteView.path,
+              builder: (context, state) {
+                final siteId = state.pathParameters['id'];
+                final viewModel = SiteViewModel(siteRepository: context.read(), id: siteId!);
+                viewModel.load.execute(false);
+                return SiteViewScreen(viewModel: viewModel);
+              },
+            ),
+            GoRoute(
+              name: Routes.siteEdit.name,
+              path: Routes.siteEdit.path,
+              builder: (context, state) {
+                final siteId = state.pathParameters['id'];
+                final viewModel = SiteViewModel(siteRepository: context.read(), id: siteId!);
+                viewModel.load.execute(false);
+                return SiteEditScreen(viewModel: viewModel);
+              },
+            ),
+          ],
         ),
       ],
     ),
