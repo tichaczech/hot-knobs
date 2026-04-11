@@ -1,0 +1,1586 @@
+openapi: 3.0.1
+info:
+  title: Dummy API (mojeEUC)
+  description: Dummy service (mojeEUC) interface specification.
+  termsOfService: https://cyberfox.cz/
+  contact:
+    name: Petr Tichý
+    url: https://cyberfox.cz/
+    email: petr.tichy@cyberfox.cz
+  license:
+    name: CyberFox Closed Source Commercial License (CFCSCL)
+    url: https://cyberfox.cz/
+  version: v1
+servers:
+  - url: https://cf-meuc-dev.azure-api.net/dummy/v1
+paths:
+  /author:
+    post:
+      tags:
+        - Author
+      summary: Creates a new entity.
+      description: Creates a new entity.
+      operationId: AuthorCreate
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorCreateRequest'
+            example:
+              firstName: string
+              lastName: string
+      responses:
+        '201':
+          description: Author was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+              example:
+                firstName: string
+                lastName: string
+                isActive: true
+                id: string
+        '400':
+          description: Author creation request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Author
+      summary: Retrieves a list of authors based on the specified criteria.
+      description: Retrieves a list of authors based on the specified criteria.
+      operationId: AuthorList
+      parameters:
+        - name: onlyActive
+          in: query
+          description: Limits the resulting list to only active authors.
+          schema:
+            type: boolean
+            default: true
+        - name: if-Modified-Since
+          in: header
+          description: Format - date-time (as date-time in RFC3339). Limits the resulting list to only authors that have been modified since.
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - string
+        '304':
+          description: Any author were modified since requested date.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  '/author/{id}':
+    delete:
+      tags:
+        - Author
+      summary: Deletes entity by ID.
+      description: Deletes entity by ID.
+      operationId: AuthorDelete
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Author was deleted successfully.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Author was not found.
+        '409':
+          description: Author is not active.
+        '412':
+          description: Author was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Author
+      summary: Gets entity by ID.
+      description: Gets entity by ID.
+      operationId: AuthorGet
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: onlyActive
+          in: query
+          description: ''
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+              example:
+                firstName: string
+                lastName: string
+                isActive: true
+                id: string
+        '304':
+          description: Author was not modified.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Author was not found.
+        '409':
+          description: Author is not active (if requested onlyActive record).
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    put:
+      tags:
+        - Author
+      summary: Returns a list of entities.
+      description: Returns a list of entities.
+      operationId: AuthorUpdate
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorUpdateRequest'
+            example:
+              firstName: string
+              lastName: string
+      responses:
+        '200':
+          description: Author was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+              example:
+                firstName: string
+                lastName: string
+                isActive: true
+                id: string
+        '400':
+          description: Author update request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Author was not found.
+        '409':
+          description: Author is not active.
+        '412':
+          description: Author was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  /book:
+    post:
+      tags:
+        - Book
+      summary: Creates a new entity.
+      description: Creates a new entity.
+      operationId: BookCreate
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCreateRequest'
+            example:
+              authorId: string
+              name: string
+              originalPrice: 0
+              publishYear: 0
+      responses:
+        '201':
+          description: Book was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+              example:
+                authorId: string
+                name: string
+                originalPrice: 0
+                publishYear: 0
+                isActive: true
+                id: string
+                purchasedOn: string
+        '400':
+          description: Book creation request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '410':
+          description: "One of the following problems occurred: <br />\r\n            - Author does not exists or is not active <br />"
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Book
+      summary: Retrieves a list of books based on the specified criteria.
+      description: Retrieves a list of books based on the specified criteria.
+      operationId: BookList
+      parameters:
+        - name: onlyActive
+          in: query
+          description: Limits the resulting list to only active books.
+          schema:
+            type: boolean
+            default: true
+        - name: authorId
+          in: query
+          description: The ID of the author to filter the books by.
+          schema:
+            type: string
+        - name: if-Modified-Since
+          in: header
+          description: Format - date-time (as date-time in RFC3339). Limits the resulting list to only books that have been modified since.
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - string
+        '304':
+          description: Any book were modified since requested date.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  '/book/{id}':
+    delete:
+      tags:
+        - Book
+      summary: Deletes entity by ID.
+      description: Deletes entity by ID.
+      operationId: BookDelete
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Book was deleted successfully.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Book was not found.
+        '409':
+          description: Book is not active.
+        '412':
+          description: Book was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Book
+      summary: Gets entity by ID.
+      description: Gets entity by ID.
+      operationId: BookGet
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: onlyActive
+          in: query
+          description: ''
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Author was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+              example:
+                authorId: string
+                name: string
+                originalPrice: 0
+                publishYear: 0
+                isActive: true
+                id: string
+                purchasedOn: string
+        '304':
+          description: Book was not modified.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Book was not found.
+        '409':
+          description: Book is not active (if requested onlyActive record).
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    put:
+      tags:
+        - Book
+      summary: Returns a list of entities.
+      description: Returns a list of entities.
+      operationId: BookUpdate
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookUpdateRequest'
+            example:
+              authorId: string
+              name: string
+              originalPrice: 0
+              publishYear: 0
+      responses:
+        '200':
+          description: Book was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+              example:
+                authorId: string
+                name: string
+                originalPrice: 0
+                publishYear: 0
+                isActive: true
+                id: string
+                purchasedOn: string
+        '400':
+          description: Book update request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Book was not found.
+        '409':
+          description: Book is not active.
+        '410':
+          description: "One of the following problems occurred: <br />\r\n            - Author does not exists or is not active <br />"
+        '412':
+          description: Book was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  '/loan/{reservationId}':
+    post:
+      tags:
+        - Loan
+      summary: Creates a new loan for the specified reservation ID.
+      description: Creates a new loan for the specified reservation ID.
+      operationId: LoanCreateFromReservation
+      parameters:
+        - name: reservationId
+          in: path
+          description: The ID of the reservation for which to create a loan.
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Loan was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponse'
+              example:
+                bookId: string
+                shouldReturnOn: string
+                returnedOn: string
+                patronId: string
+                startedOn: string
+                isActive: true
+                id: string
+                reservationId: string
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '410':
+          description: "One of the following problems occurred: <br />\r\n            - Book does not exists or is not active <br />\r\n            - Patron does not exists or is not active <br />\r\n            - Reservation does not exists or is not active <br />"
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  /loan:
+    post:
+      tags:
+        - Loan
+      summary: Creates a new entity.
+      description: Creates a new entity.
+      operationId: LoanCreate
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanCreateRequest'
+            example:
+              bookId: string
+              shouldReturnOn: string
+              returnedOn: string
+              patronId: string
+              startedOn: string
+      responses:
+        '201':
+          description: Loan was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponse'
+              example:
+                bookId: string
+                shouldReturnOn: string
+                returnedOn: string
+                patronId: string
+                startedOn: string
+                isActive: true
+                id: string
+                reservationId: string
+        '400':
+          description: Loan creation request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '409':
+          description: Book is already reserved for requested period.
+        '410':
+          description: "One of the following problems occurred: <br />\r\n            - Book does not exists or is not active <br />\r\n            - Patron does not exists or is not active <br />"
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Loan
+      summary: Retrieves a list of loans based on the specified criteria.
+      description: Retrieves a list of loans based on the specified criteria.
+      operationId: LoanList
+      parameters:
+        - name: onlyActive
+          in: query
+          description: Limits the resulting list to only active loans.
+          schema:
+            type: boolean
+            default: true
+        - name: bookId
+          in: query
+          description: The ID of the book to filter by.
+          schema:
+            type: string
+        - name: patronId
+          in: query
+          description: The ID of the patron to filter by.
+          schema:
+            type: string
+        - name: startedOn
+          in: query
+          description: Format - date-time (as date-time in RFC3339). The date on which the book was loaned.
+          schema:
+            type: string
+            format: date-time
+        - name: shouldReturnOn
+          in: query
+          description: Format - date-time (as date-time in RFC3339). The date on which the book should be returned.
+          schema:
+            type: string
+            format: date-time
+        - name: loanInProgressOn
+          in: query
+          description: Format - date-time (as date-time in RFC3339). The date on which the loan is/was in progress.
+          schema:
+            type: string
+            format: date-time
+        - name: onDue
+          in: query
+          description: Whether the loan is due.
+          schema:
+            type: boolean
+        - name: if-Modified-Since
+          in: header
+          description: Format - date-time (as date-time in RFC3339). Limits the resulting list to only loans that have been modified since.
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - string
+        '304':
+          description: Any loan were modified since requested date.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  '/loan/{id}':
+    delete:
+      tags:
+        - Loan
+      summary: Deletes entity by ID.
+      description: Deletes entity by ID.
+      operationId: LoanDelete
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Loan was deleted successfully.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Loan was not found.
+        '412':
+          description: Loan was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Loan
+      summary: Gets entity by ID.
+      description: Gets entity by ID.
+      operationId: LoanGet
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: onlyActive
+          in: query
+          description: ''
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Loan was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponse'
+              example:
+                bookId: string
+                shouldReturnOn: string
+                returnedOn: string
+                patronId: string
+                startedOn: string
+                isActive: true
+                id: string
+                reservationId: string
+        '304':
+          description: Loan was not modified.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Loan was not found.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    put:
+      tags:
+        - Loan
+      summary: Returns a list of entities.
+      description: Returns a list of entities.
+      operationId: LoanUpdate
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanUpdateRequest'
+            example:
+              shouldReturnOn: string
+              returnedOn: string
+      responses:
+        '200':
+          description: Loan was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponse'
+              example:
+                bookId: string
+                shouldReturnOn: string
+                returnedOn: string
+                patronId: string
+                startedOn: string
+                isActive: true
+                id: string
+                reservationId: string
+        '400':
+          description: Loan update request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Loan was not found.
+        '409':
+          description: Loan is not active.
+        '412':
+          description: Loan was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  /patron:
+    post:
+      tags:
+        - Patron
+      summary: Creates a new entity.
+      description: Creates a new entity.
+      operationId: PatronCreate
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatronCreateRequest'
+            example:
+              firstName: string
+              lastName: string
+              dateOfBirth: string
+      responses:
+        '201':
+          description: Patron was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatronResponse'
+              example:
+                firstName: string
+                lastName: string
+                dateOfBirth: string
+                isActive: true
+                id: string
+        '400':
+          description: Patron creation request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Patron
+      summary: Lists all patrons.
+      description: Lists all patrons.
+      operationId: PatronList
+      parameters:
+        - name: onlyActive
+          in: query
+          description: ''
+          schema:
+            type: boolean
+            default: true
+        - name: query
+          in: query
+          description: ''
+          schema:
+            type: string
+        - name: if-Modified-Since
+          in: header
+          description: Format - date-time (as date-time in RFC3339).
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - string
+        '304':
+          description: Any patron were modified since requested date.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  '/patron/{id}':
+    delete:
+      tags:
+        - Patron
+      summary: Deletes entity by ID.
+      description: Deletes entity by ID.
+      operationId: PatronDelete
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Patron was deleted successfully.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Patron was not found.
+        '409':
+          description: Patron is not active.
+        '412':
+          description: Patron was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Patron
+      summary: Gets entity by ID.
+      description: Gets entity by ID.
+      operationId: PatronGet
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: onlyActive
+          in: query
+          description: ''
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Patron was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatronResponse'
+              example:
+                firstName: string
+                lastName: string
+                dateOfBirth: string
+                isActive: true
+                id: string
+        '304':
+          description: Patron was not modified.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Patron was not found.
+        '409':
+          description: Patron is not active.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    put:
+      tags:
+        - Patron
+      summary: Returns a list of entities.
+      description: Returns a list of entities.
+      operationId: PatronUpdate
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatronUpdateRequest'
+            example:
+              firstName: string
+              lastName: string
+              dateOfBirth: string
+      responses:
+        '200':
+          description: Patron was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatronResponse'
+              example:
+                firstName: string
+                lastName: string
+                dateOfBirth: string
+                isActive: true
+                id: string
+        '400':
+          description: Patron update request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Patron was not found.
+        '409':
+          description: Patron is not active.
+        '412':
+          description: Patron was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  /reservation:
+    post:
+      tags:
+        - Reservation
+      summary: Creates a new reservation.
+      description: Creates a new reservation.
+      operationId: ReservationCreate
+      requestBody:
+        description: The <see cref="T:mojeEUC.ApplicationServices.Dummy.Contracts.ReservationCreateRequest">reservation creation request</see>.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationCreateRequest'
+            example:
+              bookId: string
+              endsOn: string
+              patronId: string
+              startsOn: string
+      responses:
+        '202':
+          description: Reservation was requested and will be created in background.
+        '400':
+          description: Reservation creation request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '410':
+          description: "One of the following problems occurred: <br />\r\n            - Book does not exists or is not active <br />\r\n            - Patron does not exists or is not active <br />"
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Reservation
+      summary: Retrieves a list of reservations based on the specified criteria.
+      description: Retrieves a list of reservations based on the specified criteria.
+      operationId: ReservationList
+      parameters:
+        - name: onlyActive
+          in: query
+          description: Limits the resulting list to only active reservations.
+          schema:
+            type: boolean
+            default: true
+        - name: bookId
+          in: query
+          description: The ID of the book to filter by.
+          schema:
+            type: string
+        - name: patronId
+          in: query
+          description: The ID of the patron to filter by.
+          schema:
+            type: string
+        - name: startsOn
+          in: query
+          description: Format - date-time (as date-time in RFC3339). The date on which the reservation starts.
+          schema:
+            type: string
+            format: date-time
+        - name: endsOn
+          in: query
+          description: Format - date-time (as date-time in RFC3339). The date on which the reservation ends.
+          schema:
+            type: string
+            format: date-time
+        - name: reservationInProgressOn
+          in: query
+          description: Format - date-time (as date-time in RFC3339). The date on which the reservation is in progress.
+          schema:
+            type: string
+            format: date-time
+        - name: if-Modified-Since
+          in: header
+          description: Format - date-time (as date-time in RFC3339). Limits the resulting list to only reservations that have been modified since.
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - string
+        '304':
+          description: Any reservation were modified since requested date.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+  '/reservation/{id}':
+    delete:
+      tags:
+        - Reservation
+      summary: Deletes the reservation with the specified ID.
+      description: Call this method to archive a reservation.
+      operationId: ReservationDelete
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the reservation to delete.
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Reservation was deleted successfully.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Reservation was not found.
+        '409':
+          description: Reservation is not active.
+        '412':
+          description: Reservation was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    get:
+      tags:
+        - Reservation
+      summary: Retrieves a reservation by its ID.
+      description: Retrieves a reservation by its ID.
+      operationId: ReservationGet
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the reservation to retrieve.
+          required: true
+          schema:
+            type: string
+        - name: onlyActive
+          in: query
+          description: Indicates whether to retrieve only active reservation (default is true).
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Reservation was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+              example:
+                bookId: string
+                endsOn: string
+                patronId: string
+                startsOn: string
+                isActive: true
+                id: string
+        '304':
+          description: Reservation was not modified.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Reservation was not found.
+        '409':
+          description: Reservation is not active.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+    put:
+      tags:
+        - Reservation
+      summary: Updates an reservation.
+      description: Updates an reservation.
+      operationId: ReservationUpdate
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the reservation to update.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The <see cref="T:mojeEUC.ApplicationServices.Dummy.Contracts.ReservationUpdateRequest">reservation update request</see>.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationUpdateRequest'
+            example:
+              endsOn: string
+              startsOn: string
+      responses:
+        '200':
+          description: Reservation was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+              example:
+                bookId: string
+                endsOn: string
+                patronId: string
+                startsOn: string
+                isActive: true
+                id: string
+        '400':
+          description: Reservation update request is invalid.
+        '401':
+          description: There was en error authentication user.
+        '403':
+          description: User is not authorized to perform requested operation.
+        '404':
+          description: Reservation was not found.
+        '409':
+          description: Reservation is not active.
+        '412':
+          description: Reservation was modified by another request.
+        '500':
+          description: There was a general error during request processing.
+        '501':
+          description: Requested operation is not implemented.
+components:
+  schemas:
+    AuthorCreateRequest:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          minLength: 1
+          type: string
+          description: The first name of the author.
+        lastName:
+          minLength: 1
+          type: string
+          description: The last name of the author.
+      additionalProperties: false
+      description: Request to create an author.
+    AuthorResponse:
+      required:
+        - firstName
+        - id
+        - isActive
+        - lastName
+      type: object
+      properties:
+        firstName:
+          minLength: 1
+          type: string
+          description: The first name of the author.
+        lastName:
+          minLength: 1
+          type: string
+          description: The last name of the author.
+        isActive:
+          type: boolean
+          description: Indicates whether the author is active (or soft-deleted).
+        id:
+          minLength: 1
+          type: string
+          description: Author ID.
+      additionalProperties: false
+      description: General response to author requests.
+    AuthorUpdateRequest:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          minLength: 1
+          type: string
+          description: The first name of the author.
+        lastName:
+          minLength: 1
+          type: string
+          description: The last name of the author.
+      additionalProperties: false
+      description: Request to update an author.
+    BookCreateRequest:
+      required:
+        - authorId
+        - name
+        - originalPrice
+        - publishYear
+      type: object
+      properties:
+        authorId:
+          minLength: 1
+          type: string
+          description: Tha author of the book
+        name:
+          minLength: 1
+          type: string
+          description: The Name of the book
+        originalPrice:
+          type: number
+          description: The original price of the book.
+          format: double
+        publishYear:
+          type: integer
+          description: The year the book was published.
+          format: int32
+      additionalProperties: false
+      description: Request to create a book.
+    BookResponse:
+      required:
+        - authorId
+        - id
+        - isActive
+        - name
+        - originalPrice
+        - publishYear
+        - purchasedOn
+      type: object
+      properties:
+        authorId:
+          minLength: 1
+          type: string
+          description: Tha author of the book
+        name:
+          minLength: 1
+          type: string
+          description: The Name of the book
+        originalPrice:
+          type: number
+          description: The original price of the book.
+          format: double
+        publishYear:
+          type: integer
+          description: The year the book was published.
+          format: int32
+        isActive:
+          type: boolean
+          description: Indicates whether the book is active (or soft-deleted).
+        id:
+          minLength: 1
+          type: string
+          description: Book ID.
+        purchasedOn:
+          type: string
+          description: The date the book was purchased.
+          format: date-time
+      additionalProperties: false
+      description: General response to book requests.
+    BookUpdateRequest:
+      required:
+        - authorId
+        - name
+        - originalPrice
+        - publishYear
+      type: object
+      properties:
+        authorId:
+          minLength: 1
+          type: string
+          description: Tha author of the book
+        name:
+          minLength: 1
+          type: string
+          description: The Name of the book
+        originalPrice:
+          type: number
+          description: The original price of the book.
+          format: double
+        publishYear:
+          type: integer
+          description: The year the book was published.
+          format: int32
+      additionalProperties: false
+      description: Request to update a book.
+    LoanCreateRequest:
+      required:
+        - bookId
+        - patronId
+        - shouldReturnOn
+        - startedOn
+      type: object
+      properties:
+        bookId:
+          minLength: 1
+          type: string
+          description: The book that is loaned.
+        shouldReturnOn:
+          type: string
+          description: The date and time when the loan ends.
+          format: date-time
+        returnedOn:
+          type: string
+          description: The date and time when the book was returned.
+          format: date-time
+          nullable: true
+        patronId:
+          minLength: 1
+          type: string
+          description: The patron of this loan.
+        startedOn:
+          type: string
+          description: The date and time when the book was loaned.
+          format: date-time
+      additionalProperties: false
+      description: Request to create a loan.
+    LoanResponse:
+      required:
+        - bookId
+        - id
+        - isActive
+        - patronId
+        - shouldReturnOn
+        - startedOn
+      type: object
+      properties:
+        bookId:
+          minLength: 1
+          type: string
+          description: The book that is loaned.
+        shouldReturnOn:
+          type: string
+          description: The date and time when the loan ends.
+          format: date-time
+        returnedOn:
+          type: string
+          description: The date and time when the book was returned.
+          format: date-time
+          nullable: true
+        patronId:
+          minLength: 1
+          type: string
+          description: The patron of this loan.
+        startedOn:
+          type: string
+          description: The date and time when the book was loaned.
+          format: date-time
+        isActive:
+          type: boolean
+          description: Indicates whether the loan is active (or soft-deleted).
+        id:
+          minLength: 1
+          type: string
+          description: Loan ID.
+        reservationId:
+          type: string
+          description: Reservation associated with this loan.
+          nullable: true
+      additionalProperties: false
+      description: Represents a response to a loan contract.
+    LoanUpdateRequest:
+      required:
+        - shouldReturnOn
+      type: object
+      properties:
+        shouldReturnOn:
+          type: string
+          description: The date and time when the loan ends.
+          format: date-time
+        returnedOn:
+          type: string
+          description: The date and time when the book was returned.
+          format: date-time
+          nullable: true
+      additionalProperties: false
+      description: Request to update a reservation.
+    PatronCreateRequest:
+      required:
+        - dateOfBirth
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          minLength: 1
+          type: string
+          description: The first name of the patron.
+        lastName:
+          minLength: 1
+          type: string
+          description: The last name of the patron.
+        dateOfBirth:
+          type: string
+          description: Date of birth of the patron.
+          format: date-time
+      additionalProperties: false
+      description: Request to create a patron.
+    PatronResponse:
+      required:
+        - dateOfBirth
+        - firstName
+        - id
+        - isActive
+        - lastName
+      type: object
+      properties:
+        firstName:
+          minLength: 1
+          type: string
+          description: The first name of the patron.
+        lastName:
+          minLength: 1
+          type: string
+          description: The last name of the patron.
+        dateOfBirth:
+          type: string
+          description: Date of birth of the patron.
+          format: date-time
+        isActive:
+          type: boolean
+          description: Indicates whether the patron is active (or soft-deleted).
+        id:
+          minLength: 1
+          type: string
+          description: Patron ID.
+      additionalProperties: false
+      description: General response to patron requests.
+    PatronUpdateRequest:
+      required:
+        - dateOfBirth
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          minLength: 1
+          type: string
+          description: The first name of the patron.
+        lastName:
+          minLength: 1
+          type: string
+          description: The last name of the patron.
+        dateOfBirth:
+          type: string
+          description: Date of birth of the patron.
+          format: date-time
+      additionalProperties: false
+      description: Request to update a patron.
+    ReservationCreateRequest:
+      required:
+        - bookId
+        - endsOn
+        - patronId
+        - startsOn
+      type: object
+      properties:
+        bookId:
+          minLength: 1
+          type: string
+          description: The book that is reserved.
+        endsOn:
+          type: string
+          description: The date and time when the reservation ends.
+          format: date-time
+        patronId:
+          minLength: 1
+          type: string
+          description: The patron of this reservation.
+        startsOn:
+          type: string
+          description: The date and time when the reservation starts.
+          format: date-time
+      additionalProperties: false
+      description: Request to create a reservation.
+    ReservationResponse:
+      required:
+        - bookId
+        - endsOn
+        - id
+        - isActive
+        - patronId
+        - startsOn
+      type: object
+      properties:
+        bookId:
+          minLength: 1
+          type: string
+          description: The book that is reserved.
+        endsOn:
+          type: string
+          description: The date and time when the reservation ends.
+          format: date-time
+        patronId:
+          minLength: 1
+          type: string
+          description: The patron of this reservation.
+        startsOn:
+          type: string
+          description: The date and time when the reservation starts.
+          format: date-time
+        isActive:
+          type: boolean
+          description: Indicates whether the reservation is active (or soft-deleted).
+        id:
+          minLength: 1
+          type: string
+          description: Loan ID.
+      additionalProperties: false
+      description: Represents a response to a reservation contract.
+    ReservationUpdateRequest:
+      required:
+        - endsOn
+        - startsOn
+      type: object
+      properties:
+        endsOn:
+          type: string
+          description: The date and time when the reservation ends.
+          format: date-time
+        startsOn:
+          type: string
+          description: The date and time when the reservation starts.
+          format: date-time
+      additionalProperties: false
+      description: Request to update a reservation.
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]

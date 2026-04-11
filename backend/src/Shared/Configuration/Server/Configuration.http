@@ -1,0 +1,68 @@
+@client_id = meuc.frontendClient
+@client_secret = secretForFrontendClient
+
+### Get FE Token
+POST {{sso}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password
+    &username={{user}}
+    &password={{pass}}
+    &client_id=meuc.frontendTest
+    &client_secret=secretForFrontendTest
+    &scope=openid profile
+
+> {% client.global.set("user_access_token", response.body.access_token); %}
+
+### Get token by urn:ietf:params:oauth:grant-type:jwt-bearer
+POST {{sso}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}&client_secret={{client_secret}}&assertion={{user_access_token}}&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+
+> {% client.global.set("access_token", response.body.access_token);
+    client.global.set("refresh_token", response.body.refresh_token); %}
+
+### Refresh token
+POST {{sso}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}&client_secret={{client_secret}}&grant_type=refresh_token&refresh_token={{refresh_token}}
+
+### List all configurations
+GET {{shared-configuration-api}}/v1/items HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Configurations
+GET {{shared-configuration-api}}/v1/items/af76f66e-5f36-4b49-98c3-a6d86d67d447 HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### List configuration by name
+GET {{shared-configuration-api}}/v1/test HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Get configuration by name
+GET {{shared-configuration-api}}/v1/test/jedna HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Upsert configuration by name
+PUT {{shared-configuration-api}}/v1/test/jedna HTTP/1.1
+Accept: application/json
+If-Unmodified-Since: Tue, 10 Sep 2024 12:29:20 GMT
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+    "data":
+    {
+        "pole": [1,3]
+    }
+}

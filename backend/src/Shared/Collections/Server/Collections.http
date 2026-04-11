@@ -1,0 +1,336 @@
+@client_id = meuc.frontendClient
+@client_secret = secretForFrontendClient
+
+
+### Get FE Token
+POST {{sso}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password
+    &username={{user}}
+    &password={{pass}}
+    &client_id=meuc.frontendTest
+    &client_secret=secretForFrontendTest
+    &scope=openid profile
+
+> {% client.global.set("user_access_token", response.body.access_token); %}
+
+### Get token by urn:ietf:params:oauth:grant-type:jwt-bearer
+POST {{sso}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}&client_secret={{client_secret}}&assertion={{user_access_token}}&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+
+> {% client.global.set("access_token", response.body.access_token);
+    client.global.set("refresh_token", response.body.refresh_token); %}
+
+### Get token by client_credentials
+POST {{sso}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}&client_secret={{client_secret}}&grant_type=client_credentials
+
+> {% client.global.set("access_token", response.body.access_token); %}
+
+### Refresh token
+POST {{sso}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}&client_secret={{client_secret}}&grant_type=refresh_token&refresh_token={{refresh_token}}
+
+
+### Create Insurance
+POST {{shared-collections-api}}/v1/insuranceCompany
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "code": "111",
+    "data": {
+        "shortName": "VZP"
+    },
+    "name": "Všeobecná zdravotní pojišťovna"
+}
+
+### Insurance List
+GET {{shared-collections-api}}/v1/insurancecompany
+Accept: application/json
+Accept-Encoding: gzip,deflate
+Accept-Language: cs-CZ,cz;q=0.9,en;q
+Authorization: Bearer {{access_token}}
+Connection: keep-alive
+Content-Type: application/json
+Origin: https://www.mojeuc.cz
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0
+
+#Authorization: Bearer {{access_token}}
+### Insurance
+GET {{shared-collections-api}}/v1/insurancecompany/205
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Facility List
+GET {{shared-collections-api}}/v1/facility
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Facility Brno
+GET {{shared-collections-api}}/v1/facility/1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Facility Plzen
+GET {{shared-collections-api}}/v1/facility/9
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Facility Borislavka
+GET {{shared-collections-api}}/v1/facility/10
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Lekarna
+GET {{shared-collections-api}}/v1/facility/35
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Laboratory List
+GET {{shared-collections-api}}/v1/laboratory
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Laboratory Odběrové místo Bílina
+GET {{shared-collections-api}}/v1/laboratory/67
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Facility Laboratory
+GET {{shared-collections-api}}/v1/laboratory
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Facility Laboratory
+GET {{shared-collections-api}}/v1/laboratory/69
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+
+### Segment List
+GET {{shared-collections-api}}/v1/segment
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Segment by code
+GET {{shared-collections-api}}/v1/segment/3
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Segment by id
+GET {{shared-collections-api}}/v1/0d5b9b80-e6d9-4652-b115-47e50f8fdbb2
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Delete Segment by id
+DELETE {{shared-collections-api}}/v1/7df9cf07-4c36-4cc0-99ba-f5df8b4aebce
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Benefit List
+GET {{shared-collections-api}}/v1/benefit
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Benefit
+GET {{shared-collections-api}}/v1/benefit/4
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+
+### Consent List
+GET {{shared-collections-api}}/v1/consent
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Consent
+GET {{shared-collections-api}}/v1/consent/VOP
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Building List
+GET {{shared-collections-api}}/v1/building
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Building
+GET {{shared-collections-api}}/v1/building/146
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Location List
+GET {{shared-collections-api}}/v1/location
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Location
+GET {{shared-collections-api}}/v1/location/74
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### FAQ List
+GET {{shared-collections-api}}/v1/faq
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### FAQ 5
+GET {{shared-collections-api}}/v1/faq/5
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### FAQ List
+GET {{shared-collections-api}}/v1/faq
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### OfflineSpecialization List
+GET {{shared-collections-api}}/v1/offlineSpecialization
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### OfflineSpecialization
+GET {{shared-collections-api}}/v1/offlineSpecialization/98
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### OnlineSpecialization List
+GET {{shared-collections-api}}/v1/onlineSpecialization
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### OnlineSpecialization
+GET {{shared-collections-api}}/v1/onlineSpecialization/163217
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### ConvenientSpecialization List
+GET {{shared-collections-api}}/v1/convenientSpecialization
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### ConvenientSpecialization
+GET {{shared-collections-api}}/v1/convenientSpecialization/163216
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Country List
+GET {{shared-collections-api}}/v1/country
+Accept: application/json
+Authorization: Bearer {{access_token}}
+### Country cz
+GET {{shared-collections-api}}/v1/country/ZW
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### List test
+GET {{shared-collections-api}}/v1/test
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### GET test
+GET {{shared-collections-api}}/v1/test/tri
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### PUT test
+PUT {{shared-collections-api}}/v1/test/tri HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "data": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+    },
+    "name": "string"
+}
+
+### DELETE test
+DELETE {{shared-collections-api}}/v1/test/dva HTTP/1.1
+Authorization: Bearer {{access_token}}
+If-Unmodified-Since: Tue, 10 Sep 2024 12:05:01 GMT
+
+### Location List
+GET {{shared-collections-api}}/v1/location
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Location Get
+GET {{shared-collections-api}}/v1/location/48
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Medicalc List
+GET {{shared-collections-api}}/v1/medicalc
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Medicalc Get
+GET {{shared-collections-api}}/v1/medicalc/1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Medicalc Workplace List
+GET {{shared-collections-api}}/v1/medicalcWorkplace
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Medicalc Workplace Get
+GET {{shared-collections-api}}/v1/medicalcWorkplace/876
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Measurement Type List
+GET {{shared-collections-api}}/v1/measurementType
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Measurement Type Get
+GET {{shared-collections-api}}/v1/measurementType/8
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Lab Item List
+GET {{shared-collections-api}}/v1/laboratoryItem
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Lab Item Get
+GET {{shared-collections-api}}/v1/laboratoryItem/5
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Examination type List
+GET {{shared-collections-api}}/v1/examinationType
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### Examination type Get
+GET {{shared-collections-api}}/v1/examinationType/24
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### DMP Examination type List
+GET {{shared-collections-api}}/v1/dmpExaminationType
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### DMP Examination type Get
+GET {{shared-collections-api}}/v1/dmpExaminationType/1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### DMP Examination type List
+GET {{shared-collections-api}}/v1/dmpExaminationType
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### DMP Examination type Get
+GET {{shared-collections-api}}/v1/dmpExaminationType/1
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### DMP Diagnosis List
+GET {{shared-collections-api}}/v1/dmpDiagnose
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+### DMP Diagnosis Get
+GET {{shared-collections-api}}/v1/dmpDiagnose/2
+Accept: application/json
+Authorization: Bearer {{access_token}}

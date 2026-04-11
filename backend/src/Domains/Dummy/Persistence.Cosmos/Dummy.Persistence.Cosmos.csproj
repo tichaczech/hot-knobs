@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>$(DefaultAssemblyName)</AssemblyName>
+    <RootNamespace>$(DefaultRootNamespace)</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Persistence.Cosmos\Persistence.Cosmos.csproj" />
+    <ProjectReference Include="..\Common\Dummy.Common.csproj" />
+  </ItemGroup>
+
+</Project>

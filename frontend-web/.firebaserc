@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "__default": "mad-sprocket-demo",
+    "default": "hot-knobs-dev"
+  }
+}

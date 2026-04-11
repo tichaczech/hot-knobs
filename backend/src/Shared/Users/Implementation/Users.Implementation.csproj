@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>$(DefaultAssemblyName)</AssemblyName>
+    <RootNamespace>$(DefaultRootNamespace)</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper"/>
+
+    <ProjectReference Include="..\..\..\Common\Implementation\Implementation.csproj"/>
+    <ProjectReference Include="..\Common\Users.Common.csproj"/>
+  </ItemGroup>
+
+</Project>

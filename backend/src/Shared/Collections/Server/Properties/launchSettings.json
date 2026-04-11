@@ -1,0 +1,16 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "swagger/index.html",
+      "applicationUrl": "http://localhost:7201",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "_MPAT_APPCONFIG_CONNSTR_NAME": "AppConfiguration"
+      }
+    }
+  }
+}

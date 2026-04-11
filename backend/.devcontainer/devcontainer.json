@@ -1,0 +1,111 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+  "name": "thc: HotKnobs - Backend",
+  "dockerComposeFile": "./docker-compose.yaml",
+  "service": "dev",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "dotnetAcquisitionExtension.existingDotnetPath": [
+          {
+            "extensionId": "msazuretools.azurerm-vscode-tools",
+            "path": "/usr/local/share/dotnet/dotnet"
+          }
+        ],
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.languageServer": "Default",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true
+      },
+      "extensions": [
+        "42Crunch.vscode-openapi",
+		"DrBlury.protobuf-vsc",
+        "EditorConfig.EditorConfig",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "GitHub.vscode-github-actions",
+        "Gruntfuggly.todo-tree",
+        "Redis.redis-for-vscode",
+        "dbaeumer.vscode-eslint",
+        "davidnussio.vscode-jq-playground",
+        "formulahendry.dotnet-test-explorer",
+        "humao.rest-client",
+        "jq-syntax-highlighting.jq-syntax-highlighting",
+        "mongodb.mongodb-vscode",
+        "ms-azure-devops.azure-pipelines",
+        "ms-azuretools.azure-dev",
+        "ms-azuretools.vscode-apimanagement",
+        "ms-azuretools.vscode-azure-github-copilot",
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-azuretools.vscode-bicep",
+        "ms-azuretools.vscode-containers",
+        "ms-azuretools.vscode-cosmosdb",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "ms-ossdata.vscode-pgsql",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "ms-vscode.azurecli",
+        "patcx.vscode-nuget-gallery",
+        "rioj7.command-variable",
+        "redhat.vscode-yaml",
+        "redhat.vscode-xml",
+        "task.vscode-task",
+        "timonwong.shellcheck",
+        "typespec.typespec-vscode",
+        "znck.grammarly"
+      ]
+    }
+  },
+  "features": {
+    // https://github.com/devcontainers/features/tree/main/src/common-utils
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    // https://github.com/devcontainers/features/tree/main/src/docker-in-docker
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "azureDnsAutoDetection": true,
+      "dockerDashComposeVersion": "v2",
+      "installDockerBuildx": true,
+      "installDockerComposeSwitch": true,
+      "version": "latest"
+    },
+    // https://github.com/devcontainers/features/tree/main/src/dotnet
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "latest"
+    },
+    // https://github.com/devcontainers/features/tree/main/src/node
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    // https://github.com/devcontainers/features/tree/main/src/python
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "latest"
+    },
+    // https://github.com/eitsupi/devcontainer-features/tree/main/src/jq-likes
+    "ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {
+      "jqVersion": "latest",
+      "yqVersion": "latest"
+    },
+    // https://github.com/devcontainers-community/npm-features/tree/main/src/typescript
+    "ghcr.io/devcontainers-community/npm-features/typescript:1": {
+      "version": "latest"
+    }
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [
+    5432
+  ],
+  // "portsAttributes": {
+  // 		"5001": {
+  // 			"protocol": "https"
+  // 		}
+  // }
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": [
+    ".devcontainer/init.sh"
+  ]
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}

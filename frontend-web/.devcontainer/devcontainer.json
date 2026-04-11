@@ -1,0 +1,132 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+	"name": "Hot Knobs: Web",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.languageServer": "Default",
+				"python.linting.enabled": true,
+				"python.linting.pylintEnabled": true
+			},
+			"extensions": [
+				"42Crunch.vscode-openapi",
+				"EditorConfig.EditorConfig",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"GitHub.vscode-github-actions",
+				"Gruntfuggly.todo-tree",
+				"Redis.redis-for-vscode",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"VisualStudioExptTeam.intellicode-api-usage-examples",
+				"dbaeumer.vscode-eslint",
+				"davidnussio.vscode-jq-playground",
+				"formulahendry.dotnet-test-explorer",
+				"humao.rest-client",
+				"jq-syntax-highlighting.jq-syntax-highlighting",
+				"mongodb.mongodb-vscode",
+				"ms-azuretools.vscode-containers",
+				"ms-azuretools.vscode-docker",
+				"ms-dotnettools.csdevkit",
+				"ms-dotnettools.csharp",
+				"ms-ossdata.vscode-pgsql",
+				"ms-python.vscode-pylance",
+				"ms-python.python",
+				"ms-python.debugpy",
+				"patcx.vscode-nuget-gallery",
+				"rioj7.command-variable",
+				"redhat.vscode-yaml",
+				"redhat.vscode-xml",
+				"task.vscode-task",
+				"timonwong.shellcheck",
+				"typespec.typespec-vscode",
+				"znck.grammarly",
+				"zxh404.vscode-proto3"
+			]
+		}
+	},
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		// https://github.com/devcontainers/features/tree/main/src/common-utils
+		"ghcr.io/devcontainers/features/common-utils:2": {},
+		// https://github.com/devcontainers/features/tree/main/src/docker-in-docker
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"azureDnsAutoDetection": true,
+			"dockerDashComposeVersion": "v2",
+			"installDockerBuildx": true,
+			"installDockerComposeSwitch": true,
+			"version": "latest"
+		},
+		// https://github.com/devcontainers/features/tree/main/src/dotnet
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers-extra/features/firebase-cli:2": {},
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "latest",
+			"installGradle": "true",
+			"installMaven": "true"
+		},
+		// https://github.com/devcontainers/features/tree/main/src/node
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "lts"
+		},
+		// https://github.com/devcontainers/features/tree/main/src/python
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "latest"
+		},
+		// https://github.com/eitsupi/devcontainer-features/tree/main/src/jq-likes
+		"ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {
+			"jqVersion": "latest",
+			"yqVersion": "latest"
+		},
+		// https://github.com/devcontainers-community/npm-features/tree/main/src/typescript
+		"ghcr.io/devcontainers-community/npm-features/typescript:1": {
+			"version": "latest"
+		}
+		// "ghcr.io/devcontainers-community/features/typescript": {
+		// }
+	},
+	"portsAttributes": {
+		"4000": {
+			"label": "Firebase Emulator UI",
+			"onAutoForward": "notify"
+		},
+		"4400": {
+			"label": "Firebase Emulator Hub",
+			"onAutoForward": "notify"
+		},
+		"4500": {
+			"label": "Firebase Emulator Reserved Port",
+			"onAutoForward": "notify"
+		},
+		"8080": {
+			"label": "Firebase Firestore Emulator",
+			"onAutoForward": "notify"
+		},
+		"9099": {
+			"label": "Firebase Authentication Emulator",
+			"onAutoForward": "notify"
+		},
+		"9150": {
+			"label": "Firebase Emulator Reserved Port",
+			"onAutoForward": "notify"
+		},
+		"9199": {
+			"label": "Firebase Storage Emulator",
+			"onAutoForward": "notify"
+		}
+	},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [4000, 4400, 4500, 8080, 9099, 9150, 9199],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": [
+		".devcontainer/init.sh"
+	]
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

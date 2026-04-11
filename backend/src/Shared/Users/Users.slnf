@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "..\\..\\..\\backend.slnx",
+    "projects": [
+      "src\\Shared\\Users\\Common\\Users.Common.csproj",
+      "src\\Shared\\Users\\Contracts\\Users.Contracts.csproj",
+      "src\\Shared\\Users\\Implementation\\Users.Implementation.csproj",
+      "src\\Shared\\Users\\Persistence.Cosmos\\Users.Persistence.Cosmos.csproj",
+      "src\\Shared\\Users\\Persistence.Mongo\\Users.Persistence.Mongo.csproj",
+      "src\\Shared\\Users\\Persistence.Postgres\\Users.Persistence.Postgres.csproj",
+      "src\\Shared\\Users\\Server\\Users.Server.csproj",
+    ]
+  }
+}

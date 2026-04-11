@@ -1,0 +1,299 @@
+version: "3"
+
+vars:
+  _TMP_MODULES:
+    sh: 'find . -name "manifest.yaml" -type f -exec yq -o=y -I=0 --no-doc ". | {.name: filename}" {} + | sed -e "s/\/manifest.yaml//g"'
+  ARTIFACTS_DIRECTORY_DEFAULT: '{{ joinPath .TASKFILE_DIR "_artifacts" }}'
+  ARTIFACTS_DIRECTORY: '{{ .ARTIFACTS_DIRECTORY | default .ARTIFACTS_DIRECTORY_DEFAULT }}'
+  BUILD_CONFIGURATION: '{{ .BUILD_CONFIGURATION | default "Debug" }}'
+  BUILD_PLATFORM: '{{ .BUILD_PLATFORM | default "Any CPU" }}'
+  CLEAN_CODE_DIRS: ['bin', 'obj', 'package', 'publish', 'tests']
+  CLEAN_DOC_FILES: ['doc/code/*/*.yml', 'doc/code/*/.manifest']
+  CLEAN_TSP_DIR: 'doc/api'
+  CONTAINER_PLATFORM: '{{ .CONTAINER_PLATFORM | default "linux/amd64" }}'
+#   CONTAINER_PLATFORM: '{{ .CONTAINER_PLATFORM | default "linux/amd64,linux/arm64" }}'
+  CONTAINER_REGISTRY: '{{ .CONTAINER_REGISTRY | default "ghcr.io/tichaczech" }}'
+  DOCUMENTATION_REPOSITORY_PATH: '{{ .DOCUMENTATION_REPOSITORY_PATH | default "../documentation" }}'
+  MIGRATIONS_OBJ_DIRECTORY: '_artifacts/obj' # Migrations are managed always on local development machine.
+  MIGRATIONS_OUTPUT_DIR: '{{ .MIGRATIONS_OUTPUT_DIR | default "Runtime/Persistence/Migrations" }}'
+  MODULES:
+    ref: 'fromYaml ._TMP_MODULES'
+  # NUGET_SOURCE: '{{ .NUGET_SOURCE | default "local" }}'
+  NUGET_SOURCE: '{{ .NUGET_SOURCE | default "ghcr" }}'
+  PACKAGE_DIRECTORY: '{{ .PACKAGE_DIRECTORY | default (joinPath .ARTIFACTS_DIRECTORY "package") }}'
+  PUBLISH_DIRECTORY: '{{ .PUBLISH_DIRECTORY | default (joinPath .ARTIFACTS_DIRECTORY "publish") }}'
+  TAG_LATEST: '{{ .TAG_LATEST | default true }}'
+  SWAGGER_OUTPUT_DIR: '{{ .SWAGGER_OUTPUT_DIR | default (joinPath .TASKFILE_DIR "doc/openapi") }}'
+  # Time formatting does not work in the first hour after midnight and GOlang formating is generally messy - setting the value the hard way.
+  VERSION_DEFAULT: '{{ now | date "2006.002" }}.{{ add (mul (now | date "15") 60) (now | date "4") }}-local'
+  VERSION: '{{ .VERSION | default .VERSION_DEFAULT }}'
+
+tasks:
+  _build:
+    cmds:
+      - for: [code, doc]
+        task: _build:{{ .ITEM }}
+        vars:
+          MANIFEST:
+            ref: .MANIFEST
+          MODULE_DIR: '{{ .MODULE_DIR }}'
+    internal: true
+    requires:
+      vars: [MANIFEST, MODULE_DIR]
+  _build:code:
+    cmds:
+      - dotnet build
+        --no-restore
+        --configuration "{{ .BUILD_CONFIGURATION }}"
+        --property:GeneratePackageOnBuild=True
+        --property:PackageOutputPath="{{ .PACKAGE_DIRECTORY }}"
+        --property:Platform="{{ .BUILD_PLATFORM }}"
+        --property:Version="{{ .VERSION }}"
+        "{{ .MODULE_DIR }}"
+      - for:
+          var: CONTAINERS
+        cmd: dotnet publish
+          --no-build
+          --configuration "{{ .BUILD_CONFIGURATION }}"
+          --property:Platform="{{ .BUILD_PLATFORM }}"
+          --output="{{ joinPath .PUBLISH_DIRECTORY .ITEM.projectDirectory }}"
+          "{{ joinPath .MODULE_DIR .ITEM.projectDirectory }}"
+    deps:
+      - task: _clean:code
+      - task: _restore:code
+        vars:
+          MODULE_DIR: '{{ .MODULE_DIR }}'
+    internal: true
+    requires:
+      vars: [BUILD_CONFIGURATION, BUILD_PLATFORM, MANIFEST, MODULE_DIR, PACKAGE_DIRECTORY, PUBLISH_DIRECTORY, VERSION]
+    vars:
+      CONTAINERS:
+        ref: .MANIFEST.build.containers
+  _build:doc:
+    cmds:
+      - docfx metadata docfx.json
+    deps:
+      - task: _clean:doc
+        vars:
+          MODULE_DIR: '{{ .MODULE_DIR }}'
+      - task: _build:tsp
+        vars:
+          MANIFEST:
+            ref: .MANIFEST
+          MODULE_DIR: '{{ .MODULE_DIR }}'
+    internal: true
+    requires:
+      vars: [MANIFEST, MODULE_DIR]
+  _build:tsp:
+    cmds:
+      - tsp compile {{ .CONTRACTS_FILE }} --option "@typespec/openapi3.emitter-output-dir={{ .SWAGGER_OUTPUT_DIR }}" --option "@typespec/openapi3.file-type=json" --option "@typespec/openapi3.output-file={{ .SWAGGER_FILE }}"
+    deps:
+      - task: _clean:tsp
+        vars:
+          SWAGGER_FILE: '{{ .SWAGGER_FILE }}'
+    internal: true
+    requires:
+      vars: [MANIFEST, MODULE_DIR, SWAGGER_OUTPUT_DIR]
+    vars:
+      CONTRACTS_FILE: '{{ joinPath .MODULE_DIR .MANIFEST.contracts.file }}'
+      SWAGGER_FILE: '{{ .MANIFEST.name }}.openapi.json'
+  _clean:code:
+    cmds:
+      - for:
+          var: CLEAN_CODE_DIRS
+        cmd: rm -rf {{ joinPath .ARTIFACTS_DIRECTORY .ITEM }}
+    internal: true
+    requires:
+      vars: [ARTIFACTS_DIRECTORY, CLEAN_CODE_DIRS]
+  _clean:doc:
+    cmds:
+      - for:
+          var: CLEAN_DOC_FILES
+        cmd: rm -rf {{ joinPath .TASKFILE_DIR .ITEM }}
+    internal: true
+    requires:
+      vars: [CLEAN_DOC_FILES]
+  _clean:tsp:
+    cmds:
+      - rm -rf {{ joinPath .CLEAN_TSP_DIR .SWAGGER_FILE }}
+    internal: true
+    requires:
+      vars: [CLEAN_TSP_DIR, SWAGGER_FILE]
+  _init:
+    # TODO: Add checks for the existence of the module directory and manifest file
+    cmds:
+      - for:
+          var: CONTINUE_WITH
+        task: '{{ .ITEM }}'
+        vars:
+          MODULE_DIR: '{{ ._MODULE_DIR }}'
+          MANIFEST:
+            ref: 'fromYaml .MANIFEST_FILE'
+    internal: true
+    requires:
+      vars: [CONTINUE_WITH, MODULES, SELECTED_MODULE_NAME]
+    vars:
+      _MODULE_DIR: '{{ joinPath .TASKFILE_DIR (get .MODULES .SELECTED_MODULE_NAME) }}'
+      MANIFEST_FILE:
+        sh: cat {{ joinPath ._MODULE_DIR "manifest.yaml" }}
+  _init.select:
+    cmds:
+      - task: _init
+        vars:
+          CONTINUE_WITH:
+            ref: .CONTINUE_WITH
+          SELECTED_MODULE_NAME: '{{ .SELECTED_MODULE_NAME }}'
+    internal: true
+    requires:
+      vars: [MODULES]
+    vars:
+      SELECTED_MODULE_NAME:
+        sh: gum choose --header "Select module:" --height 15 {{ keys .MODULES | join " " }}
+  _migration:add:
+    cmds:
+      - for:
+          var: CONTEXTS
+        cmd: dotnet ef migrations add {{ .MIGRATION_NAME }}
+          --context "{{ .ITEM.contextName }}"
+          --msbuildprojectextensionspath "{{ joinPath .MIGRATIONS_OBJ_DIRECTORY ((cat .MANIFEST.name .ITEM.projectDirectory) | replace " " "." ) }}"
+          --output-dir "{{ .MIGRATIONS_OUTPUT_DIR }}"
+          --project "{{ joinPath .MODULE_DIR .ITEM.projectDirectory .ITEM.projectName }}"
+          -v
+    internal: true
+    requires:
+      vars: [MANIFEST, MIGRATIONS_OBJ_DIRECTORY, MIGRATIONS_OUTPUT_DIR, MODULE_DIR]
+    vars:
+      CONTEXTS:
+        ref: .MANIFEST.ef.contexts
+      MIGRATION_NAME:
+        sh: gum input --header="Enter migration name (32 characters)" --placeholder="" --char-limit=32
+  _publish:
+    cmds:
+      - for: [code]
+        task: _publish:{{ .ITEM }}
+        vars:
+          MANIFEST:
+            ref: .MANIFEST
+          MODULE_DIR: '{{ .MODULE_DIR }}'
+    internal: true
+    requires:
+      vars: [MANIFEST, MODULE_DIR]
+  _publish:code:
+    # TODO: Add checks for the existence of package files and/or published directories
+    cmds:
+      - for:
+          var: CONTAINERS
+        cmd: docker build
+          --push
+          --build-arg entrypointDll="{{ .ITEM.entrypointDll }}"
+          --file "{{ joinPath .TASKFILE_DIR .ITEM.dockerfile }}"
+          --platform "{{ .CONTAINER_PLATFORM }}"
+          --tag "{{ .CONTAINER_REGISTRY }}/{{ .ITEM.imageName }}:{{ .VERSION }}"
+          {{ if .TAG_LATEST }}--tag "{{ .CONTAINER_REGISTRY }}/{{ .ITEM.imageName }}:latest"{{ end }}
+          "{{ joinPath .PUBLISH_DIRECTORY .ITEM.projectDirectory }}"
+      - for:
+          var: PACKAGES
+        cmd: dotnet nuget
+          push
+          --source "{{ .NUGET_SOURCE }}"
+          --api-key VSTS
+          "{{ joinPath .PACKAGE_DIRECTORY .ITEM }}.{{ .VERSION }}.nupkg"
+    deps:
+      - task: _build
+        vars:
+          MODULE_DIR: '{{ .MODULE_DIR }}'
+          MANIFEST:
+            ref: .MANIFEST
+    internal: true
+    requires:
+      vars: [CONTAINER_PLATFORM, CONTAINER_REGISTRY, MANIFEST, MODULE_DIR, NUGET_SOURCE, PACKAGE_DIRECTORY, PUBLISH_DIRECTORY, VERSION, TAG_LATEST]
+    # Prompt is not working when using in VS Code Output panel.
+    # prompt: This will publish new version of "{{ .MANIFEST.name }}" to container registry "{{ .CONTAINER_REGISTRY }}". Do you want to continue?
+    vars:
+      CONTAINERS:
+        ref: .MANIFEST.build.containers
+      PACKAGES:
+        ref: .MANIFEST.build.packages
+  # _publish:doc:
+  #   cmds:
+  #     - rm -rf {{ joinPath .CODE_DIR "*" }}
+  #     - rm -rf {{ joinPath .SWAGGER_DIR "*" }}
+  #     - cp -r doc/code/* {{ .CODE_DIR }}
+  #     - cp -r doc/openapi/* {{ .SWAGGER_DIR }}
+  #   internal: true
+  #   requires:
+  #     vars: [DOCUMENTATION_REPOSITORY_PATH]
+  #   vars:
+  #     CODE_DIR: '{{ joinPath .TASKFILE_DIR .DOCUMENTATION_REPOSITORY_PATH "devel" "be" "code" }}'
+  #     SWAGGER_DIR: '{{ joinPath .TASKFILE_DIR .DOCUMENTATION_REPOSITORY_PATH "openapi" }}'
+  _restore:code:
+    cmds:
+      - dotnet restore
+        --disable-build-servers
+        --ignore-failed-sources
+        "{{ .MODULE_DIR }}"
+    internal: true
+    requires:
+      vars: [MODULE_DIR]
+  build:
+    cmds:
+      - task: _init.select
+        vars:
+          CONTINUE_WITH: [_build]
+  build:Domains.Dummy:
+    cmds:
+      - task: _init
+        vars:
+          CONTINUE_WITH: [_build]
+          SELECTED_MODULE_NAME: '{{ splitList ":" .TASK | last }}'
+  build:Shared.Users:
+    cmds:
+      - task: _init
+        vars:
+          CONTINUE_WITH: [_build]
+          SELECTED_MODULE_NAME: '{{ splitList ":" .TASK | last }}'
+  doc:build:
+    cmds:
+      - task: _init.select
+        vars:
+          CONTINUE_WITH: [_build:doc]
+  # doc:publish:
+  #   cmds:
+  #     - task: _init.select
+  #       vars:
+  #         CONTINUE_WITH: [_publish:doc]
+  migration:add:
+    cmds:
+      - task: _init.select
+        vars:
+          CONTINUE_WITH: [_migration:add]
+  publish:
+    cmds:
+      - task: _init.select
+        vars:
+          CONTINUE_WITH: [_publish]
+  publish:Shared.Users:
+    cmds:
+      - task: _init
+        vars:
+          CONTINUE_WITH: [_publish]
+          SELECTED_MODULE_NAME: '{{ splitList ":" .TASK | last }}'
+  publish:Domains.Dummy:
+    cmds:
+      - task: _init
+        vars:
+          CONTINUE_WITH: [_publish]
+          SELECTED_MODULE_NAME: '{{ splitList ":" .TASK | last }}'
+  tsp:build:
+    cmds:
+      - task: _init.select
+        vars:
+          CONTINUE_WITH: [_build:tsp]
+
+# tsp compile /workspaces/backend/src/Domains/Users/Contracts/Users.Contracts.tsp \
+# 	--emit @typespec/http-server-csharp \
+# 	--emit @typespec/openapi3 \
+# 	--option @typespec/http-server-csharp.emit-mocks=mocks-and-project-files \
+# 	--option @typespec/http-server-csharp.use-swaggerui=true \
+# 	--option @typespec/http-server-csharp.overwrite=true \
+# 	--option @typespec/http-server-csharp.emitter-output-dir=/workspaces/backend/_tmp

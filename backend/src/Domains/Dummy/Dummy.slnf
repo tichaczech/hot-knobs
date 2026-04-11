@@ -1,0 +1,15 @@
+{
+  "solution": {
+    "path": "..\\..\\..\\backend.slnx",
+    "projects": [
+      "src\\Domains\\Dummy\\Common\\Dummy.Common.csproj",
+      "src\\Domains\\Dummy\\Contracts\\Dummy.Contracts.csproj",
+      "src\\Domains\\Dummy\\Implementation\\Dummy.Implementation.csproj",
+      "src\\Domains\\Dummy\\Implementation.Tests\\Dummy.Implementation.Tests.csproj",
+      "src\\Domains\\Dummy\\Persistence.Cosmos\\Dummy.Persistence.Cosmos.csproj",
+      "src\\Domains\\Dummy\\Persistence.Mongo\\Dummy.Persistence.Mongo.csproj",
+      "src\\Domains\\Dummy\\Persistence.Postgres\\Dummy.Persistence.Postgres.csproj",
+      "src\\Domains\\Dummy\\Server\\Dummy.Server.csproj",
+    ]
+  }
+}

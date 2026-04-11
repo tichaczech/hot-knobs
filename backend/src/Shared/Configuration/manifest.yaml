@@ -1,0 +1,44 @@
+# Configuration for the Shared.Configuration application module.
+
+code: shared-configuration
+name: Shared.Configuration
+
+_42:
+  menuCode: s-con
+
+build:
+  dotnet:
+  - name: contracts
+    packages:
+    - 'mojeEUC.Shared.Configuration.Contracts'
+    projectFile: ./Contracts/Configuration.Contracts.csproj
+  - name: server
+    docker:
+      dockerfile: .docker/Dockerfile.dotNet.Server
+      imageName: &imageName-server euccz/app/mojeeuc/shared/configuration/server
+    entrypointDll: mojeEUC.Shared.Configuration.Server.dll
+    openAPI:
+      versions: [v1]
+    projectFile: ./Server/Configuration.Server.csproj
+
+contracts:
+  typeSpecFile: ./Contracts/Configuration.Contracts.tsp
+
+deployment:
+  database:  # TODO: for worker project
+    containers:
+    - name: items
+      partitionKeyPaths:
+        - /type
+    throughput: null
+    autoscaleMaxThroughput: 1000
+  resourceName: scon
+  sharedInfrastructure:
+    minimumVersion: 2024.226.2
+  servers:
+  - name: default
+    cpu: '0.25'
+    image: *imageName-server
+    memory: '0.5Gi'
+    minReplicas: 1
+    maxReplicas: 3

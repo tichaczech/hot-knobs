@@ -1,0 +1,53 @@
+<Solution>
+  <Folder Name="/.shared/">
+    <File Path="src/appsettings.json" />
+    <File Path="src/appsettings.Local.json" />
+    <File Path="src/Directory.Build.props" />
+    <File Path="src/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Common/">
+    <Project Path="src/Common/Common/Common.csproj" />
+    <Project Path="src/Common/Contracts/Contracts.csproj" />
+    <Project Path="src/Common/Implementation/Implementation.csproj" />
+    <Project Path="src/Common/Persistence.Cosmos/Persistence.Cosmos.csproj" />
+    <Project Path="src/Common/Persistence.Mongo/Persistence.Mongo.csproj" />
+    <Project Path="src/Common/Persistence.Postgres/Persistence.Postgres.csproj" />
+    <Project Path="src/Common/Persistence/Persistence.csproj" />
+    <Project Path="src/Common/Runtime.Server.Diagnostics.AzureMonitor/Runtime.Server.Diagnostics.AzureMonitor.csproj" />
+    <Project Path="src/Common/Runtime.Server/Runtime.Server.csproj" />
+    <Project Path="src/Common/Runtime.Worker.Diagnostics.AzureMonitor/Runtime.Worker.Diagnostics.AzureMonitor.csproj" />
+    <Project Path="src/Common/Runtime.Worker/Runtime.Worker.csproj" />
+    <Project Path="src/Common/Runtime/Runtime.csproj" />
+  </Folder>
+  <Folder Name="/Domains/" />
+  <Folder Name="/Domains/Dummy/">
+    <File Path="src/Domains/Dummy/manifest.yaml" />
+    <Project Path="src/Domains/Dummy/Common/Dummy.Common.csproj" />
+    <Project Path="src/Domains/Dummy/Contracts/Dummy.Contracts.csproj" />
+    <Project Path="src/Domains/Dummy/Implementation/Dummy.Implementation.csproj" />
+    <Project Path="src/Domains/Dummy/Implementation.Tests/Dummy.Implementation.Tests.csproj" />
+    <Project Path="src/Domains/Dummy/Persistence.Cosmos/Dummy.Persistence.Cosmos.csproj" />
+    <Project Path="src/Domains/Dummy/Persistence.Mongo/Dummy.Persistence.Mongo.csproj" />
+    <Project Path="src/Domains/Dummy/Persistence.Postgres/Dummy.Persistence.Postgres.csproj" />
+    <Project Path="src/Domains/Dummy/Server/Dummy.Server.csproj" />
+  </Folder>
+  <Folder Name="/Shared/" />
+  <Folder Name="/Shared/Collections/">
+    <Project Path="src/Shared/Collections/Common/Collections.Common.csproj" />
+    <Project Path="src/Shared/Collections/Contracts/Collections.Contracts.csproj" />
+    <Project Path="src/Shared/Collections/Implementation/Collections.Implementation.csproj" />
+    <Project Path="src/Shared/Collections/Persistence.Cosmos/Collections.Persistence.Cosmos.csproj" />
+    <Project Path="src/Shared/Collections/Persistence.Mongo/Collections.Persistence.Mongo.csproj" />
+    <Project Path="src/Shared/Collections/Persistence.Postgres/Collections.Persistence.Postgres.csproj" />
+    <Project Path="src/Shared/Collections/Server/Collections.Server.csproj" />
+  </Folder>
+  <Folder Name="/Shared/Users/">
+    <Project Path="src/Shared/Users/Common/Users.Common.csproj" />
+    <Project Path="src/Shared/Users/Contracts/Users.Contracts.csproj" />
+    <Project Path="src/Shared/Users/Implementation/Users.Implementation.csproj" />
+    <Project Path="src/Shared/Users/Persistence.Cosmos/Users.Persistence.Cosmos.csproj" />
+    <Project Path="src/Shared/Users/Persistence.Mongo/Users.Persistence.Mongo.csproj" />
+    <Project Path="src/Shared/Users/Persistence.Postgres/Users.Persistence.Postgres.csproj" />
+    <Project Path="src/Shared/Users/Server/Users.Server.csproj" />
+  </Folder>
+</Solution>

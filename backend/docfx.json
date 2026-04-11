@@ -1,0 +1,49 @@
+{
+	"metadata": [
+		{
+			"src": [
+				{
+					"files": [
+						"src/Common/**/**.csproj"
+					],
+					"exclude": [
+						"*.Tests/**"
+					]
+				}
+			],
+			"dest": "doc/code/common",
+			"disableGitFeatures": false,
+			"disableDefaultFilter": false
+		},
+		{
+			"src": [
+				{
+					"files": [
+						"src/Domains/Dummy/**/**.csproj"
+					],
+					"exclude": [
+						"*.Tests/**"
+					]
+				}
+			],
+			"dest": "doc/code/domains/dummy",
+			"disableGitFeatures": false,
+			"disableDefaultFilter": false
+		},
+		{
+			"src": [
+				{
+					"files": [
+						"src/Domains/Secrets/**/**.csproj"
+					],
+					"exclude": [
+						"*.Tests/**"
+					]
+				}
+			],
+			"dest": "doc/code/domains/secrets",
+			"disableGitFeatures": false,
+			"disableDefaultFilter": false
+		}
+	]
+}

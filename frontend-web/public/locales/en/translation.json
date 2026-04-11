@@ -1,0 +1,204 @@
+{
+    "_buttons": {
+        "add": "Add",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "save": "Save",
+        "search": "Search",
+        "submit": "Submit",
+        "view": "View"
+    },
+    "_common": {
+        "add": "Add",
+        "appDescription": "Application for managing off-road motorcycle riding",
+        "appName": "Hot Knobs",
+        "cancel": "Cancel",
+        "close": "Close",
+        "continue": "Continue",
+        "delete": "Delete",
+        "edit": "Edit",
+        "error": "An error occurred. Please try again.",
+        "loading": "Loading...",
+        "no": "No",
+        "ok": "OK",
+        "save": "Save",
+        "search": "Search",
+        "success": "Success!",
+        "view": "View",
+        "yes": "Yes"
+    },
+    "_errors": {
+        "network": "There was a problem connecting to the server. Please check your internet connection.",
+        "notFound": "The requested page was not found.",
+        "server": "An error occurred on the server. Please try again later.",
+        "unauthorized": "You are not authorized to view this page."
+    },
+    "_modals": {
+        "confirmDelete": {
+            "cancelButton": "No, cancel",
+            "confirmButton": "Yes, delete it",
+            "message": "Are you sure you want to delete {{item}}?",
+            "title": "Confirm Deletion"
+        },
+        "error": {
+            "message": "Sorry, an error occurred. Please try again.",
+            "title": "An Error Occurred"
+        }
+    },
+    "_navigation": {
+        "administration": {
+            "title": "Administration",
+            "items": {
+                "coaches": "Coaches",
+                "operators": "Operators",
+                "riders": "Riders",
+                "sites": "Sites"
+            }
+        },
+        "main": {
+            "items": {
+                "about": "About the App",
+                "account": "Account",
+                "coaches": "Coaches",
+                "home": "Home",
+                "operators": "Operators",
+                "riders": "Riders",
+                "settings": "Settings"
+            }
+        }
+    },
+    "_notifications": {
+        "error": {
+            "message": "An error occurred while {{action}}. Please try again.",
+            "title": "Error"
+        },
+        "success": {
+            "message": "{{action}} was completed successfully.",
+            "title": "Success"
+        }
+    },
+    "_validations": {
+        "maxLength": "{{field}} must not exceed {{max}} characters.",
+        "minLength": "{{field}} must be at least {{min}} characters.",
+        "passwordsMustMatch": "Passwords must match.",
+        "required": "{{field}} is required.",
+        "validEmail": "Please enter a valid email address."
+    },
+    "auth": {
+        "_common": {
+            "cancel": "Cancel",
+            "confirmPassword": "Confirm Password",
+            "email": "E-mail",
+            "emailPlaceholder": "name@example.com",
+            "password": "Password",
+            "passwordPlaceholder": "••••••••",
+            "signIn": "Sign In",
+            "signUp": "Sign Up",
+            "submit": "Submit",
+            "_termsAndPolicyPrompt": "By clicking continue, you agree to our <1>Terms of Service</1> and <2>Privacy Policy</2>."
+        },
+        "_validations": {
+            "validPassword": "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+        },
+        "changePassword": {
+            "_validations": {
+                "oldPasswordRequired": "Current password is required.",
+                "passwordsMustMatch": "Passwords must match."
+            },
+            "form": {
+                "confirmPasswordLabel": "Confirm New Password",
+                "errorMessage": "Failed to change password. Please try again.",
+                "newPasswordLabel": "New Password",
+                "oldPasswordLabel": "Current Password",
+                "submit": "Change Password",
+                "submitting": "Changing...",
+                "successMessage": "Password change was successful!"
+            },
+            "page": {
+                "changedMind": "Changed your mind?",
+                "description": "Enter your current password and new password below.",
+                "goBack": "Go Back",
+                "title": "Want to change password?"
+            }
+        },
+        "forgotPassword": {
+            "form": {
+                "enterEmail": "Enter your email address below and we'll send you a link to reset your password.",
+                "errorMessage": "Failed to send password reset email. Please try again.",
+                "submit": "Send Reset Link",
+                "submitting": "Sending...",
+                "successMessage": "Password reset email sent! Check your inbox."
+            },
+            "page": {
+                "description": "Enter your email address below and we'll send you a link to reset your password.",
+                "remembered": "Remember your password?",
+                "signIn": "Sign In",
+                "title": "Forgot Your Password?"
+            }
+        },
+        "signIn": {
+            "form": {
+                "forgotPasswordLink": "Forgot your password?",
+                "signUpLink": "Zaregistrujte se",
+                "submit": "Přihlásit se",
+                "submitting": "Přihlašuji se..."
+            },
+            "page": {
+                "emailSignInDescription": "Sign in with your email address",
+                "forgotPassword": "Forgot your password?",
+                "noAccountPrompt": "Don't have an account?",
+                "signUpLink": "Sign up",
+                "socialSignInApple": "Sign in with Apple",
+                "socialSignInDescription": "Sign in with your social account",
+                "socialSignInFacebook": "Sign in with Facebook",
+                "socialSignInGoogle": "Sign in with Google",
+                "socialSignInMicrosoft": "Sign in with Microsoft",
+                "title": "Welcome back!"
+            }
+        },
+        "signUp": {
+            "form": {
+                "confirmPasswordLabel": "Confirm Password",
+                "hasAccountPrompt": "Already have an account?",
+                "submit": "Sign Up",
+                "submitting": "Signing Up..."
+            },
+            "page": {
+                "description": "Enter your email address and choose your password below. ",
+                "hasAccountPrompt": "Already have an account or want to sign in with social account?",
+                "signInLink": "Sign In",
+                "title": "Create an Account"
+            }
+        }
+    },
+    "home": {
+        "coaches": {
+            "description": "Create training plans and track your riders' progress.",
+            "title": "For Coaches"
+        },
+        "footerNotice": "© {{year}} Hot Knobs. All rights reserved.",
+        "loginButton": "Login",
+        "operators": {
+            "description": "Manage tracks and monitor activity.",
+            "title": "For Operators"
+        },
+        "registerButton": "Register",
+        "riders": {
+            "description": "Log your rides, analyze your performance, and connect with coaches.",
+            "title": "For Riders"
+        },
+        "welcomeSubtitle": "Your only application for managing dirtbike riding.",
+        "welcomeTitle": "Welcome to Hot Knobs!"
+    },
+    "operators": {
+        "_common": {},
+        "list": {
+            "card": {},
+            "page": {
+                "description": "Manage your operators here.",
+                "title": "Operators"
+            }
+        }
+    }
+}

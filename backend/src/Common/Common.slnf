@@ -1,0 +1,16 @@
+{
+  "solution": {
+    "path": "..\\..\\backend.slnx",
+    "projects": [
+      "src\\Common\\Common\\Common.csproj",
+      "src\\Common\\Contracts\\Contracts.csproj",
+      "src\\Common\\Implementation\\Implementation.csproj",
+      "src\\Common\\Persistence\\Persistence.csproj",
+      "src\\Common\\Persistence.Cosmos\\Persistence.Cosmos.csproj",
+      "src\\Common\\Persistence.Mongo\\Persistence.Mongo.csproj",
+      "src\\Common\\Runtime\\Runtime.csproj",
+      "src\\Common\\Runtime.Server\\Runtime.Server.csproj",
+      "src\\Common\\Runtime.Worker\\Runtime.Worker.csproj",
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+﻿# Předpis kontejneru pro server modulu (mikro-službu) HotKnobs
+## Předpokládná nastavení při spuštění (viz https://docs.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-8.0)
+## - expozice portu/ů (vzhledem k požadavku na možnost dynamického nastavení není v tomto souboru)
+## - nastavení urls a protokolů pro Kestrel (viz https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel?view=aspnetcore-8.0#endpoint-configuration) pomocí ENV, které si příkaz `dotnet` převezme pro nastavení runtime
+##  - `ASPNETCORE_Kestrel__Endpoints__[***]__Url`: např. http://*:443 nebo http://+:443 - port(y) musí odpovídat nastavení expozice
+##   kde [***] je název endpointu (může být cokoliv, např. http, https nebo grpc) a pro obě nastavení musí být stejné
+##  - `ASPNETCORE_Kestrel__Endpoints__[***]__Protocols`: výběr z Http1, Http2, Http1AndHttp2
+##   kde [***] je název endpointu (může být cokoliv, např. http, https nebo grpc) a pro obě nastavení musí být stejné
+##  - `ASPNETCORE_Kestrel__Certificates__Default__Path`: cesta k certifikátu, který se použije pro nastavení TLS, ve formátu .pfx
+##  - `ASPNETCORE_Kestrel__Certificates__Default__Password`: heslo k certifikátu, který se použije pro nastavení TLS
+##  - `ASPNETCORE_URLS`: seznam adres, na kterých bude Kestrel naslouchat, ve formátu https://+:443;http://+:80
+## - nastavení pro diagnostiku pomocí OpenTelemetry
+##  - `MNN_OTEL_SERVICE_NAME`: jméno služby, které se použije pro identifikaci služby v OpenTelemetry
+##  - `MNN_OTEL_SERVICE_NAMESPACE`: jméno namespace, které se použije pro identifikaci služby v OpenTelemetry
+##  - `MNN_OTEL_SERVICE_VERSION`: verze služby, která se použije pro identifikaci služby v OpenTelemetry
+##  - `CONTAINER_APP_REVISION`: revize kontejneru, která se použije pro identifikaci služby v OpenTelemetry (standardně nastaveno při nasazení v rámci Azure Container Apps)
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+# Input parameters:
+## Name of the entrypoint DLL
+ARG entrypointDll
+## Source directory from which the "publish" will be copied
+ARG sourceDir
+## Port on which the service will be exposed
+ARG port=5000
+## Entrypoint command parameters
+ARG startupParameters
+
+ENV ASPNETCORE_ENVIRONMENT=Development
+# ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/app/localhost.pfx
+# ENV ASPNETCORE_Kestrel__Certificates__Default__Password=password
+ENV ASPNETCORE_URLS=http://+:${port}
+ENV ENTRYPOINT_DLL=${entrypointDll}
+ENV STARTUP_PARAMETERS=${startupParameters}
+
+WORKDIR /app
+COPY . .
+
+ENTRYPOINT env OTEL_RESOURCE_ATTRIBUTES="service.name=$MNN_OTEL_SERVICE_NAME,service.namespace=$MNN_OTEL_SERVICE_NAMESPACE,service.version=$MNN_OTEL_SERVICE_VERSION,service.instance.id=$CONTAINER_APP_REVISION,host.name=`hostname`,host.type=`uname -m`,os.name=`uname -s`,os.version=`uname -r`" dotnet $ENTRYPOINT_DLL $STARTUP_PARAMETERS

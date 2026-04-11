@@ -1,0 +1,346 @@
+[*]
+charset = utf-8
+end_of_line = crlf
+indent_style = tab
+indent_size = 4
+insert_final_newline = true
+tab_width = 4
+trim_trailing_whitespace = true
+
+## XML project files
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+charset = utf-8-bom
+indent_size = 2
+indent_style = space
+
+## XML config files
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+indent_size = 2
+indent_style = space
+
+# Python
+[*.py]
+end_of_line = lf
+
+# Shell scripts
+[*.sh]
+end_of_line = lf
+
+[*.{yml,yaml}]
+indent_size = 2
+indent_style = space
+
+[*.{cs,vb}]
+###############################
+# .NET Coding Conventions     #
+###############################
+# Organize usings
+dotnet_sort_system_directives_first = true # IDE0055
+dotnet_separate_import_directive_groups = true # IDE0055
+# this. preferences
+dotnet_style_qualification_for_field = false:warning # IDE0003
+dotnet_style_qualification_for_property = false:warning # IDE0003
+dotnet_style_qualification_for_method = false:warning # IDE0003
+dotnet_style_qualification_for_event = false:warning # IDE0003
+# Language keywords vs BCL types preferences
+dotnet_style_predefined_type_for_locals_parameters_members = true:warning # IDE0049
+dotnet_style_predefined_type_for_member_access = false:warning # IDE0049
+# Parentheses preferences
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:warning # IDE0047, IDE0048
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:warning # IDE0047, IDE0048
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:warning # IDE0047, IDE0048
+dotnet_style_parentheses_in_other_operators = always_for_clarity:warning # IDE0047, IDE0048
+# Modifier preferences
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning # IDE0040
+# Readonly preferences
+dotnet_style_readonly_field = true:warning # IDE0044
+# Expression-level preferences
+dotnet_style_object_initializer = true:warning # IDE0017
+dotnet_style_collection_initializer = true:warning # IDE0028
+dotnet_style_prefer_auto_properties = true:warning # IDE0032
+dotnet_style_explicit_tuple_names = true:warning # IDE0033
+csharp_prefer_simple_default_expression = true:warning # IDE0034
+dotnet_style_prefer_inferred_tuple_names = false:warning # IDE0037
+dotnet_style_prefer_inferred_anonymous_type_member_names = false:warning # IDE0037
+dotnet_style_prefer_conditional_expression_over_assignment = true:warning # IDE0045
+dotnet_style_prefer_conditional_expression_over_return = true:warning # IDE0046
+dotnet_style_prefer_compound_assignment = true:warning # IDE0054, IDE0074
+dotnet_style_prefer_simplified_interpolation = true:warning # IDE0071
+dotnet_style_prefer_simplified_boolean_expressions = true:warning # IDE0075
+dotnet_style_prefer_foreach_explicit_cast_in_source = when_strongly_typed:warning # IDE0220
+# Null-checking preferences
+dotnet_style_coalesce_expression = true:warning # IDE0029, IDE0030, IDE0270
+dotnet_style_null_propagation = true:warning # IDE0031
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:warning # IDE0041
+# Folder structure organization
+dotnet_style_namespace_match_folder = false:silent # IDE0130
+# Unnecessary code rules
+dotnet_code_quality_unused_parameters = all:warning # IDE0060
+dotnet_remove_unnecessary_suppression_exclusions = all:warning # IDE0079
+# Operator placement rules
+dotnet_style_operator_placement_when_wrapping = beginning_of_line:warning
+
+###############################
+# Naming Conventions          #
+###############################
+# Style Definitions
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+# Use PascalCase for constant fields
+dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = warning
+dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols = constant_fields
+dotnet_naming_rule.constant_fields_should_be_pascal_case.style = pascal_case_style
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+# Define the 'private_fields' symbol group:
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+# Define the 'private_static_fields' symbol group
+dotnet_naming_symbols.private_static_fields.applicable_kinds = field
+dotnet_naming_symbols.private_static_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_fields.required_modifiers = static
+# Define the 'underscored' naming style
+dotnet_naming_style.underscored.capitalization = camel_case
+dotnet_naming_style.underscored.required_prefix = _
+# Define the 'private_fields_underscored' naming rule
+dotnet_naming_rule.private_fields_underscored.symbols = private_fields
+dotnet_naming_rule.private_fields_underscored.style = underscored
+dotnet_naming_rule.private_fields_underscored.severity = warning
+# Define the 'private_static_fields_none' naming rule
+dotnet_naming_rule.private_static_fields_none.symbols = private_static_fields
+dotnet_naming_rule.private_static_fields_none.style = underscored
+dotnet_naming_rule.private_static_fields_none.severity = warning
+
+###############################
+# .NET Diagnostics
+###############################
+# Code Analysis Rules
+dotnet_diagnostic.CA1032.severity = suggestion
+dotnet_diagnostic.CA1040.severity = suggestion
+dotnet_diagnostic.CA1051.severity = suggestion
+dotnet_diagnostic.CA1716.severity = suggestion
+dotnet_diagnostic.CA1848.severity = silent
+dotnet_diagnostic.CA1853.severity = warning
+dotnet_diagnostic.CA1854.severity = warning
+dotnet_diagnostic.CA1822.severity = warning
+dotnet_diagnostic.CA1860.severity = suggestion
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2012.severity = warning
+dotnet_diagnostic.CA2016.severity = warning
+dotnet_diagnostic.CA2254.severity = silent # TODO:
+dotnet_diagnostic.CS1572.severity = warning
+# dotnet_diagnostic.CS1591.severity = warning
+dotnet_diagnostic.CS1591.severity = none
+dotnet_diagnostic.CS4014.severity = warning
+# Code Style Rules
+dotnet_diagnostic.IDE0001.severity = warning
+dotnet_diagnostic.IDE0002.severity = warning
+dotnet_diagnostic.IDE0003.severity = warning # Drives corresponding settings that are set to false. If no settings is set to false, this analyzer has no effect.
+dotnet_diagnostic.IDE0004.severity = warning
+dotnet_diagnostic.IDE0005.severity = warning
+dotnet_diagnostic.IDE0007.severity = warning
+dotnet_diagnostic.IDE0008.severity = none
+dotnet_diagnostic.IDE0009.severity = warning # Drives corresponding settings that are set to true. If no settings is set to true, this analyzer has no effect.
+dotnet_diagnostic.IDE0010.severity = warning
+dotnet_diagnostic.IDE0011.severity = warning
+dotnet_diagnostic.IDE0016.severity = warning
+dotnet_diagnostic.IDE0017.severity = warning
+dotnet_diagnostic.IDE0018.severity = warning
+dotnet_diagnostic.IDE0019.severity = warning
+dotnet_diagnostic.IDE0020.severity = warning
+dotnet_diagnostic.IDE0021.severity = warning
+dotnet_diagnostic.IDE0022.severity = none
+dotnet_diagnostic.IDE0023.severity = warning
+dotnet_diagnostic.IDE0024.severity = warning
+dotnet_diagnostic.IDE0025.severity = warning
+dotnet_diagnostic.IDE0026.severity = warning
+dotnet_diagnostic.IDE0027.severity = warning
+dotnet_diagnostic.IDE0028.severity = warning
+dotnet_diagnostic.IDE0029.severity = warning
+dotnet_diagnostic.IDE0030.severity = warning
+dotnet_diagnostic.IDE0031.severity = warning
+dotnet_diagnostic.IDE0032.severity = warning
+dotnet_diagnostic.IDE0033.severity = warning
+dotnet_diagnostic.IDE0034.severity = warning
+dotnet_diagnostic.IDE0035.severity = warning
+dotnet_diagnostic.IDE0036.severity = warning
+dotnet_diagnostic.IDE0037.severity = none
+dotnet_diagnostic.IDE0038.severity = warning
+dotnet_diagnostic.IDE0039.severity = warning
+dotnet_diagnostic.IDE0040.severity = none
+dotnet_diagnostic.IDE0041.severity = warning
+dotnet_diagnostic.IDE0042.severity = warning
+dotnet_diagnostic.IDE0043.severity = warning # Undocumented, see https://makolyte.com/use-string-interpolation-instead-of-string-format-to-prevent-runtime-formatexceptions/ for details.
+dotnet_diagnostic.IDE0044.severity = warning
+dotnet_diagnostic.IDE0045.severity = warning
+dotnet_diagnostic.IDE0046.severity = none
+dotnet_diagnostic.IDE0047.severity = none
+dotnet_diagnostic.IDE0048.severity = none
+dotnet_diagnostic.IDE0049.severity = warning
+dotnet_diagnostic.IDE0051.severity = warning
+dotnet_diagnostic.IDE0052.severity = silent # TODO:
+dotnet_diagnostic.IDE0053.severity = none
+dotnet_diagnostic.IDE0054.severity = warning
+dotnet_diagnostic.IDE0055.severity = warning
+dotnet_diagnostic.IDE0056.severity = warning
+dotnet_diagnostic.IDE0057.severity = warning
+dotnet_diagnostic.IDE0058.severity = warning
+dotnet_diagnostic.IDE0059.severity = warning
+dotnet_diagnostic.IDE0060.severity = suggestion
+dotnet_diagnostic.IDE0061.severity = warning
+dotnet_diagnostic.IDE0062.severity = warning
+dotnet_diagnostic.IDE0063.severity = warning
+dotnet_diagnostic.IDE0064.severity = warning
+dotnet_diagnostic.IDE0065.severity = warning
+dotnet_diagnostic.IDE0066.severity = warning
+dotnet_diagnostic.IDE0070.severity = warning
+dotnet_diagnostic.IDE0071.severity = warning
+dotnet_diagnostic.IDE0072.severity = warning
+dotnet_diagnostic.IDE0073.severity = none
+dotnet_diagnostic.IDE0074.severity = warning
+dotnet_diagnostic.IDE0075.severity = warning
+dotnet_diagnostic.IDE0076.severity = warning
+dotnet_diagnostic.IDE0077.severity = warning
+dotnet_diagnostic.IDE0078.severity = warning
+dotnet_diagnostic.IDE0079.severity = warning
+dotnet_diagnostic.IDE0080.severity = warning
+dotnet_diagnostic.IDE0082.severity = warning
+dotnet_diagnostic.IDE0083.severity = warning
+dotnet_diagnostic.IDE0090.severity = warning
+dotnet_diagnostic.IDE0100.severity = warning
+dotnet_diagnostic.IDE0110.severity = warning
+dotnet_diagnostic.IDE0120.severity = warning
+dotnet_diagnostic.IDE0130.severity = warning
+dotnet_diagnostic.IDE0150.severity = warning
+dotnet_diagnostic.IDE0160.severity = none
+dotnet_diagnostic.IDE0161.severity = warning
+dotnet_diagnostic.IDE0170.severity = warning
+dotnet_diagnostic.IDE0180.severity = warning
+dotnet_diagnostic.IDE0200.severity = warning
+dotnet_diagnostic.IDE0210.severity = warning
+dotnet_diagnostic.IDE0211.severity = warning
+dotnet_diagnostic.IDE0220.severity = warning
+dotnet_diagnostic.IDE0230.severity = warning
+dotnet_diagnostic.IDE0240.severity = warning
+dotnet_diagnostic.IDE0241.severity = warning
+dotnet_diagnostic.IDE0250.severity = warning
+dotnet_diagnostic.IDE0251.severity = warning
+dotnet_diagnostic.IDE0260.severity = warning
+dotnet_diagnostic.IDE0270.severity = warning
+dotnet_diagnostic.IDE0280.severity = warning
+dotnet_diagnostic.IDE0290.severity = warning
+dotnet_diagnostic.IDE0301.severity = warning
+dotnet_diagnostic.IDE0302.severity = warning
+dotnet_diagnostic.IDE0303.severity = warning
+dotnet_diagnostic.IDE0304.severity = warning
+dotnet_diagnostic.IDE0305.severity = none
+dotnet_diagnostic.ide1001.severity = warning # No documentation
+dotnet_diagnostic.ide1002.severity = warning # No documentation
+dotnet_diagnostic.ide1003.severity = warning # No documentation
+dotnet_diagnostic.ide1004.severity = warning # Not active
+dotnet_diagnostic.IDE1005.severity = warning
+dotnet_diagnostic.IDE1006.severity = warning # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules
+# Other rules
+dotnet_diagnostic.JSON001.severity = warning
+dotnet_diagnostic.JSON002.severity = warning
+dotnet_diagnostic.RE0001.severity = warning
+dotnet_diagnostic.RF001.severity = none # TODO:
+
+[*.cs]
+###############################
+# C# Coding Conventions       #
+###############################
+# Usings placement
+csharp_using_directive_placement = outside_namespace:warning # IDE0065
+# var preferences
+csharp_style_var_for_built_in_types = true:warning # IDE0007, IDE0008
+csharp_style_var_when_type_is_apparent = true:warning # IDE0007, IDE0008
+csharp_style_var_elsewhere = true:warning # IDE0007, IDE0008
+# Expression-bodied members
+csharp_style_expression_bodied_constructors = true:warning # IDE0021
+csharp_style_expression_bodied_methods = true:warning # IDE0022
+csharp_style_expression_bodied_operators = true:warning # IDE0023, IDE0024
+csharp_style_expression_bodied_properties = true:warning # IDE0025
+csharp_style_expression_bodied_indexers = true:warning # IDE0026
+csharp_style_expression_bodied_accessors = true:warning # IDE0027
+csharp_style_expression_bodied_lambdas = true:warning # IDE0053
+csharp_style_expression_bodied_local_functions = true:warning # IDE0061
+csharp_style_prefer_extended_property_pattern = true:warning # IDE0170
+# Pattern matching preferences
+csharp_style_pattern_matching_over_as_with_null_check = true:warning # IDE0019, IDE0260
+csharp_style_pattern_matching_over_is_with_cast_check = true:warning # IDE0020, IDE0038
+csharp_style_prefer_switch_expression = true:warning # IDE0066
+csharp_style_prefer_pattern_matching = true:warning # IDE0078
+csharp_style_prefer_not_pattern = true:warning # IDE0083
+# Null-checking preferences
+csharp_style_throw_expression = true:warning # IDE0016
+csharp_style_prefer_null_check_over_type_check = true:warning # IDE0150
+csharp_style_conditional_delegate_call = true:warning # IDE1005
+# Modifier preferences
+csharp_prefer_static_local_function = true:warning # IDE0062
+csharp_preferred_modifier_order = public,protected,private,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async:warning
+# Expression-level preferences
+csharp_prefer_braces = when_multiline:warning # IDE0011
+csharp_style_inlined_variable_declaration = true:warning # IDE0018
+dotnet_style_prefer_collection_expression = true:warning # IDE0028, IDE0301, IDE0302, IDE0303, IDE0304, IDE0305
+csharp_prefer_simple_default_expression = true:warning # IDE0034
+csharp_style_pattern_local_over_anonymous_function = true:warning # IDE0039
+csharp_style_prefer_local_over_anonymous_function = true:warning # IDE0039
+csharp_style_deconstructed_variable_declaration = true:warning # IDE0042
+csharp_style_prefer_index_operator = true:warning # IDE0056
+csharp_style_prefer_range_operator = true:warning # IDE0057
+csharp_style_unused_value_expression_statement_preference = discard_variable:warning # IDE0058
+csharp_style_unused_value_assignment_preference = discard_variable:warning # IDE0059
+csharp_prefer_simple_using_statement = true:warning # IDE0063
+csharp_style_implicit_object_creation_when_type_is_apparent = true:warning # IDE0090
+csharp_style_prefer_tuple_swap = true:warning # IDE0180
+csharp_style_prefer_utf8_string_literals = false:warning # IDE0230
+# Method group rules
+csharp_style_prefer_method_group_conversion = true:warning # IDE0200
+# Top level statements
+csharp_style_prefer_top_level_statements = true:warning # IDE0210, IDE0211
+# Member can be readonly
+csharp_style_prefer_readonly_struct = true:warning # IDE0250
+csharp_style_prefer_readonly_struct_member = true:warning # IDE0251
+# Primary constructors
+csharp_style_prefer_primary_constructors = false:warning # IDE0290
+
+###############################
+# C# Formatting Rules         #
+###############################
+# New line preferences
+csharp_new_line_before_open_brace = all # IDE0055
+csharp_new_line_before_else = true # IDE0055
+csharp_new_line_before_catch = true # IDE0055
+csharp_new_line_before_finally = true # IDE0055
+csharp_new_line_before_members_in_object_initializers = true # IDE0055
+csharp_new_line_before_members_in_anonymous_types = true # IDE0055
+csharp_new_line_between_query_expression_clauses = true # IDE0055
+# Indentation preferences
+csharp_indent_case_contents = true # IDE0055
+csharp_indent_switch_labels = true # IDE0055
+csharp_indent_labels = flush_left # IDE0055
+# Space preferences
+csharp_space_after_cast = false # IDE0055
+csharp_space_after_keywords_in_control_flow_statements = true # IDE0055
+csharp_space_between_method_call_parameter_list_parentheses = false # IDE0055
+csharp_space_between_method_declaration_parameter_list_parentheses = false # IDE0055
+csharp_space_between_parentheses = false # IDE0055
+csharp_space_before_colon_in_inheritance_clause = true # IDE0055
+csharp_space_after_colon_in_inheritance_clause = true # IDE0055
+csharp_space_around_binary_operators = before_and_after # IDE0055
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false # IDE0055
+csharp_space_between_method_call_name_and_opening_parenthesis = false # IDE0055
+csharp_space_between_method_call_empty_parameter_list_parentheses = false # IDE0055
+# Wrapping preferences
+csharp_preserve_single_line_statements = true # IDE0055
+csharp_preserve_single_line_blocks = true # IDE0055
+# Namespace organization
+csharp_style_namespace_declarations = file_scoped:warning # IDE0161
+
+[*.vb]
+###############################
+# VB Coding Conventions       #
+###############################
+# Modifier preferences
+visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion

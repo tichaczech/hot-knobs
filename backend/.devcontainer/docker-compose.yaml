@@ -1,0 +1,27 @@
+version: '3.8'
+name: thc-hotknobs
+
+include:
+  - ../docker-compose.yaml
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sleep infinity
+    container_name: thc-hotknobs-dev
+    # Overrides default command so things don't shut down after the process ends.
+    hostname: dev
+    # network_mode: host
+    networks:
+      - default
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+    ports:
+      - "7119:7119"
+      - "7120:7120"
+    volumes:
+      - ../..:/workspaces:cached
+    # Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    # user: root

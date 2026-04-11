@@ -1,0 +1,10 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Naming convention -->
+  <PropertyGroup>
+    <DefaultRootNamespace>$(DefaultRootNamespace).Dummy</DefaultRootNamespace>
+  </PropertyGroup>
+
+</Project>

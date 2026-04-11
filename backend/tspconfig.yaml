@@ -1,0 +1,12 @@
+parameters:
+  base-dir:
+    default: "{project-root}"
+
+output-dir: "{base-dir}/doc/openapi"
+
+options:
+  "@typespec/openapi3":
+    emitter-output-dir: "{output-dir}"
+
+emit:
+  - "@typespec/openapi3"

@@ -1,0 +1,20 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+	  "_commandLineArgs": "--database=cosmosdb",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "swagger/index.html",
+      "applicationUrl": "http://localhost:7101",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+		"_HOTKNOBS_DATABASE": "postgresql",
+		"HOTKNOBS_DATABASE": "mongodb",
+        "HOTKNOBS_STARTUP_LOGGER_LOG_LEVEL": "Debug",
+        "OTEL_RESOURCE_ATTRIBUTES": "service.name=domains-secrets/server,service.namespace=hotknobs,service.version=1.2.3-dev,service.instance.id=10a1f2fb-aa7f-4c5f-8375-b17f73a1d6c8,host.name=petr-tichys-macbook,host.type=aarch64,os.name=Linux,os.version=6.10.14-linuxkit"
+      }
+    }
+  }
+}

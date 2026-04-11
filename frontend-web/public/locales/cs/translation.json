@@ -1,0 +1,228 @@
+{
+    "_buttons": {
+        "add": "Přidat",
+        "cancel": "Zrušit",
+        "delete": "Smazat",
+        "edit": "Upravit",
+        "save": "Uložit",
+        "saving": "Ukládám...",
+        "search": "Hledat",
+        "submit": "Odeslat",
+        "view": "Zobrazit"
+    },
+    "_common": {
+        "add": "Přidat",
+        "appDescription": "Aplikace pro správu ježdění na terénní motorce",
+        "appName": "Hot Knobs",
+        "cancel": "Zrušit",
+        "close": "Zavřít",
+        "continue": "Pokračovat",
+        "delete": "Smazat",
+        "description": "Popis",
+        "descriptionPlaceholder": "Zadejte popis",
+        "edit": "Upravit",
+        "error": "Nastala chyba. Zkuste to prosím znovu.",
+        "loading": "Načítání...",
+        "name": "Jméno",
+        "namePlaceholder": "Zadejte jméno",
+        "no": "Ne",
+        "ok": "OK",
+        "save": "Uložit",
+        "search": "Hledat",
+        "success": "Úspěch!",
+        "view": "Zobrazit",
+        "yes": "Ano"
+    },
+    "_errors": {
+        "network": "Nastala chyba při připojení k serveru. Zkontrolujte své připojení k internetu.",
+        "notFound": "Požadovaná stránka nebyla nalezena.",
+        "server": "Nastala chyba na serveru. Zkuste to prosím znovu později.",
+        "unauthorized": "Nemáte oprávnění k zobrazení této stránky."
+    },
+    "_modals": {
+        "confirmDelete": {
+            "cancelButton": "Ne, zrušit",
+            "confirmButton": "Ano, smažte to",
+            "message": "Opravdu chcete smazat {{item}}?",
+            "title": "Potvrdit smazání"
+        },
+        "error": {
+            "message": "Omlouváme se, došlo k chybě. Zkuste to prosím znovu.",
+            "title": "Nastala chyba"
+        }
+    },
+    "_navigation": {
+        "administration": {
+            "title": "Administrace",
+            "items": {
+                "coaches": "Trenéři",
+                "operators": "Provozovatelé",
+                "riders": "Jezdci",
+                "sites": "Místa"
+            }
+        },
+        "main": {
+            "items": {
+                "about": "O aplikaci",
+                "account": "Účet",
+                "coaches": "Trenéři",
+                "home": "Domů",
+                "operators": "Provozovatelé",
+                "riders": "Jezdci",
+                "settings": "Nastavení"
+            }
+        }
+    },
+    "_notifications": {
+        "error": {
+            "message": "Nastala chyba při {{action}}. Zkuste to prosím znovu.",
+            "title": "Chyba"
+        },
+        "success": {
+            "message": "{{action}} bylo úspěšně dokončeno.",
+            "title": "Úspěch"
+        }
+    },
+    "_validations": {
+        "maxLength": "{{field}} nesmí překročit {{max}} znaků.",
+        "minLength": "{{field}} musí mít alespoň {{min}} znaků.",
+        "passwordsMustMatch": "Hesla se musí shodovat.",
+        "required": "Pole {{field}} je povinné.",
+        "validEmail": "Zadejte platnou e-mailovou adresu."
+    },
+    "auth": {
+        "_common": {
+            "cancel": "Zrušit",
+            "confirmPassword": "Potvrdit heslo",
+            "email": "E-mail",
+            "emailPlaceholder": "jmeno@priklad.cz",
+            "password": "Heslo",
+            "passwordPlaceholder": "••••••••",
+            "signIn": "Přihlásit se",
+            "signUp": "Zaregistrovat se",
+            "submit": "Odeslat",
+            "_termsAndPolicyPrompt": "Kliknutím na Pokračovat souhlasíte s našimi <1>Podmínkami služby</1> a <2>Zásadami ochrany osobních údajů</2>."
+        },
+        "_validations": {
+            "passwordsMustMatch": "Hesla se musí shodovat.",
+            "validPassword": "Heslo musí mít alespoň 8 znaků a obsahovat alespoň jedno číslo a jedno speciální znaky."
+        },
+        "changePassword": {
+            "_validations": {
+                "oldPasswordRequired": "Aktuální heslo je nutné vyplnit."
+            },
+            "form": {
+                "confirmPasswordLabel": "Potvrdit nové heslo",
+                "errorMessage": "Nepodařilo se změnit heslo. Zkuste to prosím znovu.",
+                "newPasswordLabel": "Nové heslo",
+                "oldPasswordLabel": "Aktuální heslo",
+                "submit": "Změnit heslo",
+                "submitting": "Měním...",
+                "successMessage": "Změna hesla byla provedena!"
+            },
+            "page": {
+                "changedMind": "Rozmysleli jste si to?",
+                "description": "Zadejte níže své aktuální heslo a nové heslo.",
+                "goBack": "Vraťte se zpět",
+                "title": "Chcete změnit heslo?"
+            }
+        },
+        "forgotPassword": {
+            "form": {
+                "enterEmail": "Zadejte níže svou e-mailovou adresu a my vám zašleme odkaz pro obnovení hesla.",
+                "errorMessage": "Nepodařilo se odeslat e-mail pro obnovení hesla. Zkuste to prosím znovu později.",
+                "submit": "Odeslat odkaz pro obnovení",
+                "submitting": "Odesílání...",
+                "successMessage": "E-mail pro obnovení hesla byl odeslán! Zkontrolujte svou doručenou poštu."
+            },
+            "page": {
+                "description": "Zadejte níže svou e-mailovou adresu a my vám zašleme odkaz pro obnovení hesla.",
+                "remembered": "Pamatujete si své heslo?",
+                "signIn": "Přihlašte se",
+                "title": "Zapomněli jste heslo?"
+            }
+        },
+        "signIn": {
+            "form": {
+                "forgotPasswordLink": "Zapomněli jste heslo?",
+                "signUpLink": "Zaregistrujte se",
+                "submit": "Přihlásit se",
+                "submitting": "Přihlašuji se..."
+            },
+            "page": {
+                "emailSignInDescription": "Přihlaste se pomocí své e-mailové adresy",
+                "forgotPassword": "Zapomněli jste heslo?",
+                "noAccountPrompt": "Nemáte účet?",
+                "signUpLink": "Zaregistrujte se",
+                "socialSignInApple": "Přihlásit se pomocí Apple",
+                "socialSignInDescription": "Přihlaste se pomocí svého účtu na sociální síti",
+                "socialSignInFacebook": "Přihlásit se pomocí Facebooku",
+                "socialSignInGoogle": "Přihlásit se pomocí Google",
+                "socialSignInMicrosoft": "Přihlásit se pomocí Microsoftu",
+                "title": "Vítejte zpět!"
+            }
+        },
+        "signUp": {
+            "form": {
+                "confirmPasswordLabel": "Potvrdit heslo",
+                "hasAccountPrompt": "Již máte účet?",
+                "submit": "Zaregistrovat se",
+                "submitting": "Registruji se..."
+            },
+            "page": {
+                "description": "Zadejte svou e-mailovou adresu a nastavte si heslo níže.",
+                "hasAccountPrompt": "Již máte účet nebo se chcete přihlásit pomocí účtu na sociální síti?",
+                "signInLink": "Přihlásit se",
+                "title": "Vytvořit účet"
+            }
+        }
+    },
+    "home": {
+        "coaches": {
+            "description": "Vytvářejte tréninkové plány a sledujte pokrok svých jezdců.",
+            "title": "Pro trenéry"
+        },
+        "footerNotice": "© {{year}} Hot Knobs. Všechna práva vyhrazena.",
+        "loginButton": "Přihlásit se",
+        "operators": {
+            "description": "Spravujte tratě, plánujte volné jízdy a sledujte aktivitu.",
+            "title": "Pro provozovatele"
+        },
+        "registerButton": "Registrovat se",
+        "riders": {
+            "description": "Zaznamenávejte své jízdy, analyzujte svůj výkon a spojte se s trenéry.",
+            "title": "Pro jezdce"
+        },
+        "welcomeSubtitle": "Jediná aplikace, kterou potřebujete pro správu ježdění na terénní motorce.",
+        "welcomeTitle": "Vítejte v Hot Knobs!"
+    },
+    "operator": {
+        "_common": {
+            "name": "Název",
+            "namePlaceholder": "Zadejte název"
+        },
+        "edit": {
+            "form": {
+                "descriptionLabel": "Popis",
+                "nameLabel": "Název"
+            },
+            "page": {
+                "title": "Upravit provozovatele",
+                "description": "Upravte informace o provozovateli."
+            }
+        },
+        "list": {
+            "card": {},
+            "page": {
+                "description": "Spravujte provozovatele a jejich data.",
+                "title": "Provozovatelé"
+            },
+            "addOperator": "Přidat provozovatele",
+            "deleteOperator": "Smazat provozovatele",
+            "editOperator": "Upravit provozovatele",
+            "noOperators": "Žádní provozovatelé nebyli nalezeni.",
+            "searchOperators": "Hledat provozovatele",
+            "title": "Provozovatelé"
+        }
+    }
+}

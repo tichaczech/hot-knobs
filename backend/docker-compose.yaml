@@ -1,0 +1,189 @@
+version: '3.8'
+name: thc-hotknobs
+
+networks:
+  default:
+    name: thc-hotknobs
+    driver: bridge
+
+services:
+  # azure-keyvault:
+  #   image: nagyesta/lowkey-vault:3.4.0-ubi9-minimal
+  #   container_name: thc-hotknobs-azure-keyvault
+  #   environment:
+  #     LOWKEY_ARGS: >
+  #       --server.port=10004
+  #       --LOWKEY_VAULT_ALIASES=localhost=azure-keyvault:10004
+  #   hostname: azure-keyvault
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "10004:10004"
+  #   restart: always
+
+  # azure-storage:
+  #   image: mcr.microsoft.com/azure-storage/azurite
+  #   container_name: thc-hotknobs-azure-storage
+  #   hostname: azure-storage
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "10000:10000"
+  #     - "10001:10001"
+  #     - "10002:10002"
+  #   restart: always
+  #   volumes:
+  #     - ./_data/azure-storage:/data
+
+  # cosmos:
+  #   image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+  #   container_name: thc-hotknobs-cosmos
+  #   environment:
+  #     PROTOCOL: https
+  #     DATA_PATH: /data
+  #     GATEWAY_PUBLIC_ENDPOINT: cosmos
+  #   hostname: cosmos
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "8081:8081"
+  #     - "1234:1234"
+  #   restart: always
+  #   volumes:
+  #     - ./_data/cosmos:/data
+
+  # jaeger:
+  #   image: jaegertracing/jaeger:${JAEGER_VERSION:-latest}
+  #   command: ["--config", "/etc/jaeger/config.yaml"]
+  #   container_name: thc-hotknobs-jaeger
+  #   hostname: jaeger
+  #   environment:
+  #     OTEL_ENABLED: true
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "4317:4317" # OTLP gRPC
+  #     - "4318:4318" # OTLP HTTP
+  #     - "8888:8888"
+  #     - "8889:8889"
+  #     - "16686:16686"
+  #   restart: always
+  #   volumes:
+  #     - "./.docker-compose/jaeger-ui.json:/etc/jaeger/jaeger-ui.json"
+  #     - "./.docker-compose/config.yaml:/etc/jaeger/config.yaml"
+
+  mongo-rs1:
+    image: mongo:latest
+    container_name: thc-hotknobs-mongo-rs1
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--bind_ip_all",
+        "--replSet",
+        "dbrs"
+      ]
+    hostname: mongo-rs1
+    # network_mode: host
+    networks:
+      - default
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+      - ./_data/mongo/1:/data/db
+
+  mongo-rs2:
+    image: mongo:latest
+    container_name: thc-hotknobs-mongo-rs2
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--bind_ip_all",
+        "--replSet",
+        "dbrs"
+      ]
+    hostname: mongo-rs2
+    # network_mode: host
+    networks:
+      - default
+    ports:
+      - "27018:27017"
+    restart: always
+    volumes:
+      - ./_data/mongo/2:/data/db
+
+  mongo-rs3:
+    image: mongo:latest
+    container_name: thc-hotknobs-mongo-rs3
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--bind_ip_all",
+        "--replSet",
+        "dbrs"
+      ]
+    hostname: mongo-rs3
+    # network_mode: host
+    networks:
+      - default
+    ports:
+      - "27019:27017"
+    restart: always
+    volumes:
+      - ./_data/mongo/3:/data/db
+
+  mongo-rsinit:
+    image: mongo
+    container_name: thc-hotknobs-mongo-rsinit
+    depends_on:
+      - mongo-rs1
+      - mongo-rs2
+      - mongo-rs3
+    hostname: mongo-rsinit
+    entrypoint:
+      [
+        "bash",
+        "-c",
+        "sleep 5 && mongosh --host mongo-rs1 ./mongo-rsinit.js"
+      ]
+    # network_mode: host
+    networks:
+      - default
+    restart: "no"
+    volumes:
+      - ./.docker-compose/mongo-rsinit.js:/mongo-rsinit.js
+
+  # postgres:
+  #   image: postgres:17.5-bookworm
+  #   container_name: thc-hotknobs-postgres
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #   healthcheck:
+  #     test: pg_isready -d postgres -U postgres
+  #     interval: 5s
+  #     retries: 6
+  #   hostname: postgres
+  #   networks:
+  #     - default
+  #   ports:
+  #     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
+  #     # (Adding the "ports" property to this file will not forward from a Codespace.)
+  #     - "5432:5432"
+  #   restart: always
+  #   volumes:
+  #     - ./_data/mongo/2:/data/db
+
+  redis:
+    image: redis
+    container_name: thc-hotknobs-redis
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    hostname: redis
+    # network_mode: host
+    networks:
+      - default
+    ports:
+      - "6379:6379"
+    restart: always

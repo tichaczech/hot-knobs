@@ -1,0 +1,131 @@
+version: '3.8'
+name: thc-hotknobs
+
+networks:
+  default:
+    name: thc-hotknobs
+    driver: bridge
+
+services:
+  # jaeger:
+  #   image: jaegertracing/jaeger:${JAEGER_VERSION:-latest}
+  #   command: ["--config", "/etc/jaeger/config.yaml"]
+  #   container_name: thc-hotknobs-jaeger
+  #   hostname: jaeger
+  #   environment:
+  #     OTEL_ENABLED: true
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "4317:4317" # OTLP gRPC
+  #     - "4318:4318" # OTLP HTTP
+  #     - "8888:8888"
+  #     - "8889:8889"
+  #     - "16686:16686"
+  #   restart: always
+  #   volumes:
+  #     - "./.docker-compose/jaeger-ui.json:/etc/jaeger/jaeger-ui.json"
+  #     - "./.docker-compose/config.yaml:/etc/jaeger/config.yaml"
+
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:latest
+  #   command: start-dev
+  #   container_name: thc-hotknobs-keycloak
+  #   environment:
+  #     KC_BOOTSTRAP_ADMIN_USERNAME: admin
+  #     KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+  #   hostname: keycloak
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "8080:8080"
+  #   restart: always
+
+  mongo-rs1:
+    image: mongo:latest
+    container_name: thc-hotknobs-mongo-rs1
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--bind_ip_all",
+        "--replSet",
+        "dbrs"
+      ]
+    hostname: mongo-rs1
+    networks:
+      - default
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+      - ./_data/mongo/1:/data/db
+
+  mongo-rs2:
+    image: mongo:latest
+    container_name: thc-hotknobs-mongo-rs2
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--bind_ip_all",
+        "--replSet",
+        "dbrs"
+      ]
+    hostname: mongo-rs2
+    networks:
+      - default
+    ports:
+      - "27018:27017"
+    restart: always
+    volumes:
+      - ./_data/mongo/2:/data/db
+
+  mongo-rs3:
+    image: mongo:latest
+    container_name: thc-hotknobs-mongo-rs3
+    entrypoint:
+      [
+        "/usr/bin/mongod",
+        "--bind_ip_all",
+        "--replSet",
+        "dbrs"
+      ]
+    hostname: mongo-rs3
+    networks:
+      - default
+    ports:
+      - "27019:27017"
+    restart: always
+    volumes:
+      - ./_data/mongo/3:/data/db
+
+  mongo-rsinit:
+    image: mongo
+    container_name: thc-hotknobs-mongo-rsinit
+    depends_on:
+      - mongo-rs1
+      - mongo-rs2
+      - mongo-rs3
+    hostname: mongo-rsinit
+    entrypoint:
+      [
+        "bash",
+        "-c",
+        "sleep 5 && mongosh --host mongo-rs1 ./mongo-rsinit.js"
+      ]
+    networks:
+      - default
+    restart: "no"
+    volumes:
+      - ./.docker-compose/mongo-rsinit.js:/mongo-rsinit.js
+
+  redis:
+    image: redis
+    container_name: thc-hotknobs-redis
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    hostname: redis
+    networks:
+      - default
+    ports:
+      - "6379:6379"
+    restart: always

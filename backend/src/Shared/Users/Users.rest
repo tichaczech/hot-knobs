@@ -1,0 +1,60 @@
+@id_token = eyJhbGciOiJSUzI1NiIsImtpZCI6IjRiMTFjYjdhYjVmY2JlNDFlOTQ4MDk0ZTlkZjRjNWI1ZWNhMDAwOWUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiUGV0ciBUaWNow70iLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vaG90LWtub2JzLWRldiIsImF1ZCI6ImhvdC1rbm9icy1kZXYiLCJhdXRoX3RpbWUiOjE3NzEwOTEwNzEsInVzZXJfaWQiOiJHdUs2eVBxQXdaV3A2ZjRiUFlmSWt2OFZpeUoyIiwic3ViIjoiR3VLNnlQcUF3WldwNmY0YlBZZklrdjhWaXlKMiIsImlhdCI6MTc3MTA5MTA3MSwiZXhwIjoxNzcxMDk0NjcxLCJlbWFpbCI6InBldHJAdGljaHkubWUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJwZXRyQHRpY2h5Lm1lIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.U1dKUOz6GxBzLXf0xW3WfUFyFY8kaAFz6tSwVYtCkP1y9xq57JjLhQzmHGF91JhQj4BSnAUjsiGtR4zS40UUgqBj_MJuQigcXTLTJd5DEsBJCGech40y8TqPMrscIH5ye8KAVCFczOZl9zVyJ8GbXuwGOMHfmGtEjmirMDQNGypC5xd2hXC2zP7rLJZYP7JFgUBSlF7pz2GZLWV_GGGG1cydmQe6vepUs49OHrsRaKfmBLZZaICt5GzzyQHfzLnwXlwNcMiCNB9Vs8EHUm7TRkVtl7w_oH0vB5LtnvLazTu7cgT5yaZOVpa8tj3Bxrly1OBvVUuA1_5m04eXhEp11g
+@refreshToken = AMf-vByf1BZhI7ohFW0h5ddzV_6a3QIN42MTL-I6ptxnylAJp5Z85i4mHVT4OoWxnySS0wm6nYjoNTJ120xqBBIzo4dzKfl-56KD5TF0dvNNttsnNAvPAufRmFfMgLCNYV0O2NDdqqILExqA6v9Tvh-4QgTpF5kB3zF6j2VifWac3dRUX1V5Dt8y2LN7h34j7H13rjuYgbXGOCWBcoYn6T6IUc_DPSYh5A
+
+###
+
+POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCt3AT3y9mABh_MrWkSpTKQlH4UQYlnr2A HTTP/1.1
+Content-Type: application/json
+
+{
+	"email": "petr@tichy.me",
+	"password": "petr12345",
+	"returnSecureToken": true
+}
+
+###
+
+GET http://localhost:7101/v1/my/profile HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{ id_token }}
+
+###
+
+PUT http://localhost:7101/v1/my/profile HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{ id_token }}
+Content-Type: application/json
+
+{
+	"email": "petr@tichy.me",
+	"displayName": "Petr Tichý",
+	"photoUrl": "https://gravatar.com/avatar/2b5cadbc09de13740adc411300d917ac?s=400&d=mp&r=x"
+}
+
+###
+
+GET http://localhost:7101/v1/my/devices HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{ id_token }}
+
+###
+
+@device_id = 1eaa5e2c-62d7-44a7-b46f-abdb84b265d9
+
+GET http://localhost:7101/v1/my/devices/{{ device_id }} HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{ id_token }}
+
+###
+
+PUT http://localhost:7101/v1/my/devices/register HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{ id_token }}
+Content-Type: application/json
+
+{
+  "apnsToken": "### apsnToken",
+  "fcmToken": "### fcmToken",
+  "platform": "iOS 17.1",
+  "name": "Petr Tichý's iPhone"
+}
