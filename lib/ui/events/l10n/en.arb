@@ -1,0 +1,6 @@
+{
+  "@@locale": "en",
+  "eventsScreenName": "Events",
+  "eventViewScreenName": "Event View",
+  "eventEditScreenName": "Event Edit"
+}

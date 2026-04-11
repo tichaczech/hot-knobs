@@ -1,0 +1,19 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'profile_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class ProfileLocalizationsEn extends ProfileLocalizations {
+  ProfileLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get profileScreenName => 'Profile';
+
+  @override
+  String get profileViewScreenName => 'View Profile';
+
+  @override
+  String get profileEditScreenName => 'Edit Profile';
+}

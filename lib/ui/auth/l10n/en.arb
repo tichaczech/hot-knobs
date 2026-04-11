@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "authFormSignInButton": "Sign In",
+  "authFormSignUpButton": "Sign Up",
+  "authSignInCancelledByUser": "Sign in cancelled by user...",
+  "authSignInError": "Error signing in: {error}",
+  "authSignInOrSignUpToContinue": "You need to sign in or sign up before you can continue...",
+  "authSignUpCancelledByUser": "Sign up cancelled by user...",
+  "authSignUpError": "Error signing up: {error}",
+  "authScreenName": "Sign In / Sign Up"
+}

@@ -36,5 +36,7 @@ linter:
 analyzer:
   exclude:
     - "**/*.mapper.dart"
+    - "_lib/*.dart"
+    - "_lib/**/*.dart"
   errors:
     invalid_annotation_target: ignore

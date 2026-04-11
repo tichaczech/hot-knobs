@@ -95,89 +95,23 @@ abstract class SitesLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @siteOpeningHoursTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Opening Hours'**
-  String get siteOpeningHoursTitle;
-
-  /// No description provided for @sitesFormCreateButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Create'**
-  String get sitesFormCreateButton;
-
-  /// No description provided for @sitesFormFieldDescriptionHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Short description'**
-  String get sitesFormFieldDescriptionHint;
-
-  /// No description provided for @sitesFormFieldDescriptionLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Description'**
-  String get sitesFormFieldDescriptionLabel;
-
-  /// No description provided for @sitesFormFieldNameHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter name'**
-  String get sitesFormFieldNameHint;
-
-  /// No description provided for @sitesFormFieldNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Name'**
-  String get sitesFormFieldNameLabel;
-
-  /// No description provided for @sitesFormSaveButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get sitesFormSaveButton;
-
-  /// No description provided for @sitesFormTitleCreate.
-  ///
-  /// In en, this message translates to:
-  /// **'New Site'**
-  String get sitesFormTitleCreate;
-
-  /// No description provided for @sitesFormTitleEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Site'**
-  String get sitesFormTitleEdit;
-
-  /// No description provided for @sitesFormValidationNameRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Name is required'**
-  String get sitesFormValidationNameRequired;
-
   /// No description provided for @sitesScreenName.
   ///
   /// In en, this message translates to:
   /// **'Sites'**
   String get sitesScreenName;
 
-  /// No description provided for @siteTabArrival.
+  /// No description provided for @siteViewScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Arrival'**
-  String get siteTabArrival;
+  /// **'View Site'**
+  String get siteViewScreenName;
 
-  /// No description provided for @siteTabLocation.
+  /// No description provided for @siteEditScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Location'**
-  String get siteTabLocation;
-
-  /// No description provided for @siteTabParking.
-  ///
-  /// In en, this message translates to:
-  /// **'Parking'**
-  String get siteTabParking;
+  /// **'Edit Site'**
+  String get siteEditScreenName;
 }
 
 class _SitesLocalizationsDelegate extends LocalizationsDelegate<SitesLocalizations> {

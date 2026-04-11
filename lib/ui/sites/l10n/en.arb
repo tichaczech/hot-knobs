@@ -1,17 +1,6 @@
 {
   "@@locale": "en",
-  "siteOpeningHoursTitle": "Opening Hours",
-  "sitesFormCreateButton": "Create",
-  "sitesFormFieldDescriptionHint": "Short description",
-  "sitesFormFieldDescriptionLabel": "Description",
-  "sitesFormFieldNameHint": "Enter name",
-  "sitesFormFieldNameLabel": "Name",
-  "sitesFormSaveButton": "Save",
-  "sitesFormTitleCreate": "New Site",
-  "sitesFormTitleEdit": "Edit Site",
-  "sitesFormValidationNameRequired": "Name is required",
   "sitesScreenName": "Sites",
-  "siteTabArrival": "Arrival",
-  "siteTabLocation": "Location",
-  "siteTabParking": "Parking"
+  "siteViewScreenName": "View Site",
+  "siteEditScreenName": "Edit Site"
 }

@@ -1,17 +1,6 @@
 {
   "@@locale": "cs",
-  "sitesFormCreateButton": "Vytvořit",
-  "sitesFormFieldDescriptionHint": "Krátký popis",
-  "sitesFormFieldDescriptionLabel": "Popis",
-  "sitesFormFieldNameHint": "Zadejte název",
-  "sitesFormFieldNameLabel": "Název",
-  "sitesFormSaveButton": "Uložit",
-  "sitesFormTitleCreate": "Nové místo",
-  "sitesFormTitleEdit": "Upravit místo",
-  "sitesFormValidationNameRequired": "Název je povinný",
   "sitesScreenName": "Místa",
-  "siteOpeningHoursTitle": "Provozní doba",
-  "siteTabArrival": "Příjezd",
-  "siteTabLocation": "Lokalita",
-  "siteTabParking": "Parkování"
+  "siteViewScreenName": "Zobrazit místo",
+  "siteEditScreenName": "Upravit místo"
 }

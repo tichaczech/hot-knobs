@@ -9,9 +9,6 @@ class CoreLocalizationsCs extends CoreLocalizations {
   CoreLocalizationsCs([String locale = 'cs']) : super(locale);
 
   @override
-  String get dashboardScreenName => 'Dashboard';
-
-  @override
   String get dayOfWeekFriday => 'Pátek';
 
   @override
@@ -51,7 +48,7 @@ class CoreLocalizationsCs extends CoreLocalizations {
   String get navigationChat => 'Zprávy';
 
   @override
-  String get navigationDashboard => 'Dashboard';
+  String get navigationDashboard => 'Přehled';
 
   @override
   String get navigationEvents => 'Události';

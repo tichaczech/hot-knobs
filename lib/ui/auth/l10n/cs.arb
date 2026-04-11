@@ -1,0 +1,11 @@
+{
+  "@@locale": "cs",
+  "authFormSignInButton": "Přihlásit",
+  "authFormSignUpButton": "Registrovat",
+  "authSignInCancelledByUser": "Přihlášení zrušeno uživatelem...",
+  "authSignInError": "Chyba při přihlašování: {error}",
+  "authSignInOrSignUpToContinue": "Než budete moci pokračovat, tak se musíte přihlásit nebo zaregistrovat...",
+  "authSignUpCancelledByUser": "Registrace zrušena uživatelem...",
+  "authSignUpError": "Chyba při registraci: {error}",
+  "authScreenName": "Přihlásit / Registrovat"
+}

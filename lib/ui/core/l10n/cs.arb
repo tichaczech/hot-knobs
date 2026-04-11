@@ -1,6 +1,5 @@
 {
   "@@locale": "cs",
-  "dashboardScreenName": "Dashboard",
   "dayOfWeekFriday": "Pátek",
   "dayOfWeekMonday": "Pondělí",
   "dayOfWeekSaturday": "Sobota",
@@ -14,7 +13,7 @@
   "eventsScreenPastTab": "Proběhlé",
   "eventsScreenUpcomingTab": "Nadcházející",
   "navigationChat": "Zprávy",
-  "navigationDashboard": "Dashboard",
+  "navigationDashboard": "Přehled",
   "navigationEvents": "Události",
   "navigationOperators": "Provozovatelé",
   "navigationParticipants": "Účastníci",

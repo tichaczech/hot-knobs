@@ -9,9 +9,6 @@ class CoreLocalizationsEn extends CoreLocalizations {
   CoreLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get dashboardScreenName => 'Dashboard';
-
-  @override
   String get dayOfWeekFriday => 'Friday';
 
   @override

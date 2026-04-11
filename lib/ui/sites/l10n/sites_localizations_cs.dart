@@ -9,44 +9,11 @@ class SitesLocalizationsCs extends SitesLocalizations {
   SitesLocalizationsCs([String locale = 'cs']) : super(locale);
 
   @override
-  String get siteOpeningHoursTitle => 'Provozní doba';
-
-  @override
-  String get sitesFormCreateButton => 'Vytvořit';
-
-  @override
-  String get sitesFormFieldDescriptionHint => 'Krátký popis';
-
-  @override
-  String get sitesFormFieldDescriptionLabel => 'Popis';
-
-  @override
-  String get sitesFormFieldNameHint => 'Zadejte název';
-
-  @override
-  String get sitesFormFieldNameLabel => 'Název';
-
-  @override
-  String get sitesFormSaveButton => 'Uložit';
-
-  @override
-  String get sitesFormTitleCreate => 'Nové místo';
-
-  @override
-  String get sitesFormTitleEdit => 'Upravit místo';
-
-  @override
-  String get sitesFormValidationNameRequired => 'Název je povinný';
-
-  @override
   String get sitesScreenName => 'Místa';
 
   @override
-  String get siteTabArrival => 'Příjezd';
+  String get siteViewScreenName => 'Zobrazit místo';
 
   @override
-  String get siteTabLocation => 'Lokalita';
-
-  @override
-  String get siteTabParking => 'Parkování';
+  String get siteEditScreenName => 'Upravit místo';
 }

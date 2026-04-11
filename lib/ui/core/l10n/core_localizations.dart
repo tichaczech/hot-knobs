@@ -95,12 +95,6 @@ abstract class CoreLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @dashboardScreenName.
-  ///
-  /// In en, this message translates to:
-  /// **'Dashboard'**
-  String get dashboardScreenName;
-
   /// No description provided for @dayOfWeekFriday.
   ///
   /// In en, this message translates to:
