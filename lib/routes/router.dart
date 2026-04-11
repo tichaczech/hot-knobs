@@ -28,13 +28,14 @@ import '../widgets/app_shell.dart';
 import 'routes.dart';
 import '../utils/auth_provider.dart';
 
-final _routerKey = GlobalKey<NavigatorState>();
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   debugLogDiagnostics: true,
   errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Error: ${state.error}'))),
   initialLocation: Routes.dashboard.path,
-  navigatorKey: _routerKey,
+  navigatorKey: _rootNavigatorKey,
   redirect: (BuildContext context, GoRouterState state) async {
     final authProvider = context.read<AuthProvider>();
     final currentUser = await authProvider.getCurrentUser();
@@ -62,49 +63,101 @@ final router = GoRouter(
     // Main shell with NavigationBar
     ShellRoute(
       builder: (context, state, child) => AppShell(child: child),
+      navigatorKey: _shellNavigatorKey,
       routes: [
         // Chat
-        GoRoute(name: Routes.chat.name, path: Routes.chat.path, builder: (context, state) => const ChatsHomeScreen()),
+        GoRoute(name: Routes.chat.name, parentNavigatorKey: _shellNavigatorKey, path: Routes.chat.path, builder: (context, state) => const ChatsHomeScreen()),
 
         // Dashboard
-        GoRoute(name: Routes.dashboard.name, path: Routes.dashboard.path, builder: (context, state) => const DashboardHomeScreen()),
+        GoRoute(
+          name: Routes.dashboard.name,
+          parentNavigatorKey: _shellNavigatorKey,
+          path: Routes.dashboard.path,
+          builder: (context, state) => const DashboardHomeScreen(),
+          routes: [
+            // Organizers
+            GoRoute(
+              name: Routes.organizers.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.organizers.path,
+              builder: (context, state) => const OrganizersHomeScreen(),
+              routes: [
+                GoRoute(
+                  name: Routes.organizerView.name,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: Routes.organizerView.path,
+                  builder: (context, state) {
+                    final organizerId = state.pathParameters['id'];
+                    return OrganizerViewScreen();
+                  },
+                ),
+                GoRoute(
+                  name: Routes.organizerEdit.name,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: Routes.organizerEdit.path,
+                  builder: (context, state) {
+                    final organizerId = state.pathParameters['id'];
+                    return OrganizerEditScreen();
+                  },
+                ),
+              ],
+            ),
+            // Sites
+            GoRoute(
+              name: Routes.sites.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.sites.path,
+              builder: (context, state) => const SitesHomeScreen(),
+              routes: [
+                GoRoute(
+                  name: Routes.siteView.name,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: Routes.siteView.path,
+                  builder: (context, state) {
+                    final siteId = state.pathParameters['id'];
+                    return SiteViewScreen();
+                  },
+                ),
+                GoRoute(
+                  name: Routes.siteEdit.name,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: Routes.siteEdit.path,
+                  builder: (context, state) {
+                    final siteId = state.pathParameters['id'];
+                    return SiteEditScreen();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
 
         // Events
-        GoRoute(name: Routes.events.name, path: Routes.events.path, builder: (context, state) => const EventsHomeScreen()),
         GoRoute(
-          name: Routes.eventView.name,
-          path: Routes.eventView.path,
-          builder: (context, state) {
-            final eventId = state.pathParameters['id'];
-            return EventViewScreen();
-          },
-        ),
-        GoRoute(
-          name: Routes.eventEdit.name,
-          path: Routes.eventEdit.path,
-          builder: (context, state) {
-            final eventId = state.pathParameters['id'];
-            return EventEditScreen();
-          },
-        ),
-
-        // Organizers
-        GoRoute(name: Routes.organizers.name, path: Routes.organizers.path, builder: (context, state) => const OrganizersHomeScreen()),
-        GoRoute(
-          name: Routes.organizerView.name,
-          path: Routes.organizerView.path,
-          builder: (context, state) {
-            final organizerId = state.pathParameters['id'];
-            return OrganizerViewScreen();
-          },
-        ),
-        GoRoute(
-          name: Routes.organizerEdit.name,
-          path: Routes.organizerEdit.path,
-          builder: (context, state) {
-            final organizerId = state.pathParameters['id'];
-            return OrganizerEditScreen();
-          },
+          name: Routes.events.name,
+          parentNavigatorKey: _shellNavigatorKey,
+          path: Routes.events.path,
+          builder: (context, state) => const EventsHomeScreen(),
+          routes: [
+            GoRoute(
+              name: Routes.eventView.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.eventView.path,
+              builder: (context, state) {
+                final eventId = state.pathParameters['id'];
+                return EventViewScreen();
+              },
+            ),
+            GoRoute(
+              name: Routes.eventEdit.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.eventEdit.path,
+              builder: (context, state) {
+                final eventId = state.pathParameters['id'];
+                return EventEditScreen();
+              },
+            ),
+          ],
         ),
 
         // Participants
@@ -127,60 +180,59 @@ final router = GoRouter(
         // ),
 
         // Profile
-        GoRoute(name: Routes.profile.name, path: Routes.profile.path, builder: (context, state) => const ProfileHomeScreen()),
-          GoRoute(
-            name: Routes.profileView.name,
-            path: Routes.profileView.path,
-            builder: (context, state) {
-            final profileId = state.pathParameters['id'];
-            return ProfileViewScreen();
-          },
-        ),
         GoRoute(
-          name: Routes.profileEdit.name,
-          path: Routes.profileEdit.path,
-          builder: (context, state) {
-            final profileId = state.pathParameters['id'];
-            return ProfileEditScreen();
-          },
+          name: Routes.profile.name,
+          parentNavigatorKey: _shellNavigatorKey,
+          path: Routes.profile.path,
+          builder: (context, state) => const ProfileHomeScreen(),
+          routes: [
+            GoRoute(
+              name: Routes.profileView.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.profileView.path,
+              builder: (context, state) {
+                final profileId = state.pathParameters['id'];
+                return ProfileViewScreen();
+              },
+            ),
+            GoRoute(
+              name: Routes.profileEdit.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.profileEdit.path,
+              builder: (context, state) {
+                final profileId = state.pathParameters['id'];
+                return ProfileEditScreen();
+              },
+            ),
+          ],
         ),
 
         // Registrations
-        GoRoute(name: Routes.registrations.name, path: Routes.registrations.path, builder: (context, state) => const RegistrationsHomeScreen()),
         GoRoute(
-          name: Routes.registrationView.name,
-          path: Routes.registrationView.path,
-          builder: (context, state) {
-            final registrationId = state.pathParameters['id'];
-            return RegistrationViewScreen();
-          },
-        ),
-        GoRoute(
-          name: Routes.registrationEdit.name,
-          path: Routes.registrationEdit.path,
-          builder: (context, state) {
-            final registrationId = state.pathParameters['id'];
-            return RegistrationEditScreen();
-          },
-        ),
-
-        // Sites
-        GoRoute(name: Routes.sites.name, path: Routes.sites.path, builder: (context, state) => const SitesHomeScreen()),
-        GoRoute(
-          name: Routes.siteView.name,
-          path: Routes.siteView.path,
-          builder: (context, state) {
-            final siteId = state.pathParameters['id'];
-            return SiteViewScreen();
-          },
-        ),
-        GoRoute(
-          name: Routes.siteEdit.name,
-          path: Routes.siteEdit.path,
-          builder: (context, state) {
-            final siteId = state.pathParameters['id'];
-            return SiteEditScreen();
-          },
+          name: Routes.registrations.name,
+          parentNavigatorKey: _shellNavigatorKey,
+          path: Routes.registrations.path,
+          builder: (context, state) => const RegistrationsHomeScreen(),
+          routes: [
+            GoRoute(
+              name: Routes.registrationView.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.registrationView.path,
+              builder: (context, state) {
+                final registrationId = state.pathParameters['id'];
+                return RegistrationViewScreen();
+              },
+            ),
+            GoRoute(
+              name: Routes.registrationEdit.name,
+              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.registrationEdit.path,
+              builder: (context, state) {
+                final registrationId = state.pathParameters['id'];
+                return RegistrationEditScreen();
+              },
+            ),
+          ],
         ),
       ],
     ),
