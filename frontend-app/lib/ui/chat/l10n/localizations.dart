@@ -5,24 +5,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'auth_localizations_cs.dart';
-import 'auth_localizations_en.dart';
+import 'localizations_cs.dart';
+import 'localizations_en.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of AuthLocalizations
-/// returned by `AuthLocalizations.of(context)`.
+/// Callers can lookup localized strings with an instance of ChatLocalizations
+/// returned by `ChatLocalizations.of(context)`.
 ///
-/// Applications need to include `AuthLocalizations.delegate()` in their app's
+/// Applications need to include `ChatLocalizations.delegate()` in their app's
 /// `localizationDelegates` list, and the locales they support in the app's
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/auth_localizations.dart';
+/// import 'l10n/localizations.dart';
 ///
 /// return MaterialApp(
-///   localizationsDelegates: AuthLocalizations.localizationsDelegates,
-///   supportedLocales: AuthLocalizations.supportedLocales,
+///   localizationsDelegates: ChatLocalizations.localizationsDelegates,
+///   supportedLocales: ChatLocalizations.supportedLocales,
 ///   home: MyApplicationHome(),
 /// );
 /// ```
@@ -59,18 +59,18 @@ import 'auth_localizations_en.dart';
 /// Select and expand the newly-created Localizations item then, for each
 /// locale your application supports, add a new item and select the locale
 /// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the AuthLocalizations.supportedLocales
+/// be consistent with the languages listed in the ChatLocalizations.supportedLocales
 /// property.
-abstract class AuthLocalizations {
-  AuthLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+abstract class ChatLocalizations {
+  ChatLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static AuthLocalizations? of(BuildContext context) {
-    return Localizations.of<AuthLocalizations>(context, AuthLocalizations);
+  static ChatLocalizations? of(BuildContext context) {
+    return Localizations.of<ChatLocalizations>(context, ChatLocalizations);
   }
 
-  static const LocalizationsDelegate<AuthLocalizations> delegate = _AuthLocalizationsDelegate();
+  static const LocalizationsDelegate<ChatLocalizations> delegate = _ChatLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -95,81 +95,39 @@ abstract class AuthLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @authFormSignInButton.
+  /// No description provided for @chatsScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Sign In'**
-  String get authFormSignInButton;
-
-  /// No description provided for @authFormSignUpButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign Up'**
-  String get authFormSignUpButton;
-
-  /// No description provided for @authSignInCancelledByUser.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in cancelled by user...'**
-  String get authSignInCancelledByUser;
-
-  /// No description provided for @authSignInError.
-  ///
-  /// In en, this message translates to:
-  /// **'Error signing in: {error}'**
-  String authSignInError(Object error);
-
-  /// No description provided for @authSignInOrSignUpToContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'You need to sign in or sign up before you can continue...'**
-  String get authSignInOrSignUpToContinue;
-
-  /// No description provided for @authSignUpCancelledByUser.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign up cancelled by user...'**
-  String get authSignUpCancelledByUser;
-
-  /// No description provided for @authSignUpError.
-  ///
-  /// In en, this message translates to:
-  /// **'Error signing up: {error}'**
-  String authSignUpError(Object error);
-
-  /// No description provided for @authScreenName.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign In / Sign Up'**
-  String get authScreenName;
+  /// **'Chats'**
+  String get chatsScreenName;
 }
 
-class _AuthLocalizationsDelegate extends LocalizationsDelegate<AuthLocalizations> {
-  const _AuthLocalizationsDelegate();
+class _ChatLocalizationsDelegate extends LocalizationsDelegate<ChatLocalizations> {
+  const _ChatLocalizationsDelegate();
 
   @override
-  Future<AuthLocalizations> load(Locale locale) {
-    return SynchronousFuture<AuthLocalizations>(lookupAuthLocalizations(locale));
+  Future<ChatLocalizations> load(Locale locale) {
+    return SynchronousFuture<ChatLocalizations>(lookupChatLocalizations(locale));
   }
 
   @override
   bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
-  bool shouldReload(_AuthLocalizationsDelegate old) => false;
+  bool shouldReload(_ChatLocalizationsDelegate old) => false;
 }
 
-AuthLocalizations lookupAuthLocalizations(Locale locale) {
+ChatLocalizations lookupChatLocalizations(Locale locale) {
 
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'cs': return AuthLocalizationsCs();
-    case 'en': return AuthLocalizationsEn();
+    case 'cs': return ChatLocalizationsCs();
+    case 'en': return ChatLocalizationsEn();
   }
 
   throw FlutterError(
-    'AuthLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'ChatLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
     'that was used.'

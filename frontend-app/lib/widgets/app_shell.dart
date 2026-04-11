@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../routes/routes.dart';
-import '../ui/core/l10n/core_localizations.dart';
+import '../ui/core/l10n/localizations.dart';
 
 // This is the "shell" of the app, which provides the common Scaffold and NavigationBar for all main routes. The actual content of each page will be provided by the child widget, which is determined by the current route.
 class AppShell extends StatelessWidget {

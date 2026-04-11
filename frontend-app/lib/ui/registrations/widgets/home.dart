@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../routes/routes.dart';
-import '../l10n/registrations_localizations.dart';
+import '../l10n/localizations.dart';
 
 class RegistrationsHomeScreen extends StatefulWidget {
   const RegistrationsHomeScreen({super.key});

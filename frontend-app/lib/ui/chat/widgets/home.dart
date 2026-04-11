@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../chat/l10n/chat_localizations.dart';
+import '../l10n/localizations.dart';
 
 class ChatsHomeScreen extends StatefulWidget {
   const ChatsHomeScreen({super.key});

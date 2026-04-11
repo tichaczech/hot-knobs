@@ -5,24 +5,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'chat_localizations_cs.dart';
-import 'chat_localizations_en.dart';
+import 'localizations_cs.dart';
+import 'localizations_en.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of ChatLocalizations
-/// returned by `ChatLocalizations.of(context)`.
+/// Callers can lookup localized strings with an instance of ParticipantsLocalizations
+/// returned by `ParticipantsLocalizations.of(context)`.
 ///
-/// Applications need to include `ChatLocalizations.delegate()` in their app's
+/// Applications need to include `ParticipantsLocalizations.delegate()` in their app's
 /// `localizationDelegates` list, and the locales they support in the app's
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/chat_localizations.dart';
+/// import 'l10n/localizations.dart';
 ///
 /// return MaterialApp(
-///   localizationsDelegates: ChatLocalizations.localizationsDelegates,
-///   supportedLocales: ChatLocalizations.supportedLocales,
+///   localizationsDelegates: ParticipantsLocalizations.localizationsDelegates,
+///   supportedLocales: ParticipantsLocalizations.supportedLocales,
 ///   home: MyApplicationHome(),
 /// );
 /// ```
@@ -59,18 +59,18 @@ import 'chat_localizations_en.dart';
 /// Select and expand the newly-created Localizations item then, for each
 /// locale your application supports, add a new item and select the locale
 /// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the ChatLocalizations.supportedLocales
+/// be consistent with the languages listed in the ParticipantsLocalizations.supportedLocales
 /// property.
-abstract class ChatLocalizations {
-  ChatLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+abstract class ParticipantsLocalizations {
+  ParticipantsLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static ChatLocalizations? of(BuildContext context) {
-    return Localizations.of<ChatLocalizations>(context, ChatLocalizations);
+  static ParticipantsLocalizations? of(BuildContext context) {
+    return Localizations.of<ParticipantsLocalizations>(context, ParticipantsLocalizations);
   }
 
-  static const LocalizationsDelegate<ChatLocalizations> delegate = _ChatLocalizationsDelegate();
+  static const LocalizationsDelegate<ParticipantsLocalizations> delegate = _ParticipantsLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -95,39 +95,39 @@ abstract class ChatLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @chatsScreenName.
+  /// No description provided for @participantsScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Chats'**
-  String get chatsScreenName;
+  /// **'Participants'**
+  String get participantsScreenName;
 }
 
-class _ChatLocalizationsDelegate extends LocalizationsDelegate<ChatLocalizations> {
-  const _ChatLocalizationsDelegate();
+class _ParticipantsLocalizationsDelegate extends LocalizationsDelegate<ParticipantsLocalizations> {
+  const _ParticipantsLocalizationsDelegate();
 
   @override
-  Future<ChatLocalizations> load(Locale locale) {
-    return SynchronousFuture<ChatLocalizations>(lookupChatLocalizations(locale));
+  Future<ParticipantsLocalizations> load(Locale locale) {
+    return SynchronousFuture<ParticipantsLocalizations>(lookupParticipantsLocalizations(locale));
   }
 
   @override
   bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
-  bool shouldReload(_ChatLocalizationsDelegate old) => false;
+  bool shouldReload(_ParticipantsLocalizationsDelegate old) => false;
 }
 
-ChatLocalizations lookupChatLocalizations(Locale locale) {
+ParticipantsLocalizations lookupParticipantsLocalizations(Locale locale) {
 
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'cs': return ChatLocalizationsCs();
-    case 'en': return ChatLocalizationsEn();
+    case 'cs': return ParticipantsLocalizationsCs();
+    case 'en': return ParticipantsLocalizationsEn();
   }
 
   throw FlutterError(
-    'ChatLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'ParticipantsLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
     'that was used.'

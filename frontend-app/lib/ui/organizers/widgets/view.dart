@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../l10n/organizers_localizations.dart';
+import '../l10n/localizations.dart';
 
 class OrganizerViewScreen extends StatefulWidget {
   const OrganizerViewScreen({super.key});

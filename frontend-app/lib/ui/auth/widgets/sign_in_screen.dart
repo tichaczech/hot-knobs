@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../routes/routes.dart';
 import '../../../utils/result.dart';
-import '../l10n/auth_localizations.dart';
+import '../l10n/localizations.dart';
 import '../view_models/sign_in.dart';
 
 class SignInScreen extends StatefulWidget {

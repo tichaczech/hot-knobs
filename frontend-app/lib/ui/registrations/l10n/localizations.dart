@@ -5,24 +5,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'organizers_localizations_cs.dart';
-import 'organizers_localizations_en.dart';
+import 'localizations_cs.dart';
+import 'localizations_en.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of OrganizersLocalizations
-/// returned by `OrganizersLocalizations.of(context)`.
+/// Callers can lookup localized strings with an instance of RegistrationsLocalizations
+/// returned by `RegistrationsLocalizations.of(context)`.
 ///
-/// Applications need to include `OrganizersLocalizations.delegate()` in their app's
+/// Applications need to include `RegistrationsLocalizations.delegate()` in their app's
 /// `localizationDelegates` list, and the locales they support in the app's
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/organizers_localizations.dart';
+/// import 'l10n/localizations.dart';
 ///
 /// return MaterialApp(
-///   localizationsDelegates: OrganizersLocalizations.localizationsDelegates,
-///   supportedLocales: OrganizersLocalizations.supportedLocales,
+///   localizationsDelegates: RegistrationsLocalizations.localizationsDelegates,
+///   supportedLocales: RegistrationsLocalizations.supportedLocales,
 ///   home: MyApplicationHome(),
 /// );
 /// ```
@@ -59,18 +59,18 @@ import 'organizers_localizations_en.dart';
 /// Select and expand the newly-created Localizations item then, for each
 /// locale your application supports, add a new item and select the locale
 /// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the OrganizersLocalizations.supportedLocales
+/// be consistent with the languages listed in the RegistrationsLocalizations.supportedLocales
 /// property.
-abstract class OrganizersLocalizations {
-  OrganizersLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+abstract class RegistrationsLocalizations {
+  RegistrationsLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static OrganizersLocalizations? of(BuildContext context) {
-    return Localizations.of<OrganizersLocalizations>(context, OrganizersLocalizations);
+  static RegistrationsLocalizations? of(BuildContext context) {
+    return Localizations.of<RegistrationsLocalizations>(context, RegistrationsLocalizations);
   }
 
-  static const LocalizationsDelegate<OrganizersLocalizations> delegate = _OrganizersLocalizationsDelegate();
+  static const LocalizationsDelegate<RegistrationsLocalizations> delegate = _RegistrationsLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -95,51 +95,51 @@ abstract class OrganizersLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @organizersScreenName.
+  /// No description provided for @registrationsScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Organizers'**
-  String get organizersScreenName;
+  /// **'Registrations'**
+  String get registrationsScreenName;
 
-  /// No description provided for @organizerViewScreenName.
+  /// No description provided for @registrationViewScreenName.
   ///
   /// In en, this message translates to:
-  /// **'View Organizer'**
-  String get organizerViewScreenName;
+  /// **'View Registration'**
+  String get registrationViewScreenName;
 
-  /// No description provided for @organizerEditScreenName.
+  /// No description provided for @registrationEditScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Edit Organizer'**
-  String get organizerEditScreenName;
+  /// **'Edit Registration'**
+  String get registrationEditScreenName;
 }
 
-class _OrganizersLocalizationsDelegate extends LocalizationsDelegate<OrganizersLocalizations> {
-  const _OrganizersLocalizationsDelegate();
+class _RegistrationsLocalizationsDelegate extends LocalizationsDelegate<RegistrationsLocalizations> {
+  const _RegistrationsLocalizationsDelegate();
 
   @override
-  Future<OrganizersLocalizations> load(Locale locale) {
-    return SynchronousFuture<OrganizersLocalizations>(lookupOrganizersLocalizations(locale));
+  Future<RegistrationsLocalizations> load(Locale locale) {
+    return SynchronousFuture<RegistrationsLocalizations>(lookupRegistrationsLocalizations(locale));
   }
 
   @override
   bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
-  bool shouldReload(_OrganizersLocalizationsDelegate old) => false;
+  bool shouldReload(_RegistrationsLocalizationsDelegate old) => false;
 }
 
-OrganizersLocalizations lookupOrganizersLocalizations(Locale locale) {
+RegistrationsLocalizations lookupRegistrationsLocalizations(Locale locale) {
 
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'cs': return OrganizersLocalizationsCs();
-    case 'en': return OrganizersLocalizationsEn();
+    case 'cs': return RegistrationsLocalizationsCs();
+    case 'en': return RegistrationsLocalizationsEn();
   }
 
   throw FlutterError(
-    'OrganizersLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'RegistrationsLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
     'that was used.'

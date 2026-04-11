@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'core_localizations_cs.dart';
-import 'core_localizations_en.dart';
+import 'localizations_cs.dart';
+import 'localizations_en.dart';
 
 // ignore_for_file: type=lint
 
@@ -18,7 +18,7 @@ import 'core_localizations_en.dart';
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/core_localizations.dart';
+/// import 'l10n/localizations.dart';
 ///
 /// return MaterialApp(
 ///   localizationsDelegates: CoreLocalizations.localizationsDelegates,

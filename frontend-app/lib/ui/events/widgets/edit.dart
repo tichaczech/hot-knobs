@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../events/l10n/events_localizations.dart';
+import '../l10n/localizations.dart';
 
 class EventEditScreen extends StatefulWidget {
   const EventEditScreen({super.key});

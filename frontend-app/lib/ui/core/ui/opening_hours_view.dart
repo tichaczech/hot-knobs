@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../domain/models/types.dart';
-import '../l10n/core_localizations.dart';
+import '../l10n/localizations.dart';
 
 class OpeningHoursView extends StatelessWidget {
   OpeningHoursView({super.key, required OpeningHours openingHours}) {

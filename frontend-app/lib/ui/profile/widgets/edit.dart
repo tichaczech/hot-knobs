@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../l10n/profile_localizations.dart';
+import '../l10n/localizations.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({super.key});

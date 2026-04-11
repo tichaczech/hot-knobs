@@ -5,24 +5,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'dashboard_localizations_cs.dart';
-import 'dashboard_localizations_en.dart';
+import 'localizations_cs.dart';
+import 'localizations_en.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of DashboardLocalizations
-/// returned by `DashboardLocalizations.of(context)`.
+/// Callers can lookup localized strings with an instance of AuthLocalizations
+/// returned by `AuthLocalizations.of(context)`.
 ///
-/// Applications need to include `DashboardLocalizations.delegate()` in their app's
+/// Applications need to include `AuthLocalizations.delegate()` in their app's
 /// `localizationDelegates` list, and the locales they support in the app's
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/dashboard_localizations.dart';
+/// import 'l10n/localizations.dart';
 ///
 /// return MaterialApp(
-///   localizationsDelegates: DashboardLocalizations.localizationsDelegates,
-///   supportedLocales: DashboardLocalizations.supportedLocales,
+///   localizationsDelegates: AuthLocalizations.localizationsDelegates,
+///   supportedLocales: AuthLocalizations.supportedLocales,
 ///   home: MyApplicationHome(),
 /// );
 /// ```
@@ -59,18 +59,18 @@ import 'dashboard_localizations_en.dart';
 /// Select and expand the newly-created Localizations item then, for each
 /// locale your application supports, add a new item and select the locale
 /// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the DashboardLocalizations.supportedLocales
+/// be consistent with the languages listed in the AuthLocalizations.supportedLocales
 /// property.
-abstract class DashboardLocalizations {
-  DashboardLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+abstract class AuthLocalizations {
+  AuthLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static DashboardLocalizations? of(BuildContext context) {
-    return Localizations.of<DashboardLocalizations>(context, DashboardLocalizations);
+  static AuthLocalizations? of(BuildContext context) {
+    return Localizations.of<AuthLocalizations>(context, AuthLocalizations);
   }
 
-  static const LocalizationsDelegate<DashboardLocalizations> delegate = _DashboardLocalizationsDelegate();
+  static const LocalizationsDelegate<AuthLocalizations> delegate = _AuthLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -95,39 +95,81 @@ abstract class DashboardLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @dashboardScreenName.
+  /// No description provided for @authFormSignInButton.
   ///
   /// In en, this message translates to:
-  /// **'Dashboard'**
-  String get dashboardScreenName;
+  /// **'Sign In'**
+  String get authFormSignInButton;
+
+  /// No description provided for @authFormSignUpButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get authFormSignUpButton;
+
+  /// No description provided for @authSignInCancelledByUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in cancelled by user...'**
+  String get authSignInCancelledByUser;
+
+  /// No description provided for @authSignInError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error signing in: {error}'**
+  String authSignInError(Object error);
+
+  /// No description provided for @authSignInOrSignUpToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to sign in or sign up before you can continue...'**
+  String get authSignInOrSignUpToContinue;
+
+  /// No description provided for @authSignUpCancelledByUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up cancelled by user...'**
+  String get authSignUpCancelledByUser;
+
+  /// No description provided for @authSignUpError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error signing up: {error}'**
+  String authSignUpError(Object error);
+
+  /// No description provided for @authScreenName.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In / Sign Up'**
+  String get authScreenName;
 }
 
-class _DashboardLocalizationsDelegate extends LocalizationsDelegate<DashboardLocalizations> {
-  const _DashboardLocalizationsDelegate();
+class _AuthLocalizationsDelegate extends LocalizationsDelegate<AuthLocalizations> {
+  const _AuthLocalizationsDelegate();
 
   @override
-  Future<DashboardLocalizations> load(Locale locale) {
-    return SynchronousFuture<DashboardLocalizations>(lookupDashboardLocalizations(locale));
+  Future<AuthLocalizations> load(Locale locale) {
+    return SynchronousFuture<AuthLocalizations>(lookupAuthLocalizations(locale));
   }
 
   @override
   bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
-  bool shouldReload(_DashboardLocalizationsDelegate old) => false;
+  bool shouldReload(_AuthLocalizationsDelegate old) => false;
 }
 
-DashboardLocalizations lookupDashboardLocalizations(Locale locale) {
+AuthLocalizations lookupAuthLocalizations(Locale locale) {
 
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'cs': return DashboardLocalizationsCs();
-    case 'en': return DashboardLocalizationsEn();
+    case 'cs': return AuthLocalizationsCs();
+    case 'en': return AuthLocalizationsEn();
   }
 
   throw FlutterError(
-    'DashboardLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'AuthLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
     'that was used.'

@@ -5,24 +5,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'registrations_localizations_cs.dart';
-import 'registrations_localizations_en.dart';
+import 'localizations_cs.dart';
+import 'localizations_en.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of RegistrationsLocalizations
-/// returned by `RegistrationsLocalizations.of(context)`.
+/// Callers can lookup localized strings with an instance of DashboardLocalizations
+/// returned by `DashboardLocalizations.of(context)`.
 ///
-/// Applications need to include `RegistrationsLocalizations.delegate()` in their app's
+/// Applications need to include `DashboardLocalizations.delegate()` in their app's
 /// `localizationDelegates` list, and the locales they support in the app's
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/registrations_localizations.dart';
+/// import 'l10n/localizations.dart';
 ///
 /// return MaterialApp(
-///   localizationsDelegates: RegistrationsLocalizations.localizationsDelegates,
-///   supportedLocales: RegistrationsLocalizations.supportedLocales,
+///   localizationsDelegates: DashboardLocalizations.localizationsDelegates,
+///   supportedLocales: DashboardLocalizations.supportedLocales,
 ///   home: MyApplicationHome(),
 /// );
 /// ```
@@ -59,18 +59,18 @@ import 'registrations_localizations_en.dart';
 /// Select and expand the newly-created Localizations item then, for each
 /// locale your application supports, add a new item and select the locale
 /// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the RegistrationsLocalizations.supportedLocales
+/// be consistent with the languages listed in the DashboardLocalizations.supportedLocales
 /// property.
-abstract class RegistrationsLocalizations {
-  RegistrationsLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+abstract class DashboardLocalizations {
+  DashboardLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static RegistrationsLocalizations? of(BuildContext context) {
-    return Localizations.of<RegistrationsLocalizations>(context, RegistrationsLocalizations);
+  static DashboardLocalizations? of(BuildContext context) {
+    return Localizations.of<DashboardLocalizations>(context, DashboardLocalizations);
   }
 
-  static const LocalizationsDelegate<RegistrationsLocalizations> delegate = _RegistrationsLocalizationsDelegate();
+  static const LocalizationsDelegate<DashboardLocalizations> delegate = _DashboardLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -95,51 +95,39 @@ abstract class RegistrationsLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @registrationsScreenName.
+  /// No description provided for @dashboardScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Registrations'**
-  String get registrationsScreenName;
-
-  /// No description provided for @registrationViewScreenName.
-  ///
-  /// In en, this message translates to:
-  /// **'View Registration'**
-  String get registrationViewScreenName;
-
-  /// No description provided for @registrationEditScreenName.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Registration'**
-  String get registrationEditScreenName;
+  /// **'Dashboard'**
+  String get dashboardScreenName;
 }
 
-class _RegistrationsLocalizationsDelegate extends LocalizationsDelegate<RegistrationsLocalizations> {
-  const _RegistrationsLocalizationsDelegate();
+class _DashboardLocalizationsDelegate extends LocalizationsDelegate<DashboardLocalizations> {
+  const _DashboardLocalizationsDelegate();
 
   @override
-  Future<RegistrationsLocalizations> load(Locale locale) {
-    return SynchronousFuture<RegistrationsLocalizations>(lookupRegistrationsLocalizations(locale));
+  Future<DashboardLocalizations> load(Locale locale) {
+    return SynchronousFuture<DashboardLocalizations>(lookupDashboardLocalizations(locale));
   }
 
   @override
   bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
-  bool shouldReload(_RegistrationsLocalizationsDelegate old) => false;
+  bool shouldReload(_DashboardLocalizationsDelegate old) => false;
 }
 
-RegistrationsLocalizations lookupRegistrationsLocalizations(Locale locale) {
+DashboardLocalizations lookupDashboardLocalizations(Locale locale) {
 
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'cs': return RegistrationsLocalizationsCs();
-    case 'en': return RegistrationsLocalizationsEn();
+    case 'cs': return DashboardLocalizationsCs();
+    case 'en': return DashboardLocalizationsEn();
   }
 
   throw FlutterError(
-    'RegistrationsLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'DashboardLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
     'that was used.'

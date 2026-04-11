@@ -8,17 +8,17 @@ import 'package:provider/provider.dart';
 
 import 'config/dependencies.dart';
 import 'routes/router.dart';
-import 'ui/auth/l10n/auth_localizations.dart';
-import 'ui/chat/l10n/chat_localizations.dart';
-import 'ui/core/l10n/core_localizations.dart';
-import 'ui/dashboard/l10n/dashboard_localizations.dart';
+import 'ui/auth/l10n/localizations.dart';
+import 'ui/chat/l10n/localizations.dart';
+import 'ui/core/l10n/localizations.dart';
+import 'ui/dashboard/l10n/localizations.dart';
 import 'ui/core/themes/theme.dart';
-import 'ui/events/l10n/events_localizations.dart';
-import 'ui/organizers/l10n/organizers_localizations.dart';
-import 'ui/participants/l10n/participants_localizations.dart';
-import 'ui/profile/l10n/profile_localizations.dart';
-import 'ui/registrations/l10n/registrations_localizations.dart';
-import 'ui/sites/l10n/sites_localizations.dart';
+import 'ui/events/l10n/localizations.dart';
+import 'ui/organizers/l10n/localizations.dart';
+import 'ui/participants/l10n/localizations.dart';
+import 'ui/profile/l10n/localizations.dart';
+import 'ui/registrations/l10n/localizations.dart';
+import 'ui/sites/l10n/localizations.dart';
 import 'utils/auth_provider.dart';
 import 'utils/config_provider.dart';
 

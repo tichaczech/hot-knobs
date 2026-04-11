@@ -2,7 +2,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../ui/core/l10n/core_localizations.dart';
+import '../../ui/core/l10n/localizations.dart';
 
 part 'types.mapper.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../l10n/registrations_localizations.dart';
+import '../l10n/localizations.dart';
 
 class RegistrationViewScreen extends StatefulWidget {
   const RegistrationViewScreen({super.key});

@@ -2,7 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../l10n/participants_localizations.dart';
+import '../l10n/localizations.dart';
 
 class ParticipantsHomeScreen extends StatefulWidget {
   const ParticipantsHomeScreen({super.key});

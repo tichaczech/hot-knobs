@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../routes/routes.dart';
-import '../l10n/events_localizations.dart';
+import '../l10n/localizations.dart';
 
 class EventsHomeScreen extends StatefulWidget {
   const EventsHomeScreen({super.key});

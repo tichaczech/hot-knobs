@@ -5,24 +5,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'events_localizations_cs.dart';
-import 'events_localizations_en.dart';
+import 'localizations_cs.dart';
+import 'localizations_en.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of EventsLocalizations
-/// returned by `EventsLocalizations.of(context)`.
+/// Callers can lookup localized strings with an instance of ProfileLocalizations
+/// returned by `ProfileLocalizations.of(context)`.
 ///
-/// Applications need to include `EventsLocalizations.delegate()` in their app's
+/// Applications need to include `ProfileLocalizations.delegate()` in their app's
 /// `localizationDelegates` list, and the locales they support in the app's
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/events_localizations.dart';
+/// import 'l10n/localizations.dart';
 ///
 /// return MaterialApp(
-///   localizationsDelegates: EventsLocalizations.localizationsDelegates,
-///   supportedLocales: EventsLocalizations.supportedLocales,
+///   localizationsDelegates: ProfileLocalizations.localizationsDelegates,
+///   supportedLocales: ProfileLocalizations.supportedLocales,
 ///   home: MyApplicationHome(),
 /// );
 /// ```
@@ -59,18 +59,18 @@ import 'events_localizations_en.dart';
 /// Select and expand the newly-created Localizations item then, for each
 /// locale your application supports, add a new item and select the locale
 /// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the EventsLocalizations.supportedLocales
+/// be consistent with the languages listed in the ProfileLocalizations.supportedLocales
 /// property.
-abstract class EventsLocalizations {
-  EventsLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+abstract class ProfileLocalizations {
+  ProfileLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static EventsLocalizations? of(BuildContext context) {
-    return Localizations.of<EventsLocalizations>(context, EventsLocalizations);
+  static ProfileLocalizations? of(BuildContext context) {
+    return Localizations.of<ProfileLocalizations>(context, ProfileLocalizations);
   }
 
-  static const LocalizationsDelegate<EventsLocalizations> delegate = _EventsLocalizationsDelegate();
+  static const LocalizationsDelegate<ProfileLocalizations> delegate = _ProfileLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -95,51 +95,51 @@ abstract class EventsLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @eventsScreenName.
+  /// No description provided for @profileScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Events'**
-  String get eventsScreenName;
+  /// **'Profile'**
+  String get profileScreenName;
 
-  /// No description provided for @eventViewScreenName.
+  /// No description provided for @profileViewScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Event View'**
-  String get eventViewScreenName;
+  /// **'View Profile'**
+  String get profileViewScreenName;
 
-  /// No description provided for @eventEditScreenName.
+  /// No description provided for @profileEditScreenName.
   ///
   /// In en, this message translates to:
-  /// **'Event Edit'**
-  String get eventEditScreenName;
+  /// **'Edit Profile'**
+  String get profileEditScreenName;
 }
 
-class _EventsLocalizationsDelegate extends LocalizationsDelegate<EventsLocalizations> {
-  const _EventsLocalizationsDelegate();
+class _ProfileLocalizationsDelegate extends LocalizationsDelegate<ProfileLocalizations> {
+  const _ProfileLocalizationsDelegate();
 
   @override
-  Future<EventsLocalizations> load(Locale locale) {
-    return SynchronousFuture<EventsLocalizations>(lookupEventsLocalizations(locale));
+  Future<ProfileLocalizations> load(Locale locale) {
+    return SynchronousFuture<ProfileLocalizations>(lookupProfileLocalizations(locale));
   }
 
   @override
   bool isSupported(Locale locale) => <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
-  bool shouldReload(_EventsLocalizationsDelegate old) => false;
+  bool shouldReload(_ProfileLocalizationsDelegate old) => false;
 }
 
-EventsLocalizations lookupEventsLocalizations(Locale locale) {
+ProfileLocalizations lookupProfileLocalizations(Locale locale) {
 
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'cs': return EventsLocalizationsCs();
-    case 'en': return EventsLocalizationsEn();
+    case 'cs': return ProfileLocalizationsCs();
+    case 'en': return ProfileLocalizationsEn();
   }
 
   throw FlutterError(
-    'EventsLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'ProfileLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
     'that was used.'

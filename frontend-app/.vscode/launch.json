@@ -1,46 +1,4 @@
 {
     "version": "0.2.0",
-    "configurations": [
-        // {
-        //     "name": "frontend",
-        //     "request": "launch",
-        //     "type": "dart"
-        // },
-        // {
-        //     "name": "frontend (profile mode)",
-        //     "request": "launch",
-        //     "type": "dart",
-        //     "flutterMode": "profile"
-        // },
-        // {
-        //     "name": "frontend (release mode)",
-        //     "request": "launch",
-        //     "type": "dart",
-        //     "flutterMode": "release"
-        // },
-        // {
-        //     "name": "frontend (Android 16)",
-        //     "deviceId": "emulator-5554",
-        //     "request": "launch",
-        //     "type": "dart"
-        // },
-        // {
-        //     "name": "frontend (iOS 18)",
-        //     "deviceId": "2544781A-C0C7-49A0-AC66-99E460B54941",
-        //     "request": "launch",
-        //     "type": "dart"
-        // },
-        // {
-        //     "name": "frontend (macOS 15)",
-        //     "deviceId": "macos",
-        //     "request": "launch",
-        //     "type": "dart"
-        // },
-        // {
-        //     "name": "frontend (web)",
-        //     "deviceId": "chrome",
-        //     "request": "launch",
-        //     "type": "dart"
-        // }
-    ]
+    "configurations": []
 }
