@@ -85,11 +85,11 @@ interface ResourceCreateOrUpdate<
 interface ResourceDelete<
 	TResource extends Resource,
 	TScopes extends string[],
-	TResourceInstanceParameters extends ResourceParameters<TResource> = ResourceInstanceParameters<TResource>,
+	TResourceInstanceParameters extends ResourceInstanceParameters<TResource> = ResourceInstanceParameters<TResource>,
 	TError = DeleteRequestError
 > {
 	/**
-	 * Deletes an existing instance of the resource.
+	 * Deletes an existing instance of the resource. Resource is soft-deleted => `isActive` attribute is set to `false`.
 	 *
 	 * @template TResource The resource model to delete.
 	 */
@@ -114,7 +114,7 @@ interface ResourceDelete<
 interface ResourceList<
 	TResource extends Resource,
 	TScopes extends string[],
-	TResourceCollectionParameters extends ResourceParameters<TResource> = ResourceCollectionParameters<TResource>,
+	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
 	TError = ListRequestError
 > {
 	/**
@@ -143,7 +143,7 @@ interface ResourceList<
 interface ResourceRead<
 	TResource extends Resource,
 	TScopes extends string[],
-	TResourceInstanceParameters extends ResourceParameters<TResource> = ResourceInstanceParameters<TResource>,
+	TResourceInstanceParameters extends ResourceInstanceParameters<TResource> = ResourceInstanceParameters<TResource>,
 	TError = ReadRequestError
 > {
 	/**
@@ -172,7 +172,7 @@ interface ResourceRead<
 interface ResourceUpdate<
 	TResource extends Resource,
 	TScopes extends string[],
-	TResourceInstanceParameters extends ResourceParameters<TResource> = ResourceInstanceParameters<TResource>,
+	TResourceInstanceParameters extends ResourceInstanceParameters<TResource> = ResourceInstanceParameters<TResource>,
 	TError = UpdateRequestError
 > {
 	/**
@@ -203,7 +203,7 @@ interface ResourceCollectionOperationsCreateAndUpdate<
 	TResource extends Resource,
 	TReadScopes extends string[],
 	TWriteScopes extends string[],
-	TResourceCollectionParameters extends ResourceParameters<TResource> = ResourceCollectionParameters<TResource>,
+	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
 	TCreateError = CreateRequestError,
 	TListError = ListRequestError
 >
@@ -227,7 +227,7 @@ interface ResourceCollectionOperationsCreateAndUpdate<
 interface ResourceCollectionOperationsCreateOrUpdate<
 	TResource extends Resource,
 	TReadScopes extends string[],
-	TResourceCollectionParameters extends ResourceParameters<TResource> = ResourceCollectionParameters<TResource>,
+	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
 	TListError = ListRequestError
 >
 	extends ResourceList<
@@ -365,8 +365,8 @@ interface ResourceOperationsWithCreateOrUpdate<
 	TResource extends Resource,
 	TReadScopes extends string[],
 	TWriteScopes extends string[],
-	TResourceCollectionParameters extends ResourceParameters<TResource> = ResourceCollectionParameters<TResource>,
-	TResourceInstanceParameters extends ResourceParameters<TResource> = ResourceInstanceParameters<TResource>,
+	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
+	TResourceInstanceParameters extends ResourceInstanceParameters<TResource> = ResourceInstanceParameters<TResource>,
 	TCreateOrUpdateError = CreateOrUpdateRequestError,
 	TDeleteError = DeleteRequestError,
 	TListError = ListRequestError,
@@ -389,42 +389,42 @@ interface ResourceOperationsWithCreateOrUpdate<
 		> {}
 
 
-// /**
-//  * Represents the resource operations.
-//  *
-//  * @template TResource The resource model.
-//  * @template TReadScope The scope required for reading the resource.
-//  * @template TWriteScope The scope required for writing the resource.
-//  * @template TResourceCollectionParameters The resource collection parameters.
-//  * @template TResourceInstanceParameters The resource instance parameters.
-//  * @template TError The error model.
-//  */
-// interface ResourceOperationsWithUpdateOnly<
-// 	TResource extends Resource,
-// 	TReadScopes extends string[],
-// 	TWriteScopes extends string[],
-// 	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
-// 	TResourceInstanceParameters extends ResourceInstanceParameters<TResource> = ResourceInstanceParameters<TResource>,
-// 	TCreateOrUpdateError = CreateOrUpdateRequestError,
-// 	TDeleteError = DeleteRequestError,
-// 	TListError = ListRequestError,
-// 	TReadError = ReadRequestError
-// >
-// 	extends ResourceCollectionOperationsCreateOrUpdate<
-// 			TResource,
-// 			TReadScopes,
-// 			TResourceCollectionParameters,
-// 			TListError
-// 		>,
-// 		ResourceInstanceOperationsCreateAndUpdate<
-// 			TResource,
-// 			TReadScopes,
-// 			TWriteScopes,
-// 			TResourceInstanceParameters,
-// 			TCreateOrUpdateError,
-// 			TDeleteError,
-// 			TReadError
-// 		> {}
+/**
+ * Represents the resource operations.
+ *
+ * @template TResource The resource model.
+ * @template TReadScope The scope required for reading the resource.
+ * @template TWriteScope The scope required for writing the resource.
+ * @template TResourceCollectionParameters The resource collection parameters.
+ * @template TResourceInstanceParameters The resource instance parameters.
+ * @template TError The error model.
+ */
+interface ResourceOperationsWithUpdateOnly<
+	TResource extends Resource,
+	TReadScopes extends string[],
+	TWriteScopes extends string[],
+	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
+	TResourceInstanceParameters extends ResourceInstanceParameters<TResource> = ResourceInstanceParameters<TResource>,
+	TDeleteError = DeleteRequestError,
+	TListError = ListRequestError,
+	TReadError = ReadRequestError,
+	TUpdateError = UpdateRequestError
+>
+	extends ResourceCollectionOperationsCreateOrUpdate<
+			TResource,
+			TReadScopes,
+			TResourceCollectionParameters,
+			TListError
+		>,
+		ResourceInstanceOperationsCreateAndUpdate<
+			TResource,
+			TReadScopes,
+			TWriteScopes,
+			TResourceInstanceParameters,
+			TDeleteError,
+			TReadError,
+			TUpdateError
+		> {}
 
 // -- Singleton Resource Operation Templates --
 

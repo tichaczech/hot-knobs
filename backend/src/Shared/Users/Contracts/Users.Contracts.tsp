@@ -21,31 +21,40 @@ enum Versions {
 }
 
 alias claimDeviceRead = "users.device.read";
+alias claimDeviceTokenRead = "users.device.token.read";
 alias claimDeviceWrite = "users.device.write";
 alias claimProfileRead = "users.profile.read";
 alias claimProfileWrite = "users.profile.write";
+
+alias platform = "ios" | "android";
 
 /**
  * Represents a (User) Device.
  */
 model Device extends Entity {
 	/**
-	 * The device Apple Push Notification service Token.
+	 * Unique identifier for the device, e.g. UUID generated and stored in device secure storage.
 	 */
 	@visibility(Lifecycle.Read, Lifecycle.Create)
-	apnsToken?: string;
+	deviceId: string;
 
 	/**
-	 * The device Firebase Cloud Messaging Token.
+	 * The device model name, e.g. "iPhone 12".
 	 */
 	@visibility(Lifecycle.Read, Lifecycle.Create)
-	fcmToken: string;
+	modelName: string;
+
+	/**
+	 * The date and time when the device was last active.
+	 */
+	@visibility(Lifecycle.Read, Lifecycle.Query)
+	lastActiveAt: offsetDateTime;
 
 	/**
 	 * The device platform.
 	 */
 	@visibility(Lifecycle.Read, Lifecycle.Create)
-	platform: string;
+	platform: platform;
 
 	/**
 	 * The ID of the profile the device belongs to.
@@ -54,17 +63,22 @@ model Device extends Entity {
 	profileId: ResourceId;
 
 	/**
-	 * The date and time when the device was last active.
+	 * The device operating system, e.g. "iOS 14.4".
 	 */
-	@visibility(Lifecycle.Read, Lifecycle.Query)
-	lastActiveAt: offsetDateTime;
+	@visibility(Lifecycle.Read, Lifecycle.Create)
+	systemName: string;
 }
 
-model MyDevice extends OmitProperties<Device, "profileId"> {}
+// model DeviceCollectionParameters extends OmitProperties<ResourceCollectionParameters<Device>, "filter" | "orderBy" | "search"> { }
+// model DeviceCollectionParameters extends ResourceCollectionParameters<Device> { }
 
-model MyDeviceRegisterRequest extends OmitProperties<Device, "description" | "id" | "isActive" | "lastActiveAt" | "profileId"> {}
-
-model MyProfile extends OmitProperties<Profile, "id" | "isActive"> {}
+model DeviceRegisterRequest extends OmitProperties<Device, "description" | "id" | "isActive" | "lastActiveAt" | "profileId"> {
+	/**
+	 * The device token for Apple Push Notification Service or Firebase Cloud Messaging.
+	 */
+	@visibility(Lifecycle.Read, Lifecycle.Create)
+	token?: string;
+}
 
 /**
  * Represents a (User) Profile.
@@ -89,36 +103,76 @@ model Profile extends Entity {
 	photoUrl?: string;
 }
 
+// model ProfileCollectionParameters extends ResourceCollectionParameters<Profile> { }
+
+model TokenParameters {
+	/**
+	 * Device id.
+	 */
+	@key()
+	@path()
+	id: ResourceId;
+}
+
+model TokenResponse {
+	/**
+	 * The device token for Apple Push Notification service or Firebase Cloud Messaging.
+	 */
+	@visibility(Lifecycle.Read)
+	value?: string;
+
+	/**
+	 * The date and time when the Apple Push Notification service or Firebase Cloud Messaging token was last updated.
+	 */
+	@visibility(Lifecycle.Read)
+	updatedAt?: offsetDateTime;
+}
+
 /**
  * Device service.
  */
 @route("/devices")
 @tag("Device")
-interface DeviceService extends ResourceOperationsWithUpdateOnly<Device, [claimDeviceRead], [claimDeviceWrite], ResourceCollectionParametersWithSearch<Device>> {}
-
-@route("/my/devices")
-@tag("My Devices")
-interface MyDevicesService extends ResourceOperationsWithUpdateOnly<MyDevice, [], [], ResourceCollectionParametersWithSearch<MyDevice>> {
+interface DeviceService extends ResourceOperationsWithUpdateOnly<Device, [claimDeviceRead], [claimDeviceWrite], ResourceCollectionParameters<Device>> {
 	/**
-	 * Registers a new device or updates an existing one.
+	 * Registers a new device or updates an existing one for the currently authenticated user.
 	 */
-	@createsOrUpdatesResource(MyDevice)
+	@createsOrUpdatesResource(Device)
 	@put()
 	// @route("/register")
 	@useAuth(Auth<[claimDeviceWrite]>)
-	registerDevice(@bodyRoot registerRequest: MyDeviceRegisterRequest): ResourceCreatedResponseModel<MyDevice> | ResourceUpdatedResponseModel<MyDevice> | CreateOrUpdateRequestError;
-}
+	registerDevice(@bodyRoot registerRequest: DeviceRegisterRequest): SingletonResourceCreatedResponseModel<Device> | SingletonResourceUpdatedResponseModel<Device> | CreateOrUpdateRequestError;
 
-/**
- * My Profile service.
- */
-@route("/my/profile")
-@tag("My Profile")
-interface MyProfileService extends SingletonResourceOperations<MyProfile, [], []> {}
+	/**
+	 * Gets the device (FCM/APNS) token for the currently authenticated user.
+	 */
+	@get()
+	@route("/{id}/token")
+	@useAuth(Auth<[claimDeviceTokenRead]>)
+	getToken(...TokenParameters): TokenResponse | ReadRequestError;
+}
 
 /**
  * Profile service.
  */
 @route("/profiles")
 @tag("Profile")
-interface ProfileService extends ResourceOperationsWithUpdateOnly<Profile, [claimProfileRead], [claimProfileWrite], ResourceCollectionParametersWithSearch<Profile>> {}
+interface ProfileService extends ResourceOperationsWithUpdateOnly<Profile, [claimProfileRead], [claimProfileWrite], ResourceCollectionParameters<Profile>> {
+	/**
+	 * Gets the profile of the currently authenticated user.
+	 */
+	@get()
+	@readsResource(Profile)
+	@route("/my")
+	@useAuth(Auth<[claimProfileRead]>)
+	getMy(): SingletonResourceReadResponseModel<Profile> | ReadRequestError;
+
+	/**
+	 * Creates or updates the profile of the currently authenticated user.
+	 */
+	@put()
+	@createsOrUpdatesResource(Profile)
+	@route("/my")
+	@useAuth(Auth<[claimProfileWrite]>)
+	updateMy(@bodyRoot profile: SingletonResourceCreateOrUpdateRequestModel<Profile>): SingletonResourceCreatedResponseModel<Profile> | SingletonResourceUpdatedResponseModel<Profile> | CreateOrUpdateRequestError;
+}

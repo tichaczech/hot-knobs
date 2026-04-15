@@ -69,7 +69,7 @@ model AuthorCollectionParameters extends ResourceCollectionParameters<Author> {
  */
 @route("/authors")
 @tag("Author")
-interface AuthorService extends ResourceOperationsCreateAndUpdate<Author, [claimAuthorRead], [claimAuthorWrite], AuthorCollectionParameters> { }
+interface AuthorService extends ResourceOperationsWithCreateAndUpdate<Author, [claimAuthorRead], [claimAuthorWrite], AuthorCollectionParameters> { }
 
 /**
  * Represents a Book.
@@ -126,7 +126,7 @@ model BookCollectionParameters extends ResourceCollectionParameters<Book> {
  */
 @route("/books")
 @tag("Book")
-interface BookService extends ResourceOperationsCreateOrUpdate<Book, [claimBookRead], [claimBookWrite], BookCollectionParameters> { }
+interface BookService extends ResourceOperationsWithCreateAndUpdate<Book, [claimBookRead], [claimBookWrite], BookCollectionParameters> { }
 
 /**
  * Represents a Loan.
@@ -232,7 +232,7 @@ model LoanCollectionParameters extends ResourceCollectionParameters<Loan> {
  */
 @route("/loans")
 @tag("Loan")
-interface LoanService extends ResourceOperationsCreateAndUpdate<Loan, [claimLoanRead], [claimLoanWrite], LoanCollectionParameters> {
+interface LoanService extends ResourceOperationsWithCreateAndUpdate<Loan, [claimLoanRead], [claimLoanWrite], LoanCollectionParameters> {
 	/**
 	 * Creates a new instance of the Loan.
 	 */
@@ -276,7 +276,7 @@ model PatronCollectionParameters extends ResourceCollectionParameters<Patron> {
  */
 @route("/patrons")
 @tag("Patron")
-interface PatronService extends ResourceOperationsCreateAndUpdate<Patron, [claimPatronRead], [claimPatronWrite], PatronCollectionParameters> { }
+interface PatronService extends ResourceOperationsWithCreateAndUpdate<Patron, [claimPatronRead], [claimPatronWrite], PatronCollectionParameters> { }
 
 /**
  * Represents a Reservation.
@@ -357,4 +357,4 @@ model ReservationCollectionParameters extends ResourceCollectionParameters<Reser
  */
 @route("/reservations")
 @tag("Reservation")
-interface ReservationService extends ResourceOperationsCreateAndUpdate<Reservation, [claimReservationRead], [claimReservationWrite], ReservationCollectionParameters> { }
+interface ReservationService extends ResourceOperationsWithCreateAndUpdate<Reservation, [claimReservationRead], [claimReservationWrite], ReservationCollectionParameters> { }
