@@ -46,7 +46,7 @@ public class AutoMapperHostBuilderFactory : IHostApplicationBuilderFactory
 			var configuration = new MapperConfiguration(cfg =>
 			{
 				cfg.AddMaps(assemblies);
-			});
+			}, options.GetRequiredService<ILoggerFactory>());
 
 			var mapper = configuration.CreateMapper();
 			var logger = options.GetRequiredService<ILogger<ValidatingMapper>>();
