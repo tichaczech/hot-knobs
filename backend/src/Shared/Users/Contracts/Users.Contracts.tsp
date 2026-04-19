@@ -69,15 +69,16 @@ model Device extends Entity {
 	systemName: string;
 }
 
-// model DeviceCollectionParameters extends OmitProperties<ResourceCollectionParameters<Device>, "filter" | "orderBy" | "search"> { }
-// model DeviceCollectionParameters extends ResourceCollectionParameters<Device> { }
-
 model DeviceRegisterRequest extends OmitProperties<Device, "description" | "id" | "isActive" | "lastActiveAt" | "profileId"> {
 	/**
 	 * The device token for Apple Push Notification Service or Firebase Cloud Messaging.
 	 */
 	@visibility(Lifecycle.Read, Lifecycle.Create)
 	token?: string;
+}
+
+model DeviceSummary extends Summary {
+	...OmitProperties<Device, "deviceId" | "modelName" | "platform" | "systemName">;
 }
 
 /**
@@ -101,6 +102,10 @@ model Profile extends Entity {
 	 */
 	@visibility(Lifecycle.Read, Lifecycle.Create, Lifecycle.Update)
 	photoUrl?: string;
+}
+
+model ProfileSummary extends Summary {
+	...OmitProperties<Profile, "email" | "phoneNumber">;
 }
 
 // model ProfileCollectionParameters extends ResourceCollectionParameters<Profile> { }
@@ -133,7 +138,7 @@ model TokenResponse {
  */
 @route("/devices")
 @tag("Device")
-interface DeviceService extends ResourceOperationsWithUpdateOnly<Device, [claimDeviceRead], [claimDeviceWrite], ResourceCollectionParameters<Device>> {
+interface DeviceService extends ResourceOperationsWithUpdateOnly<Device, DeviceSummary, [claimDeviceRead], [claimDeviceWrite]> {
 	/**
 	 * Registers a new device or updates an existing one for the currently authenticated user.
 	 */
@@ -157,7 +162,7 @@ interface DeviceService extends ResourceOperationsWithUpdateOnly<Device, [claimD
  */
 @route("/profiles")
 @tag("Profile")
-interface ProfileService extends ResourceOperationsWithUpdateOnly<Profile, [claimProfileRead], [claimProfileWrite], ResourceCollectionParameters<Profile>> {
+interface ProfileService extends ResourceOperationsWithUpdateOnly<Profile, ProfileSummary, [claimProfileRead], [claimProfileWrite]> {
 	/**
 	 * Gets the profile of the currently authenticated user.
 	 */

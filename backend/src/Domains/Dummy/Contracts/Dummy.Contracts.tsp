@@ -52,16 +52,8 @@ model Author extends Resource {
 	nationality: string;
 }
 
-/**
- * Author collection parameters.
- */
-model AuthorCollectionParameters extends ResourceCollectionParameters<Author> {
-	/**
-	 * Query string.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	query?: string;
+model AuthorSummary extends Summary {
+	...OmitProperties<Author, "nationality">;
 }
 
 /**
@@ -69,7 +61,7 @@ model AuthorCollectionParameters extends ResourceCollectionParameters<Author> {
  */
 @route("/authors")
 @tag("Author")
-interface AuthorService extends ResourceOperationsWithCreateAndUpdate<Author, [claimAuthorRead], [claimAuthorWrite], AuthorCollectionParameters> { }
+interface AuthorService extends ResourceOperationsWithCreateAndUpdate<Author, AuthorSummary, [claimAuthorRead], [claimAuthorWrite]> { }
 
 /**
  * Represents a Book.
@@ -102,23 +94,8 @@ model Book extends Resource {
 	title: string;
 }
 
-/**
- * Book collection parameters.
- */
-model BookCollectionParameters extends ResourceCollectionParameters<Book> {
-	/**
-	 * Book author.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	authorId?: ResourceId;
-
-	/**
-	 * Query string.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	query?: string;
+model BookSummary extends Summary {
+	...OmitProperties<Book, "originalPrice" | "purchasedOn">;
 }
 
 /**
@@ -126,7 +103,7 @@ model BookCollectionParameters extends ResourceCollectionParameters<Book> {
  */
 @route("/books")
 @tag("Book")
-interface BookService extends ResourceOperationsWithCreateAndUpdate<Book, [claimBookRead], [claimBookWrite], BookCollectionParameters> { }
+interface BookService extends ResourceOperationsWithCreateAndUpdate<Book, BookSummary, [claimBookRead], [claimBookWrite]> { }
 
 /**
  * Represents a Loan.
@@ -173,58 +150,8 @@ model LoanCreateFromReservationRequestModel extends Resource {
 	reservationId: ResourceId;
 }
 
-/**
- * Loan collection parameters.
- */
-model LoanCollectionParameters extends ResourceCollectionParameters<Loan> {
-	/**
-	 * The book being loaned.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	bookId?: ResourceId;
-
-	/**
-	 * The date the loan is due.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	dueOn?: plainDate;
-
-	/**
-	 * The date the loan is on progress.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	loanInProgressOn?: plainDate;
-
-	/**
-	 * The date the loan was created.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	loanedOn?: plainDate;
-
-	/**
-	 * The date the loan is overdue.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	overdueOn?: plainDate;
-
-	/**
-	 * The user who loaned the book.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	patronId?: ResourceId;
-
-	/**
-	 * The reservation associated with the loan.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	reservationId?: ResourceId;
+model LoanSummary extends Summary {
+	...OmitProperties<Loan, "dueOn" | "loanedOn" | "reservationId" | "returnedOn">;
 }
 
 /**
@@ -232,7 +159,7 @@ model LoanCollectionParameters extends ResourceCollectionParameters<Loan> {
  */
 @route("/loans")
 @tag("Loan")
-interface LoanService extends ResourceOperationsWithCreateAndUpdate<Loan, [claimLoanRead], [claimLoanWrite], LoanCollectionParameters> {
+interface LoanService extends ResourceOperationsWithCreateAndUpdate<Loan, LoanSummary, [claimLoanRead], [claimLoanWrite]> {
 	/**
 	 * Creates a new instance of the Loan.
 	 */
@@ -259,16 +186,8 @@ model Patron extends Resource {
 	lastName: string;
 }
 
-/**
- * Patron collection parameters.
- */
-model PatronCollectionParameters extends ResourceCollectionParameters<Patron> {
-	/**
-	 * Query string.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	query?: string;
+model PatronSummary extends Summary {
+	...OmitProperties<Patron, "birthDate">;
 }
 
 /**
@@ -276,7 +195,7 @@ model PatronCollectionParameters extends ResourceCollectionParameters<Patron> {
  */
 @route("/patrons")
 @tag("Patron")
-interface PatronService extends ResourceOperationsWithCreateAndUpdate<Patron, [claimPatronRead], [claimPatronWrite], PatronCollectionParameters> { }
+interface PatronService extends ResourceOperationsWithCreateAndUpdate<Patron, PatronSummary, [claimPatronRead], [claimPatronWrite]> { }
 
 /**
  * Represents a Reservation.
@@ -305,51 +224,8 @@ model Reservation extends Resource {
 	startsOn: plainDate;
 }
 
-/**
- * Reservation collection parameters.
- */
-model ReservationCollectionParameters extends ResourceCollectionParameters<Reservation> {
-	/**
-	 * The book being reserved.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	bookId?: ResourceId;
-
-	/**
-	 * The date reservation ends.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	endsOn?: plainDate;
-
-	/**
-	 * The user who reserved the book.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	patronId?: ResourceId;
-
-	/**
-	 * Query string.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	query?: string;
-
-	/**
-	 * The date reservation is on progress.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	reservationInProgressOn?: plainDate;
-
-	/**
-	 * The date reservation starts.
-	 */
-	@query()
-	@visibility(Lifecycle.Query)
-	startsOn?: plainDate;
+model ReservationSummary extends Summary {
+	...OmitProperties<Reservation, "endsOn" | "startsOn">;
 }
 
 /**
@@ -357,4 +233,4 @@ model ReservationCollectionParameters extends ResourceCollectionParameters<Reser
  */
 @route("/reservations")
 @tag("Reservation")
-interface ReservationService extends ResourceOperationsWithCreateAndUpdate<Reservation, [claimReservationRead], [claimReservationWrite], ReservationCollectionParameters> { }
+interface ReservationService extends ResourceOperationsWithCreateAndUpdate<Reservation, ReservationSummary, [claimReservationRead], [claimReservationWrite]> { }

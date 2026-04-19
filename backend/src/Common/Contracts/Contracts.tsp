@@ -105,14 +105,15 @@ interface ResourceDelete<
  * Represents the resource GET operation.
  *
  * @template TResource The resource model.
+ * @template TSummary The summary model.
  * @template TScope The scope required for the operation.
  * @template TResourceCollectionParameters The resource collection parameters.
  * @template TError The error model.
-
  */
 // @Rest.Private.validateIsError(TError)
 interface ResourceList<
 	TResource extends Resource,
+	TSummary extends Summary,
 	TScopes extends string[],
 	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
 	TError = ListRequestError
@@ -127,7 +128,7 @@ interface ResourceList<
 	@useAuth(Auth<TScopes>)
 	list(
 		...TResourceCollectionParameters,
-	): ResourceListResponseModel<TResource> | NotModifiedResponse | TError;
+	): ResourceListResponseModel<TResource, TSummary> | TError;
 }
 
 /**
@@ -194,13 +195,16 @@ interface ResourceUpdate<
  * Represents the resource collection operations.
  *
  * @template TResource The resource model.
+ * @template TSummary The summary model.
  * @template TReadScope The scope required for reading the resource.
  * @template TWriteScope The scope required for writing the resource.
  * @template TResourceCollectionParameters The resource collection parameters.
- * @template TError The error model.
+ * @template TCreateError The error model for create operations.
+ * @template TListError The error model for list operations.
  */
 interface ResourceCollectionOperationsCreateAndUpdate<
 	TResource extends Resource,
+	TSummary extends Summary,
 	TReadScopes extends string[],
 	TWriteScopes extends string[],
 	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
@@ -210,6 +214,7 @@ interface ResourceCollectionOperationsCreateAndUpdate<
 	extends ResourceCreate<TResource, TWriteScopes, TCreateError>,
 		ResourceList<
 			TResource,
+			TSummary,
 			TReadScopes,
 			TResourceCollectionParameters,
 			TListError
@@ -219,19 +224,22 @@ interface ResourceCollectionOperationsCreateAndUpdate<
  * Represents the resource collection operations.
  *
  * @template TResource The resource model.
+ * @template TSummary The summary model.
  * @template TReadScope The scope required for reading the resource.
  * @template TWriteScope The scope required for writing the resource.
  * @template TResourceCollectionParameters The resource collection parameters.
- * @template TError The error model.
+ * @template TListError The error model for list operations.
  */
 interface ResourceCollectionOperationsCreateOrUpdate<
 	TResource extends Resource,
+	TSummary extends Summary,
 	TReadScopes extends string[],
 	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
 	TListError = ListRequestError
 >
 	extends ResourceList<
 			TResource,
+			TSummary,
 			TReadScopes,
 			TResourceCollectionParameters,
 			TListError
@@ -281,7 +289,9 @@ interface ResourceInstanceOperationsCreateAndUpdate<
  * @template TReadScope The scope required for reading the resource.
  * @template TWriteScope The scope required for writing the resource.
  * @template TResourceInstanceParameters The resource instance parameters.
- * @template TError The error model.
+ * @template TCreateOrUpdateError The error model for create or update operations.
+ * @template TDeleteError The error model for delete operations.
+ * @template TReadError The error model for read operations.
  */
 interface ResourceInstanceOperationsCreateOrUpdate<
 	TResource extends Resource,
@@ -315,14 +325,20 @@ interface ResourceInstanceOperationsCreateOrUpdate<
  * Represents the resource operations.
  *
  * @template TResource The resource model.
+ * @template TSummary The summary model.
  * @template TReadScope The scope required for reading the resource.
  * @template TWriteScope The scope required for writing the resource.
  * @template TResourceCollectionParameters The resource collection parameters.
  * @template TResourceInstanceParameters The resource instance parameters.
- * @template TError The error model.
+ * @template TCreateError The error model for create operations.
+ * @template TDeleteError The error model for delete operations.
+ * @template TListError The error model for list operations.
+ * @template TReadError The error model for read operations.
+ * @template TUpdateError The error model for update operations.
  */
 interface ResourceOperationsWithCreateAndUpdate<
 	TResource extends Resource,
+	TSummary extends Summary,
 	TReadScopes extends string[],
 	TWriteScopes extends string[],
 	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
@@ -335,6 +351,7 @@ interface ResourceOperationsWithCreateAndUpdate<
 >
 	extends ResourceCollectionOperationsCreateAndUpdate<
 			TResource,
+			TSummary,
 			TReadScopes,
 			TWriteScopes,
 			TResourceCollectionParameters,
@@ -355,14 +372,19 @@ interface ResourceOperationsWithCreateAndUpdate<
  * Represents the resource operations.
  *
  * @template TResource The resource model.
+ * @template TSummary The summary model.
  * @template TReadScope The scope required for reading the resource.
  * @template TWriteScope The scope required for writing the resource.
  * @template TResourceCollectionParameters The resource collection parameters.
  * @template TResourceInstanceParameters The resource instance parameters.
- * @template TError The error model.
+ * @template TCreateOrUpdateError The error model for create or update operations.
+ * @template TDeleteError The error model for delete operations.
+ * @template TListError The error model for list operations.
+ * @template TReadError The error model for read operations.
  */
 interface ResourceOperationsWithCreateOrUpdate<
 	TResource extends Resource,
+	TSummary extends Summary,
 	TReadScopes extends string[],
 	TWriteScopes extends string[],
 	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
@@ -383,6 +405,7 @@ interface ResourceOperationsWithCreateOrUpdate<
 		>,
 		ResourceCollectionOperationsCreateOrUpdate<
 			TResource,
+			TSummary,
 			TReadScopes,
 			TResourceCollectionParameters,
 			TListError = TListError
@@ -393,14 +416,19 @@ interface ResourceOperationsWithCreateOrUpdate<
  * Represents the resource operations.
  *
  * @template TResource The resource model.
+ * @template TSummary The summary model.
  * @template TReadScope The scope required for reading the resource.
  * @template TWriteScope The scope required for writing the resource.
  * @template TResourceCollectionParameters The resource collection parameters.
  * @template TResourceInstanceParameters The resource instance parameters.
- * @template TError The error model.
+ * @template TDeleteError The error model for delete operations.
+ * @template TListError The error model for list operations.
+ * @template TReadError The error model for read operations.
+ * @template TUpdateError The error model for update operations.
  */
 interface ResourceOperationsWithUpdateOnly<
 	TResource extends Resource,
+	TSummary extends Summary,
 	TReadScopes extends string[],
 	TWriteScopes extends string[],
 	TResourceCollectionParameters extends ResourceCollectionParameters<TResource> = ResourceCollectionParameters<TResource>,
@@ -412,6 +440,7 @@ interface ResourceOperationsWithUpdateOnly<
 >
 	extends ResourceCollectionOperationsCreateOrUpdate<
 			TResource,
+			TSummary,
 			TReadScopes,
 			TResourceCollectionParameters,
 			TListError

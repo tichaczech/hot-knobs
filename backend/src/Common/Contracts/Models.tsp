@@ -280,8 +280,7 @@ model ResourceParameters<TResource extends Resource> {
  *
  * @template TResource The resource model.
  */
-model ResourceCollectionParameters<TResource extends Resource>
-	extends ResourceParameters<TResource> {
+model ResourceCollectionParameters<TResource extends Resource> extends ResourceParameters<TResource> {
 	...PreferCollectionRequestHeader;
 
 	/**
@@ -333,8 +332,7 @@ model ResourceCollectionParameters<TResource extends Resource>
  * @template TResource The resource model.
  */
 @copyResourceKeyParameters
-model ResourceInstanceParameters<TResource extends Resource>
-	extends ResourceParameters<TResource> {
+model ResourceInstanceParameters<TResource extends Resource> extends ResourceParameters<TResource> {
 	...IfMatchRequiredHeader;
 	...IfNoneMatchHeader;
 
@@ -353,8 +351,7 @@ model ResourceInstanceParameters<TResource extends Resource>
  */
 @friendlyName("{name}CreateRequest", TResource)
 @withVisibility(Lifecycle.Create)
-model ResourceCreateRequestModel<TResource extends Resource>
-	is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>>
+model ResourceCreateRequestModel<TResource extends Resource> is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>>
 {
 	...PreferInstanceRequestHeader;
 
@@ -372,9 +369,7 @@ model ResourceCreateRequestModel<TResource extends Resource>
  */
 @friendlyName("{name}CreateOrUpdateRequest", TResource)
 @withVisibility(Lifecycle.Create, Lifecycle.Update)
-model ResourceCreateOrUpdateRequestModel<TResource extends Resource>
-	is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>>
-{
+model ResourceCreateOrUpdateRequestModel<TResource extends Resource> is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>> {
 	...IfMatchOptionalHeader;
 	...PreferInstanceRequestHeader;
 }
@@ -425,10 +420,11 @@ model ResourceDeletedResponseModel<TResource extends Resource> {
  * Resource list operation completed successfully.
  *
  * @template TResource The resource model in the list.
+ * @template TSummary The summary model in the list.
  */
 @friendlyName("{name}ListResponse", TResource)
 @withVisibility(Lifecycle.Read)
-model ResourceListResponseModel<TResource extends Resource> {
+model ResourceListResponseModel<TResource extends Resource, TSummary extends Summary> {
 	...OkResponse;
 	...PreferenceAppliedCollectionResponseHeader;
 
@@ -445,10 +441,16 @@ model ResourceListResponseModel<TResource extends Resource> {
 	checkpoint: CheckpointToken;
 
 	/**
-	 * The paging cursor for retrieving the next page of results. If not set, there are no more pages.
+	 * The paging cursor for retrieving the next page of results. If not set, there are no more pages available.
 	 */
 	@header("X-Paging-Cursor")
 	cursor?: CursorToken;
+
+	/**
+	 * The maximum number of items returned in the current response. This can be used by clients to adjust the page size in subsequent requests if needed.
+	 */
+	@header("X-Paging-Limit")
+	limit?: uint16;
 
 	/**
 	 * The Link header for pagination links, e.g. next and prev links with rel attributes.
@@ -457,12 +459,12 @@ model ResourceListResponseModel<TResource extends Resource> {
 	link?: string;
 
 	/**
-	 * The list of resource summaries (id, name, description, isActive).
+	 * The list of resource summaries.
 	 *
-	 * Alternatively, this could be a list of resource ids or full resource representations, depending on the specified preference.
+	 * Alternatively, this could be a list of resource ids, depending on the specified preference.
 	 */
 	@bodyRoot()
-	body: ResourceId[] | Entity[] | TResource[];
+	body: ResourceId[] | TSummary[];
 }
 
 /**
@@ -498,8 +500,7 @@ model ResourceReadResponseModel<TResource extends Resource> {
  */
 @friendlyName("{name}UpdateRequest", TResource)
 @withVisibility(Lifecycle.Update)
-model ResourceUpdateModel<TResource extends Resource>
-	is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>> {
+model ResourceUpdateModel<TResource extends Resource> is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>> {
 	...PreferInstanceRequestHeader;
 }
 
@@ -536,7 +537,7 @@ model ResourceUpdatedResponseModel<TResource extends Resource> {
 /**
  * Singleton resource operation model.
  */
-model SingletonResource {}
+model SingletonResource { }
 
 /**
  * Represents operation parameters for the singleton resource of type `TResource`.
@@ -564,9 +565,7 @@ model SingletonResourceInstanceParameters<TResource extends SingletonResource>
  */
 @friendlyName("{name}CreateOrUpdateRequest", TResource)
 @withVisibility(Lifecycle.Create, Lifecycle.Update)
-model SingletonResourceCreateOrUpdateRequestModel<TResource extends SingletonResource>
-	is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>>
-{
+model SingletonResourceCreateOrUpdateRequestModel<TResource extends SingletonResource> is UpdateableProperties<DefaultKeyVisibility<TResource, Lifecycle.Read>> {
 	...IfMatchOptionalHeader;
 }
 
@@ -583,7 +582,7 @@ model SingletonResourceCreatedResponseModel<TResource extends SingletonResource>
 	/**
 	 * The created resource.
 	 */
-	@bodyRoot
+	@bodyRoot()
 	body: TResource;
 
 	...ETagResponseHeader;
@@ -625,6 +624,21 @@ model SingletonResourceUpdatedResponseModel<TResource extends SingletonResource>
 	body: TResource;
 
 	...ETagResponseHeader;
+}
+
+model Summary {
+	/**
+	 * Resource id.
+	 */
+	@key()
+	@visibility(Lifecycle.Read)
+	id: ResourceId;
+
+	/**
+	 * Soft delete flag.
+	 */
+	@visibility(Lifecycle.Read)
+	isActive: boolean;
 }
 
 // --- HotKnobs Models ---
