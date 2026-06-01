@@ -10,6 +10,7 @@ using thc.HotKnobs.UseCases;
 
 using Swashbuckle.AspNetCore.Filters;
 using thc.HotKnobs.Contracts;
+using Microsoft.OpenApi;
 
 namespace thc.HotKnobs.Runtime.Server.Controllers;
 
@@ -41,7 +42,7 @@ public abstract class EntityController<TEntity, TCreateModel, TUpdateModel, TRes
 
 	/// <inheritdoc />
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[SwaggerResponseHeader(StatusCodes.Status204NoContent, "ETag", "string", "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status204NoContent, "ETag", JsonSchemaType.String, "ETag of the resource")]
 	public virtual Task DeleteAsync(string id, CancellationToken cancellationToken = default)
 	{
 		Response.StatusCode = StatusCodes.Status204NoContent;
@@ -49,7 +50,7 @@ public abstract class EntityController<TEntity, TCreateModel, TUpdateModel, TRes
 	}
 
 	/// <inheritdoc />
-	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", "string", "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", JsonSchemaType.String, "ETag of the resource")]
 	public virtual async Task<TResponse> GetAsync(string id, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
 	{
 		var entity = await UseCases.GetAsync(id, onlyActive, cancellationToken);
@@ -82,7 +83,7 @@ public abstract class EntityControllerWithCreateAndUpdate<TEntity, TCreateModel,
 
 	/// <inheritdoc />
 	[ProducesResponseType(StatusCodes.Status201Created)]
-	[SwaggerResponseHeader(StatusCodes.Status201Created, "ETag", "string", "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status201Created, "ETag", JsonSchemaType.String, "ETag of the resource")]
 	public virtual async Task<TResponse> CreateAsync(TCreateRequest request, CancellationToken cancellationToken = default)
 	{
 		var model = Mapper.Map<TCreateModel>(request);
@@ -109,10 +110,10 @@ public abstract class EntityControllerWithCreateOrUpdate<TEntity, TCreateModel, 
 	}
 
 	/// <inheritdoc />
+	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status201Created)]
-	[ProducesResponseType(StatusCodes.Status201Created)]
-	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", "string", "ETag of the resource")]
-	[SwaggerResponseHeader(StatusCodes.Status201Created, "ETag", "string", "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", JsonSchemaType.String, "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status201Created, "ETag", JsonSchemaType.String, "ETag of the resource")]
 	public virtual async Task<TResponse> CreateOrUpdateAsync(string id, TCreateOrUpdateRequest request, CancellationToken cancellationToken = default)
 	{
 		TEntity? entity;
@@ -152,7 +153,7 @@ public abstract class EntityControllerWithUpdateOnly<TEntity, TCreateModel, TUpd
 	}
 
 	/// <inheritdoc />
-	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", "string", "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", JsonSchemaType.String, "ETag of the resource")]
 	public virtual async Task<TResponse> UpdateAsync(string id, TUpdateRequest request, CancellationToken cancellationToken = default)
 	{
 		var model = Mapper.Map<TUpdateModel>(request);

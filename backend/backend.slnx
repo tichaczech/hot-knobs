@@ -32,7 +32,7 @@
     <Project Path="src/Domains/Dummy/Server/Dummy.Server.csproj" />
   </Folder>
   <Folder Name="/Shared/" />
-  <Folder Name="/Shared/Collections/">
+  <!-- <Folder Name="/Shared/Collections/">
     <Project Path="src/Shared/Collections/Common/Collections.Common.csproj" />
     <Project Path="src/Shared/Collections/Contracts/Collections.Contracts.csproj" />
     <Project Path="src/Shared/Collections/Implementation/Collections.Implementation.csproj" />
@@ -40,7 +40,7 @@
     <Project Path="src/Shared/Collections/Persistence.Mongo/Collections.Persistence.Mongo.csproj" />
     <Project Path="src/Shared/Collections/Persistence.Postgres/Collections.Persistence.Postgres.csproj" />
     <Project Path="src/Shared/Collections/Server/Collections.Server.csproj" />
-  </Folder>
+  </Folder> -->
   <Folder Name="/Shared/Users/">
     <Project Path="src/Shared/Users/Common/Users.Common.csproj" />
     <Project Path="src/Shared/Users/Contracts/Users.Contracts.csproj" />

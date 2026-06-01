@@ -7,14 +7,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
-
-using thc.HotKnobs.Contracts;
-using thc.HotKnobs.Runtime.Configuration;
+using Microsoft.OpenApi;
 
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
+
+using thc.HotKnobs.Contracts;
+using thc.HotKnobs.Runtime.Configuration;
 
 namespace thc.HotKnobs.Runtime.Hosting;
 
@@ -74,7 +73,7 @@ public class SwaggerSetupHostBuilderFactory : IHostApplicationBuilderFactory
 
 public class EnumSchemaFilter : ISchemaFilter
 {
-	public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+	public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
 	{
 		ArgumentNullException.ThrowIfNull(schema);
 		ArgumentNullException.ThrowIfNull(context);
@@ -85,7 +84,7 @@ public class EnumSchemaFilter : ISchemaFilter
 			var enumType = context.Type;
 			foreach (var name in Enum.GetNames(enumType))
 			{
-				schema.Enum.Add(new OpenApiString(name));
+				schema.Enum.Add(name);
 			}
 		}
 	}
@@ -111,17 +110,17 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
 			operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
 			operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
 
-			var oAuthScheme = new OpenApiSecurityScheme
-			{
-				Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-			};
+			// var oAuthScheme = new OpenApiSecurityScheme
+			// {
+			// 	Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+			// };
 
-			operation.Security =
-			[
-				new() {
-					[ oAuthScheme ] = requiredScopes.ToList()
-				}
-			];
+			// operation.Security =
+			// [
+			// 	new() {
+			// 		[ oAuthScheme ] = requiredScopes.ToList()
+			// 	}
+			// ];
 		}
 	}
 }

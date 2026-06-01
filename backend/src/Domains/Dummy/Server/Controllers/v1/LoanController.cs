@@ -11,6 +11,7 @@ using thc.HotKnobs.Domains.Dummy.UseCases;
 using thc.HotKnobs.Runtime.Server.Controllers;
 
 using Swashbuckle.AspNetCore.Filters;
+using Microsoft.OpenApi;
 
 namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v1;
 
@@ -45,7 +46,7 @@ internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, I
 #endif
 	[HttpPost("{reservationId}", Name = "LoanCreateFromReservation")]
 	[ProducesResponseType(StatusCodes.Status201Created)]
-	[SwaggerResponseHeader(201, "Last-Modified", "string", "Last modified date of the resource")]
+	[SwaggerResponseHeader(201, "Last-Modified", JsonSchemaType.String, "Last modified date of the resource")]
 	public async Task<LoanResponse> CreateAsync(string reservationId, CancellationToken cancellationToken = default)
 	{
 		var entity = await UseCases.CreateAsync(reservationId, cancellationToken);

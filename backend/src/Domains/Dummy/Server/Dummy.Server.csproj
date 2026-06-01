@@ -45,6 +45,7 @@
 
   <ItemGroup>
     <!-- <PackageReference Include="Fand.Runtime.Queues.AzureStorageAccount" /> -->
+    <PackageReference Include="Microsoft.AspNetCore.OData" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" />
   </ItemGroup>

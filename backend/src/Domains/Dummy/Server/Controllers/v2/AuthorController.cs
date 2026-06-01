@@ -4,6 +4,10 @@ using AutoMapper;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.OData.ModelBuilder;
+using Microsoft.OData.UriParser;
 
 using thc.HotKnobs.Domains.Dummy.Contracts.v2;
 using thc.HotKnobs.Domains.Dummy.Model.Entities;
@@ -11,6 +15,32 @@ using thc.HotKnobs.Domains.Dummy.UseCases;
 using thc.HotKnobs.Runtime.Server.Controllers;
 
 namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v2;
+
+internal class AuthorODataController : ODataController
+{
+	private readonly IAuthorUseCases _service;
+
+	public AuthorODataController(IAuthorUseCases service)
+	{
+		_service = service;
+	}
+
+	[EnableQuery]
+	public IActionResult Get()
+	{
+		return Ok(_service.ListAsync(null, null, true, CancellationToken.None));
+	}
+
+	[EnableQuery]
+	public async Task<IActionResult> GetAsync(string key)
+	{
+		var author = await _service.GetAsync(key);
+		if (author == null)
+			return NotFound();
+
+		return Ok(author);
+	}
+}
 
 /// <inheritdoc cref="ControllerBase" />
 /// <response code="401">There was en error authentication user.</response>
@@ -28,8 +58,7 @@ namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v2;
 [Consumes("application/json")]
 [Produces("application/json")]
 [Route("v{version:apiVersion}/authors")]
-internal class AuthorController(ILogger<AuthorController> _logger, IMapper mapper, IAuthorUseCases service)
-	: EntityControllerWithCreateAndUpdate<Author, AuthorCreateModel, AuthorUpdateModel, AuthorResponse, AuthorCreateRequest, AuthorUpdateRequest, IAuthorUseCases>(_logger, mapper, service), IAuthorService
+internal class AuthorController(ILogger<AuthorController> _logger, IMapper mapper, IAuthorUseCases service) : EntityControllerWithCreateAndUpdate<Author, AuthorCreateModel, AuthorUpdateModel, AuthorResponse, AuthorCreateRequest, AuthorUpdateRequest, IAuthorUseCases>(_logger, mapper, service), IAuthorService
 {
 	/// <inheritdoc />
 	/// <response code="201">Author was created successfully.</response>
@@ -67,17 +96,26 @@ internal class AuthorController(ILogger<AuthorController> _logger, IMapper mappe
 		return base.GetAsync(id, onlyActive, cancellationToken);
 	}
 
-	/// <inheritdoc />
-	public override IAsyncEnumerable<string> ListAsync([FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = default, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
-	{
-		throw new NotImplementedException();
-	}
+	public override IAsyncEnumerable<string> ListAsync([FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = null, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default) => base.ListAsync(modifiedSince, onlyActive, cancellationToken);
 
 	/// <inheritdoc />
 	/// <response code="304">Any author were modified since requested date.</response>
 	[HttpGet(Name = "AuthorList")]
 	public IAsyncEnumerable<string> ListAsync([FromQuery] string? query = null, [FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = null, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
 	{
+		var builder = new ODataConventionModelBuilder();
+		_ = builder.EntitySet<Author>("Authors");
+		var model = builder.GetEdmModel();
+
+		// var ctx = new ODataQueryContext(model, model.FindDeclaredType("thc.HotKnobs.Domains.Dummy.Model.Entities.Author"), null);
+		// var ops = new ODataQueryOptions<Author>(ctx, Request);
+		// var qry = Enumerable.Empty<Author>().AsQueryable();
+		// var qrz = ops.ApplyTo(qry);
+		// var exp = qrz.Expression;
+
+		var parser = new ODataUriParser(model, new Uri("/thc.HotKnobs.Domains.Dummy.Model.Entities.Author" + Request.QueryString, UriKind.Relative));
+		var filter = parser.ParseFilter();
+
 		return UseCases.ListAsync(query, modifiedSince, onlyActive, cancellationToken);
 	}
 

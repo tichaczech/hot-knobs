@@ -59,15 +59,4 @@ public class AuthorUpdateRequest : AuthorContract, IResourceUpdateRequest { }
 /// <summary>
 /// Provides methods for managing authors.
 /// </summary>
-public interface IAuthorService : IResourceOperationsWithCreateAndUpdate<AuthorResponse, AuthorCreateRequest, AuthorUpdateRequest>
-{
-	/// <summary>
-	/// Retrieves a list of authors based on the specified criteria.
-	/// </summary>
-	/// <param name="query">The query string to filter the authors.</param>
-	/// <param name="modifiedSince">Limits the resulting list to only authors that have been modified since.</param>
-	/// <param name="onlyActive">Limits the resulting list to only active authors.</param>
-	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>A collection representing the ids of authors that match the specified criteria.</returns>
-	IAsyncEnumerable<string> ListAsync(string? query = default, DateTimeOffset? modifiedSince = default, bool onlyActive = true, CancellationToken cancellationToken = default);
-}
+public interface IAuthorService : IResourceOperationsWithCreateAndUpdate<AuthorResponse, AuthorCreateRequest, AuthorUpdateRequest> { }

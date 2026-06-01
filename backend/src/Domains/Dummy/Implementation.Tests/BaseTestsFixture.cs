@@ -122,7 +122,7 @@ public class BaseTestsFixture
 		var configuration = new MapperConfiguration(cfg =>
 		{
 			cfg.AddMaps(assemblies);
-		});
+		}, null);
 
 		EntityMapper = configuration.CreateMapper();
 	}

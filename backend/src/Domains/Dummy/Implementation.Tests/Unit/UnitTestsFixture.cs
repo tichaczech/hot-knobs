@@ -36,7 +36,7 @@ public class UnitTestsFixture : BaseTestsFixture
 
 	private static void InitiateFakedDatabase<T>(IRepository<T> repository, ICollection<T> storage) where T : Entity
 	{
-		_ = A.CallTo(() => repository.AsQueryable()).Returns(storage.AsQueryable().BuildMockDbSet());
+		_ = A.CallTo(() => repository.AsQueryable()).Returns(storage.BuildMockDbSet());
 		_ = A.CallTo(() => repository.CreateAsync(A<T>._, A<CancellationToken>._)).ReturnsLazily((T entity, CancellationToken c) =>
 		{
 			storage.Add(entity);

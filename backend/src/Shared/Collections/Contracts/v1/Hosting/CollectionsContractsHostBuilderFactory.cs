@@ -1,8 +1,9 @@
 ﻿using Fand.Runtime.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using mojeEUC.Contracts;
-using mojeEUC.Contracts.Hosting;
+
+using thc.HotKnobs.Contracts;
+using thc.HotKnobs.Contracts.Hosting;
 
 namespace mojeEUC.Shared.Collections.Contracts.v1.Hosting;
 

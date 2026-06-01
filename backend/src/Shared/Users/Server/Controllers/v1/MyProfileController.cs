@@ -12,6 +12,7 @@ using thc.HotKnobs.Model;
 using thc.HotKnobs.Runtime.Security;
 
 using am = AutoMapper;
+using Microsoft.OpenApi;
 
 namespace thc.HotKnobs.Shared.Users.Server.Controllers.v1;
 
@@ -60,8 +61,8 @@ internal class MyProfileController : ControllerBase, ISingletonResourceOperation
 	/// <response code="400">Profile create or update request is invalid.</response>
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status201Created)]
-	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", "string", "ETag of the resource")]
-	[SwaggerResponseHeader(StatusCodes.Status201Created, "ETag", "string", "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", JsonSchemaType.String, "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status201Created, "ETag", JsonSchemaType.String, "ETag of the resource")]
 	[HttpPut(Name = "MyProfileCreateOrUpdate")]
 	public async Task<MyProfileResponse> CreateOrUpdateAsync(MyProfileCreateOrUpdateRequest request, CancellationToken cancellationToken = default)
 	{
@@ -96,7 +97,7 @@ internal class MyProfileController : ControllerBase, ISingletonResourceOperation
 	/// <response code="404">Profile was not found.</response>
 	/// <response code="409">Profile is not active (if requested onlyActive record).</response>
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", "string", "ETag of the resource")]
+	[SwaggerResponseHeader(StatusCodes.Status200OK, "ETag", JsonSchemaType.String, "ETag of the resource")]
 	[HttpGet(Name = "MyProfileGet")]
 	public async Task<MyProfileResponse> GetAsync(CancellationToken cancellationToken = default)
 	{

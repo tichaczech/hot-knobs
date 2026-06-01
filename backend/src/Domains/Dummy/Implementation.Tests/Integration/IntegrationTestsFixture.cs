@@ -158,7 +158,7 @@ public class IntegrationTestsFixture : BaseTestsFixture, IDisposable
 		var mapperConfig = new MapperConfiguration(cfg =>
 		{
 			cfg.AddMaps(assemblies);
-		});
+		}, null);
 		EntityMapper = mapperConfig.CreateMapper();
 	}
 
