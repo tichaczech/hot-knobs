@@ -19,12 +19,14 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
     <PackageReference Include="Microsoft.Extensions.Logging.EventLog" />
     <PackageReference Include="Microsoft.Extensions.Logging.EventSource" />
+    <PackageReference Include="Nerdbank.MessagePack" />
     <PackageReference Include="OpenTelemetry" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" />
+
     <PackageReference Include="StreamJsonRpc" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
 

@@ -11,7 +11,7 @@ using thc.HotKnobs.Shared.Users.UseCases;
 using thc.HotKnobs.Model;
 using thc.HotKnobs.Runtime.Security;
 
-using am = AutoMapper;
+using AM = AutoMapper;
 using Microsoft.OpenApi;
 
 namespace thc.HotKnobs.Shared.Users.Server.Controllers.v1;
@@ -38,7 +38,7 @@ internal class MyProfileController : ControllerBase, ISingletonResourceOperation
 	/// <summary>
 	/// AutoMapper.
 	/// </summary>
-	private readonly am.IMapper _mapper;
+	private readonly AM.IMapper _mapper;
 
 	/// <summary>
 	/// Entity service.
@@ -48,7 +48,7 @@ internal class MyProfileController : ControllerBase, ISingletonResourceOperation
 	private readonly IUserProvider _userProvider;
 
 	/// <inheritdoc />
-	public MyProfileController(ILogger<MyProfileController> logger, am.IMapper mapper, IProfileUseCases useCases, IUserProvider userProvider)
+	public MyProfileController(ILogger<MyProfileController> logger, AM.IMapper mapper, IProfileUseCases useCases, IUserProvider userProvider)
 	{
 		_mapper = mapper;
 		_useCases = useCases;
