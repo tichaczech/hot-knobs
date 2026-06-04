@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
@@ -7,6 +9,7 @@ import 'package:msal_auth/msal_auth.dart';
 import 'package:provider/provider.dart';
 
 import 'config/dependencies.dart';
+import 'firebase_options.dart';
 import 'routes/router.dart';
 import 'ui/auth/l10n/localizations.dart';
 import 'ui/chat/l10n/localizations.dart';
@@ -61,7 +64,10 @@ void main() async {
 
   // Logger.root.info('API response: $body');
 
-  final providers = Providers.get(configProvider: configProvider, authProvider: authService, localServiceType: LocalServiceType.dummy, remoteServiceType: RemoteServiceType.firebase);
+  final firebaseApp = await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final notificationSettings = await FirebaseMessaging.instance.requestPermission(alert: true, announcement: true, badge: true, carPlay: true, criticalAlert: false, providesAppNotificationSettings: false, provisional: true, sound: true);
+
+  final providers = Providers.get(authProvider: authService, configProvider: configProvider, firebaseMessaging: FirebaseMessaging.instance, localServiceType: LocalServiceType.dummy, remoteServiceType: RemoteServiceType.restApi);
   runApp(MultiProvider(providers: providers, child: Application()));
 }
 

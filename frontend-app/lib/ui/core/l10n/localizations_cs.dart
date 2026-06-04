@@ -75,6 +75,18 @@ class CoreLocalizationsCs extends CoreLocalizations {
   String get participantsScreenName => 'Účastníci';
 
   @override
+  String get platformAndroid => 'Android';
+
+  @override
+  String get platformIOS => 'iOS';
+
+  @override
+  String get platformWeb => 'Web';
+
+  @override
+  String get platformOther => 'Jiná';
+
+  @override
   String get registrationsScreenConfirmedTab => 'Potvrzené';
 
   @override

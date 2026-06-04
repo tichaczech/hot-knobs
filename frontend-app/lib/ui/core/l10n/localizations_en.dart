@@ -75,6 +75,18 @@ class CoreLocalizationsEn extends CoreLocalizations {
   String get participantsScreenName => 'Participants';
 
   @override
+  String get platformAndroid => 'Android';
+
+  @override
+  String get platformIOS => 'iOS';
+
+  @override
+  String get platformWeb => 'Web';
+
+  @override
+  String get platformOther => 'Other';
+
+  @override
   String get registrationsScreenConfirmedTab => 'Confirmed';
 
   @override

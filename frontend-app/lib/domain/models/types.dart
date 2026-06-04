@@ -50,16 +50,6 @@ enum DayOfWeek with TranslatableEnum {
 }
 
 @MappableClass()
-class DeviceRegistration with DeviceRegistrationMappable {
-  final String? apnsToken;
-  final String fcmToken;
-  final String name;
-  final String platform;
-
-  DeviceRegistration({this.apnsToken, required this.fcmToken, required this.name, required this.platform});
-}
-
-@MappableClass()
 class Location with LocationMappable {
   final String? description;
   final LatLng? coordinates;
@@ -84,6 +74,26 @@ class OpeningHoursItem with OpeningHoursItemMappable {
   final String? description;
 
   OpeningHoursItem({this.season, required this.dayOfWeek, required this.openingTime, required this.closingTime, this.description});
+}
+
+@MappableEnum()
+enum Platform with TranslatableEnum {
+  android,
+  ios,
+  web,
+  other;
+
+  @override
+  String get displayName {
+    final t = lookupCoreLocalizations(_locale);
+
+    return switch (this) {
+      Platform.android => t.platformAndroid,
+      Platform.ios => t.platformIOS,
+      Platform.web => t.platformWeb,
+      Platform.other => t.platformOther,
+    };
+  }
 }
 
 @MappableEnum()

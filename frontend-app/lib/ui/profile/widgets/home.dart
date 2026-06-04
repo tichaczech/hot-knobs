@@ -2,16 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../routes/routes.dart';
+import '../../../utils/auth_provider.dart';
 import '../l10n/localizations.dart';
 
 class ProfileHomeScreen extends StatefulWidget {
-  const ProfileHomeScreen({super.key});
+  const ProfileHomeScreen({super.key, required this.authProvider});
+
+  final AuthProvider authProvider;
 
   @override
   State<ProfileHomeScreen> createState() => _ProfileHomeScreenState();
 }
 
 class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
+  late final AuthProvider _authProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _authProvider = widget.authProvider;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +51,13 @@ class _ProfileHomeScreenState extends State<ProfileHomeScreen> {
                   context.pushNamed(Routes.profileEdit.name);
                 },
                 child: const Text('Go to Edit Profile'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _authProvider.signOut();
+                  context.replaceNamed(Routes.dashboard.name);
+                },
+                child: const Text('Sign Out'),
               ),
             ],
           ),

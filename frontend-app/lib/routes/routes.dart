@@ -3,6 +3,8 @@ import '../domain/models/types.dart';
 enum Routes implements TranslatableEnum {
   // Auth
   authSignIn(path: '/auth/sign-in'),
+  authSignUp(path: '/auth/sign-up'),
+  authSignOut(path: '/auth/sign-out'),
 
   // Chat
   chat(path: '/chat'),
@@ -47,6 +49,8 @@ enum Routes implements TranslatableEnum {
   @override
   String get displayName => switch (this) {
     Routes.authSignIn => 'Sign In',
+    Routes.authSignUp => 'Sign Up',
+    Routes.authSignOut => 'Sign Out',
     Routes.chat => 'Chat',
     Routes.dashboard => 'Dashboard',
     Routes.events => 'Events',

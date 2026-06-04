@@ -55,8 +55,24 @@ final router = GoRouter(
       name: Routes.authSignIn.name,
       path: Routes.authSignIn.path,
       builder: (context, state) {
-        final viewModel = SignInViewModel(authProvider: context.read() /*, userProfileUseCases: context.read()*/);
+        final viewModel = SignInViewModel(authProvider: context.read(), authUseCases: context.read(), profileRepository: context.read());
         return SignInScreen(viewModel: viewModel);
+      },
+    ),
+    GoRoute(
+      name: Routes.authSignUp.name,
+      path: Routes.authSignUp.path,
+      builder: (context, state) {
+        // TODO: Implement SignUpScreen and SignUpViewModel
+        return Scaffold(body: Center(child: Text('Sign Up Screen')));
+      },
+    ),
+    GoRoute(
+      name: Routes.authSignOut.name,
+      path: Routes.authSignOut.path,
+      builder: (context, state) {
+        // TODO: Implement SignOut logic (e.g., call authProvider.signOut() and redirect to sign-in page)
+        return Scaffold(body: Center(child: Text('Sign Out Screen')));
       },
     ),
 
@@ -184,7 +200,10 @@ final router = GoRouter(
           name: Routes.profile.name,
           parentNavigatorKey: _shellNavigatorKey,
           path: Routes.profile.path,
-          builder: (context, state) => const ProfileHomeScreen(),
+          builder: (context, state) {
+            final authProvider = context.read<AuthProvider>();
+            return ProfileHomeScreen(authProvider: authProvider);
+          },
           routes: [
             GoRoute(
               name: Routes.profileView.name,

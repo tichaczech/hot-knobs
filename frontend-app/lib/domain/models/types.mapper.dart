@@ -74,6 +74,60 @@ extension DayOfWeekMapperExtension on DayOfWeek {
   }
 }
 
+class PlatformMapper extends EnumMapper<Platform> {
+  PlatformMapper._();
+
+  static PlatformMapper? _instance;
+  static PlatformMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PlatformMapper._());
+    }
+    return _instance!;
+  }
+
+  static Platform fromValue(dynamic value) {
+    ensureInitialized();
+    return MapperContainer.globals.fromValue(value);
+  }
+
+  @override
+  Platform decode(dynamic value) {
+    switch (value) {
+      case r'android':
+        return Platform.android;
+      case r'ios':
+        return Platform.ios;
+      case r'web':
+        return Platform.web;
+      case r'other':
+        return Platform.other;
+      default:
+        throw MapperException.unknownEnumValue(value);
+    }
+  }
+
+  @override
+  dynamic encode(Platform self) {
+    switch (self) {
+      case Platform.android:
+        return r'android';
+      case Platform.ios:
+        return r'ios';
+      case Platform.web:
+        return r'web';
+      case Platform.other:
+        return r'other';
+    }
+  }
+}
+
+extension PlatformMapperExtension on Platform {
+  String toValue() {
+    PlatformMapper.ensureInitialized();
+    return MapperContainer.globals.toValue<Platform>(this) as String;
+  }
+}
+
 class SeasonMapper extends EnumMapper<Season> {
   SeasonMapper._();
 
@@ -230,177 +284,6 @@ extension SkillLevelMapperExtension on SkillLevel {
     SkillLevelMapper.ensureInitialized();
     return MapperContainer.globals.toValue<SkillLevel>(this) as String;
   }
-}
-
-class DeviceRegistrationMapper extends ClassMapperBase<DeviceRegistration> {
-  DeviceRegistrationMapper._();
-
-  static DeviceRegistrationMapper? _instance;
-  static DeviceRegistrationMapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = DeviceRegistrationMapper._());
-    }
-    return _instance!;
-  }
-
-  @override
-  final String id = 'DeviceRegistration';
-
-  static String? _$apnsToken(DeviceRegistration v) => v.apnsToken;
-  static const Field<DeviceRegistration, String> _f$apnsToken = Field(
-    'apnsToken',
-    _$apnsToken,
-    opt: true,
-  );
-  static String _$fcmToken(DeviceRegistration v) => v.fcmToken;
-  static const Field<DeviceRegistration, String> _f$fcmToken = Field(
-    'fcmToken',
-    _$fcmToken,
-  );
-  static String _$name(DeviceRegistration v) => v.name;
-  static const Field<DeviceRegistration, String> _f$name = Field(
-    'name',
-    _$name,
-  );
-  static String _$platform(DeviceRegistration v) => v.platform;
-  static const Field<DeviceRegistration, String> _f$platform = Field(
-    'platform',
-    _$platform,
-  );
-
-  @override
-  final MappableFields<DeviceRegistration> fields = const {
-    #apnsToken: _f$apnsToken,
-    #fcmToken: _f$fcmToken,
-    #name: _f$name,
-    #platform: _f$platform,
-  };
-
-  static DeviceRegistration _instantiate(DecodingData data) {
-    return DeviceRegistration(
-      apnsToken: data.dec(_f$apnsToken),
-      fcmToken: data.dec(_f$fcmToken),
-      name: data.dec(_f$name),
-      platform: data.dec(_f$platform),
-    );
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static DeviceRegistration fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<DeviceRegistration>(map);
-  }
-
-  static DeviceRegistration fromJson(String json) {
-    return ensureInitialized().decodeJson<DeviceRegistration>(json);
-  }
-}
-
-mixin DeviceRegistrationMappable {
-  String toJson() {
-    return DeviceRegistrationMapper.ensureInitialized()
-        .encodeJson<DeviceRegistration>(this as DeviceRegistration);
-  }
-
-  Map<String, dynamic> toMap() {
-    return DeviceRegistrationMapper.ensureInitialized()
-        .encodeMap<DeviceRegistration>(this as DeviceRegistration);
-  }
-
-  DeviceRegistrationCopyWith<
-    DeviceRegistration,
-    DeviceRegistration,
-    DeviceRegistration
-  >
-  get copyWith =>
-      _DeviceRegistrationCopyWithImpl<DeviceRegistration, DeviceRegistration>(
-        this as DeviceRegistration,
-        $identity,
-        $identity,
-      );
-  @override
-  String toString() {
-    return DeviceRegistrationMapper.ensureInitialized().stringifyValue(
-      this as DeviceRegistration,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return DeviceRegistrationMapper.ensureInitialized().equalsValue(
-      this as DeviceRegistration,
-      other,
-    );
-  }
-
-  @override
-  int get hashCode {
-    return DeviceRegistrationMapper.ensureInitialized().hashValue(
-      this as DeviceRegistration,
-    );
-  }
-}
-
-extension DeviceRegistrationValueCopy<$R, $Out>
-    on ObjectCopyWith<$R, DeviceRegistration, $Out> {
-  DeviceRegistrationCopyWith<$R, DeviceRegistration, $Out>
-  get $asDeviceRegistration => $base.as(
-    (v, t, t2) => _DeviceRegistrationCopyWithImpl<$R, $Out>(v, t, t2),
-  );
-}
-
-abstract class DeviceRegistrationCopyWith<
-  $R,
-  $In extends DeviceRegistration,
-  $Out
->
-    implements ClassCopyWith<$R, $In, $Out> {
-  $R call({
-    String? apnsToken,
-    String? fcmToken,
-    String? name,
-    String? platform,
-  });
-  DeviceRegistrationCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
-    Then<$Out2, $R2> t,
-  );
-}
-
-class _DeviceRegistrationCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, DeviceRegistration, $Out>
-    implements DeviceRegistrationCopyWith<$R, DeviceRegistration, $Out> {
-  _DeviceRegistrationCopyWithImpl(super.value, super.then, super.then2);
-
-  @override
-  late final ClassMapperBase<DeviceRegistration> $mapper =
-      DeviceRegistrationMapper.ensureInitialized();
-  @override
-  $R call({
-    Object? apnsToken = $none,
-    String? fcmToken,
-    String? name,
-    String? platform,
-  }) => $apply(
-    FieldCopyWithData({
-      if (apnsToken != $none) #apnsToken: apnsToken,
-      if (fcmToken != null) #fcmToken: fcmToken,
-      if (name != null) #name: name,
-      if (platform != null) #platform: platform,
-    }),
-  );
-  @override
-  DeviceRegistration $make(CopyWithData data) => DeviceRegistration(
-    apnsToken: data.get(#apnsToken, or: $value.apnsToken),
-    fcmToken: data.get(#fcmToken, or: $value.fcmToken),
-    name: data.get(#name, or: $value.name),
-    platform: data.get(#platform, or: $value.platform),
-  );
-
-  @override
-  DeviceRegistrationCopyWith<$R2, DeviceRegistration, $Out2> $chain<$R2, $Out2>(
-    Then<$Out2, $R2> t,
-  ) => _DeviceRegistrationCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class LocationMapper extends ClassMapperBase<Location> {

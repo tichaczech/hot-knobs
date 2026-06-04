@@ -34,29 +34,15 @@ class AuthSignUpException extends AuthException {
   const AuthSignUpException({required super.message, super.msalException});
 }
 
-final class User {
-  /// Gets the id of the account.
+class User {
+  final String displayName;
+  final String email;
   final String id;
 
-  /// Gets the preferred_username claim.
-  final String? username;
+  User({required this.displayName, required this.email, required this.id});
 
-  User({
-    required this.id,
-    required this.username,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      username: json['username'],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'username': username,
-      };
+  @override
+  toString() => 'User: $displayName (email: $email, id: $id)';
 }
 
 final class AuthProvider {
@@ -91,14 +77,14 @@ final class AuthProvider {
     _broker = broker;
     _clientId = clientId;
 
-    _log = Logger('AuthProvider');
+    _log = Logger('Utils:AuthProvider');
   }
 
   /// Gets the access token for the current user. If there is no current user or if acquiring the token fails, an [AuthException] is thrown.
-  Future<String?> getAccessToken() async {
+  Future<String> getAccessToken({List<String>? scopes}) async {
     try {
       final client = await _getPublicClientApplication();
-      final result = await client.acquireTokenSilent(scopes: _scopes);
+      final result = await client.acquireTokenSilent(scopes: scopes ?? _scopes);
 
       return result.accessToken;
     } on MsalException catch (e) {
@@ -115,7 +101,7 @@ final class AuthProvider {
 
       _log.info('Current account => ${result.toJson()}');
 
-      return User(id: result.id, username: result.username);
+      return User(displayName: result.name ?? result.username!, email: result.username!, id: result.id);
     } on MsalException catch (e) {
       _log.severe('Current account failed => $e');
       // We don't throw an exception here because it's possible that there is simply no user currently signed in, which is not necessarily an error case. Instead, we return null to indicate that there is no current user.
@@ -125,7 +111,7 @@ final class AuthProvider {
 
   Future<User> signIn() async {
     try {
-      User? user = await getCurrentUser();
+      var user = await getCurrentUser();
       if (user == null) {
         _log.info('No current user, sign in (acquiring token) interactively');
 
@@ -163,14 +149,14 @@ final class AuthProvider {
     }
   }
 
-  Future<User> signUp() async {
+  Future<Account> signUp() async {
     try {
       final client = await _getPublicClientApplication();
       final result = await client.acquireToken(scopes: _scopes, prompt: Prompt.create);
 
       _log.info('Sign up => $result');
 
-      return User(id: result.account.id, username: result.account.username);
+      return result.account;
     } on MsalException catch (e) {
       if(e is MsalUserCancelException) {
         _log.info('Sign up cancelled by user => $e');

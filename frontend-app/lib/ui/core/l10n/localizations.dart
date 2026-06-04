@@ -227,6 +227,30 @@ abstract class CoreLocalizations {
   /// **'Participants'**
   String get participantsScreenName;
 
+  /// No description provided for @platformAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Android'**
+  String get platformAndroid;
+
+  /// No description provided for @platformIOS.
+  ///
+  /// In en, this message translates to:
+  /// **'iOS'**
+  String get platformIOS;
+
+  /// No description provided for @platformWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Web'**
+  String get platformWeb;
+
+  /// No description provided for @platformOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get platformOther;
+
   /// No description provided for @registrationsScreenConfirmedTab.
   ///
   /// In en, this message translates to:

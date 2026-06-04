@@ -40,3 +40,4 @@ analyzer:
     - "_lib/**/*.dart"
   errors:
     invalid_annotation_target: ignore
+    invalid_use_of_protected_member: error
