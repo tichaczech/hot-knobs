@@ -1,0 +1,12 @@
+{
+	"name": "thc-hotknobs",
+	"type": "module",
+	"devDependencies": {
+		"@typespec/http": "latest",
+		"@typespec/openapi": "latest",
+		"@typespec/openapi3": "latest",
+		"@typespec/rest": "latest",
+		"@typespec/versioning": "latest"
+	},
+	"private": true
+}

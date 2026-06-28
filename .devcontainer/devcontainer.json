@@ -3,24 +3,12 @@
   "name": "thc: HotKnobs - Backend",
   "dockerComposeFile": "./docker-compose.yaml",
   "service": "dev",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/backend",
   "customizations": {
     "vscode": {
-      "settings": {
-        "dotnetAcquisitionExtension.existingDotnetPath": [
-          {
-            "extensionId": "msazuretools.azurerm-vscode-tools",
-            "path": "/usr/local/share/dotnet/dotnet"
-          }
-        ],
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.languageServer": "Default",
-        "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true
-      },
       "extensions": [
         "42Crunch.vscode-openapi",
-		"DrBlury.protobuf-vsc",
+        "DrBlury.protobuf-vsc",
         "EditorConfig.EditorConfig",
         "GitHub.copilot",
         "GitHub.copilot-chat",
@@ -29,6 +17,7 @@
         "Redis.redis-for-vscode",
         "dbaeumer.vscode-eslint",
         "davidnussio.vscode-jq-playground",
+				"esbenp.prettier-vscode",				
         "formulahendry.dotnet-test-explorer",
         "humao.rest-client",
         "jq-syntax-highlighting.jq-syntax-highlighting",
@@ -61,42 +50,68 @@
     }
   },
   "features": {
-    // https://github.com/devcontainers/features/tree/main/src/common-utils
-    "ghcr.io/devcontainers/features/common-utils:2": {},
-    // https://github.com/devcontainers/features/tree/main/src/docker-in-docker
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "azureDnsAutoDetection": true,
-      "dockerDashComposeVersion": "v2",
-      "installDockerBuildx": true,
-      "installDockerComposeSwitch": true,
-      "version": "latest"
-    },
-    // https://github.com/devcontainers/features/tree/main/src/dotnet
-    "ghcr.io/devcontainers/features/dotnet:2": {
-      "version": "latest"
-    },
-    // https://github.com/devcontainers/features/tree/main/src/node
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
-    },
-    // https://github.com/devcontainers/features/tree/main/src/python
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "latest"
-    },
-    // https://github.com/eitsupi/devcontainer-features/tree/main/src/jq-likes
-    "ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {
-      "jqVersion": "latest",
-      "yqVersion": "latest"
-    },
-    // https://github.com/devcontainers-community/npm-features/tree/main/src/typescript
-    "ghcr.io/devcontainers-community/npm-features/typescript:1": {
-      "version": "latest"
-    }
+		// https://github.com/devcontainers/features/tree/main/src/azure-cli
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"installBicep": true,
+			"version": "latest",
+			"bicepVersion": "latest"
+		},
+		// https://github.com/devcontainers/features/tree/main/src/common-utils
+		"ghcr.io/devcontainers/features/common-utils:2": {},
+		// https://github.com/devcontainers/features/tree/main/src/docker-in-docker
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"azureDnsAutoDetection": true,
+			"dockerDashComposeVersion": "v2",
+			"installDockerBuildx": true,
+			"installDockerComposeSwitch": true,
+			"version": "latest"
+		},
+		// https://github.com/devcontainers/features/tree/main/src/dotnet
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "latest"
+		},
+		// https://github.com/devcontainers/features/tree/main/src/node
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "lts"
+		},
+		// https://github.com/devcontainers/features/tree/main/src/python
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "latest"
+		},
+		// https://github.com/devcontainers-community/npm-features/tree/main/src/typescript
+		"ghcr.io/devcontainers-community/npm-features/typescript:1": {
+			"version": "latest"
+		},
+		// https://github.com/devcontainers-extra/features/tree/main/src/go-task
+		"ghcr.io/devcontainers-extra/features/go-task:1": {
+			"version": "latest"
+		},
+		// https://github.com/devcontainers-extra/features/tree/main/src/pnpm
+		"ghcr.io/devcontainers-extra/features/pnpm:2": {
+			"version": "latest"
+		},
+		// https://github.com/devcontainer-community/devcontainer-features/tree/main/src/charmbracelet-gum
+		"ghcr.io/devcontainer-community/devcontainer-features/charmbracelet-gum:1": {
+			"version": "latest"
+		},
+		// https://github.com/devcontainer-community/devcontainer-features/tree/main/src/jq
+		"ghcr.io/devcontainer-community/devcontainer-features/jq:1": {
+			"version": "latest"
+		},
+		// https://github.com/devcontainer-community/devcontainer-features/tree/main/src/yq
+		"ghcr.io/devcontainer-community/devcontainer-features/yq:1": {
+			"version": "latest"
+		},
+		// https://github.com/rocker-org/devcontainer-features/tree/main/src/apt-packages
+		"ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+			"upgradePackages": true,
+			"packages": "apt-transport-https,ca-certificates,curl,dnsutils,gnupg,inetutils-ping,mc,nano,python3-pip"
+		}
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [
-    5432
-  ],
+  // "forwardPorts": [
+  //   5432
+  // ],
   // "portsAttributes": {
   // 		"5001": {
   // 			"protocol": "https"
@@ -106,6 +121,4 @@
   "postCreateCommand": [
     ".devcontainer/init.sh"
   ]
-  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  // "remoteUser": "root"
 }

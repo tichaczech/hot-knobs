@@ -1,0 +1,22 @@
+# Configuration for the Users application module.
+
+code: apps-users
+name: Apps.Users
+
+build:
+  packages:
+    - "thc.HotKnobs.Apps.Users.Contracts"
+  containers:
+    - projectDirectory: ./Server
+      dockerfile: .docker/Dockerfile.dotNet.Server
+      entrypointDll: thc.HotKnobs.Apps.Users.Server.dll
+      imageName: hotknobs/apps/users/server
+
+contracts:
+  file: ./Contracts/Users.Contracts.tsp
+
+ef:
+  contexts:
+    - contextName: PostgresUsersContext
+      projectDirectory: Persistence.Postgres
+      projectName: Users.Persistence.Postgres.csproj

@@ -422,8 +422,38 @@ FodyWeavers.xsd
 
 # === Custom rules
 
-# Docker Compose volumes
+# Platform-specific files
+*.swp
+*.*~
+.DS_Store
+
+# Intermediate files
 _data/
+_packages/
+_tmp/
+
+# AzD CLI settings
+.azure
+
+# .NET Core Tools
+.mono
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# CodeRush
+.cr/
+
+# Python Tools for Visual Studio (PTVS)
+__pycache__/
+*.pyc
+
+# Ignore 42.py venv directory.
+venv/
+
+# Task intermediate files
+.task/
 
 # Artifacts directory
 _artifacts/
@@ -432,9 +462,6 @@ _artifacts/
 doc/code/**/*.yml
 doc/code/**/.manifest
 
-# User settings
+# User configuration files
 appsettings.Local.json
 appsettings.*.Local.json
-
-# .NET Core Tools
-.mono

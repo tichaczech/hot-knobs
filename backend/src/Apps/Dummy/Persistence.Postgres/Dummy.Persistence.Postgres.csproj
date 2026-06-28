@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>$(DefaultAssemblyName)</AssemblyName>
+    <RootNamespace>$(DefaultRootNamespace)</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Persistence.Postgres\Persistence.Postgres.csproj" />
+    <ProjectReference Include="..\Domain\Dummy.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

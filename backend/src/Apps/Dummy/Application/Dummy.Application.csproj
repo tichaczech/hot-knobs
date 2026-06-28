@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>$(DefaultAssemblyName)</AssemblyName>
+    <RootNamespace>$(DefaultRootNamespace)</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- <PackageReference Include="AutoMapper" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../Common/Application/Application.csproj" />
+    <ProjectReference Include="../Domain/Dummy.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

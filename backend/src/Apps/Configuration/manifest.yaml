@@ -1,0 +1,22 @@
+# Configuration for the Configuration application module.
+
+code: apps-configuration
+name: Apps.Configuration
+
+build:
+  packages:
+    - "thc.HotKnobs.Apps.Configuration.Contracts"
+  containers:
+    - projectDirectory: ./Server
+      dockerfile: .docker/Dockerfile.dotNet.Server
+      entrypointDll: thc.HotKnobs.Apps.Configuration.Server.dll
+      imageName: hotknobs/apps/configuration/server
+
+contracts:
+  file: ./Contracts/Configuration.Contracts.tsp
+
+ef:
+  contexts:
+    - contextName: PostgresConfigurationContext
+      projectDirectory: Persistence.Postgres
+      projectName: Configuration.Persistence.Postgres.csproj

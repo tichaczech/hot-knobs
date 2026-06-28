@@ -1,0 +1,22 @@
+# Configuration for the Collections application module.
+
+code: apps-collections
+name: Apps.Collections
+
+build:
+  packages:
+    - "thc.HotKnobs.Apps.Collections.Contracts"
+  containers:
+    - projectDirectory: ./Server
+      dockerfile: .docker/Dockerfile.dotNet.Server
+      entrypointDll: thc.HotKnobs.Apps.Collections.Server.dll
+      imageName: hotknobs/apps/collections/server
+
+contracts:
+  file: ./Contracts/Collections.Contracts.tsp
+
+ef:
+  contexts:
+    - contextName: PostgresCollectionsContext
+      projectDirectory: Persistence.Postgres
+      projectName: Collections.Persistence.Postgres.csproj

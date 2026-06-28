@@ -646,7 +646,7 @@ model Summary {
 /**
  * Represents a HotKnobs entity.
  */
-model Entity extends Resource {
+model EntityResource extends Resource {
 	/**
 	 * The name of the entity.
 	 */

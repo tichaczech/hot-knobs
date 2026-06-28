@@ -1,0 +1,13 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Naming convention -->
+  <PropertyGroup>
+    <DefaultAssemblyName>$(DefaultAssemblyName).Apps.$(MSBuildProjectName)</DefaultAssemblyName>
+    <DefaultRootNamespace>$(DefaultRootNamespace).Apps</DefaultRootNamespace>
+
+    <ArtifactsProjectName>Apps.$(MSBuildProjectName)</ArtifactsProjectName>
+  </PropertyGroup>
+
+</Project>

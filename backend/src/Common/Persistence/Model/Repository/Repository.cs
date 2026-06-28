@@ -2,7 +2,8 @@ using System.Linq.Expressions;
 
 using Microsoft.EntityFrameworkCore;
 
-using thc.HotKnobs.Model.Entities;
+using thc.HotKnobs.Models;
+using thc.HotKnobs.Repositories;
 using thc.HotKnobs.Runtime;
 using thc.HotKnobs.Runtime.Persistence;
 using thc.HotKnobs.Runtime.Security;
@@ -37,17 +38,19 @@ public abstract class Repository<TEntity, TContext> : IRepository<TEntity>
 	}
 
 	/// <inheritdoc />
-	public virtual Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+	public virtual ValueTask<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
 	{
-		return Task.FromResult(Context.Set<TEntity>().Add(entity).Entity);
+		return ValueTask.FromResult(Context.Set<TEntity>().Add(entity).Entity);
 	}
 
 	/// <inheritdoc />
-	public virtual Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+	public virtual ValueTask Delete(TEntity entity, CancellationToken cancellationToken = default)
 	{
 		CheckConcurrencyToken(entity);
 
-		return Task.FromResult(Context.Set<TEntity>().Remove(entity));
+		_ = Context.Set<TEntity>().Remove(entity).Entity;
+
+		return ValueTask.CompletedTask;
 	}
 
 	/// <inheritdoc />
@@ -69,8 +72,14 @@ public abstract class Repository<TEntity, TContext> : IRepository<TEntity>
 		GC.SuppressFinalize(this);
 	}
 
+	public IAsyncEnumerable<TRepresentation> FindAll<TRepresentation>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TRepresentation>> selector, string? pagingToken = default, string? syncToken = default, CancellationToken cancellationToken = default)
+		where TRepresentation : class
+	{
+		return Context.Set<TEntity>().Where(predicate).Select(selector).AsAsyncEnumerable();
+	}
+
 	/// <inheritdoc />
-	public virtual async Task<TEntity?> FindAsync(string id, CancellationToken cancellationToken = default)
+	public virtual async ValueTask<TEntity?> FindOne(string id, CancellationToken cancellationToken = default)
 	{
 		var entity = await Context.Set<TEntity>().FindAsync([id], cancellationToken: cancellationToken);
 		if (entity is not null)
@@ -80,7 +89,7 @@ public abstract class Repository<TEntity, TContext> : IRepository<TEntity>
 	}
 
 	/// <inheritdoc />
-	public virtual async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+	public virtual async ValueTask<TEntity?> FindOne(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
 	{
 		var entity = await Context.Set<TEntity>().SingleOrDefaultAsync(predicate, cancellationToken);
 		if (entity is not null)
@@ -89,41 +98,41 @@ public abstract class Repository<TEntity, TContext> : IRepository<TEntity>
 		return entity;
 	}
 
+	// /// <inheritdoc />
+	// public virtual async ValueTask<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+	// {
+	// 	var timestamp = DateTimeOffset.UtcNow;
+
+	// 	Context.ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified).ToList().ForEach(e =>
+	// 	{
+	// 		if (e.Entity is Entity entity)
+	// 		{
+	// 			if (e.State == EntityState.Added)
+	// 			{
+	// 				entity.CreatedAt = timestamp;
+	// 				entity.CreatedBy = UserProvider.GetCurrentUser()?.Identity?.Name ?? throw new InvalidOperationException("Current user is not set!");
+	// 			}
+
+	// 			entity.ETag = Guid.NewGuid().ToString("D");
+	// 			entity.UpdatedAt = timestamp;
+	// 			entity.UpdatedBy = UserProvider.GetCurrentUser()?.Identity?.Name ?? throw new InvalidOperationException("Current user is not set!");
+	// 		}
+	// 	});
+
+	// 	var count = await Context.SaveChangesAsync(cancellationToken);
+	// 	await SyncConcurrencyTokens(cancellationToken);
+
+	// 	return count;
+	// }
+
 	/// <inheritdoc />
-	public virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-	{
-		var timestamp = DateTimeOffset.UtcNow;
-
-		Context.ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified).ToList().ForEach(e =>
-		{
-			if (e.Entity is Entity entity)
-			{
-				if (e.State == EntityState.Added)
-				{
-					entity.CreatedAt = timestamp;
-					entity.CreatedBy = UserProvider.GetCurrentUser()?.Identity?.Name ?? throw new InvalidOperationException("Current user is not set!");
-				}
-
-				entity.ETag = Guid.NewGuid().ToString("D");
-				entity.UpdatedAt = timestamp;
-				entity.UpdatedBy = UserProvider.GetCurrentUser()?.Identity?.Name ?? throw new InvalidOperationException("Current user is not set!");
-			}
-		});
-
-		var count = await Context.SaveChangesAsync(cancellationToken);
-		await SyncConcurrencyTokens(cancellationToken);
-
-		return count;
-	}
-
-	/// <inheritdoc />
-	public virtual Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+	public virtual ValueTask<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default)
 	{
 		ArgumentNullException.ThrowIfNull(entity);
 
 		CheckConcurrencyToken(entity);
 
-		return Task.FromResult(Context.Set<TEntity>().Update(entity).Entity);
+		return ValueTask.FromResult(Context.Set<TEntity>().Update(entity).Entity);
 	}
 
 	protected virtual void Dispose(bool disposing)

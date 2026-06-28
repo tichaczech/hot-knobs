@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-using thc.HotKnobs.Model.Entities;
+using thc.HotKnobs.Models;
 
 namespace thc.HotKnobs.Runtime.Persistence;
 

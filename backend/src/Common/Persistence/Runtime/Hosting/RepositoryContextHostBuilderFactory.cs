@@ -9,8 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using thc.HotKnobs.Model.Entities;
-using thc.HotKnobs.Model.Repository;
+using thc.HotKnobs.Models;
+using thc.HotKnobs.Repositories;
 using thc.HotKnobs.Runtime.Configuration;
 using thc.HotKnobs.Runtime.Persistence;
 

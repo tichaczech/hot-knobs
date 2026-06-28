@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using thc.HotKnobs.Model.Entities;
-
 using MongoDB.EntityFrameworkCore.Extensions;
+
+using thc.HotKnobs.Models;
 
 namespace thc.HotKnobs.Runtime.Persistence;
 
