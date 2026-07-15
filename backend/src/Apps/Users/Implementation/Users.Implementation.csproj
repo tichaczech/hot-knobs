@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" />
     <ProjectReference Include="..\Common\Users.Common.csproj" />
   </ItemGroup>
 

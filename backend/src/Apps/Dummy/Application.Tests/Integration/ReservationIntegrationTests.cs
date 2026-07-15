@@ -40,7 +40,7 @@ public class ReservationIntegrationTests(IntegrationTestsFixture fixture) : ICla
 	{
 		// Arrange
 		var reservation = await fixture.PrepareReservation();
-		var result = await fixture.ReservationListQueryHandler.Handle(new ReservationListQuery<Reservation>(), default);
+		var result = await fixture.ReservationListQueryHandler.Handle(new ReservationListQuery(), default);
 		var resultList = await BaseTestsFixture.ReadAllAsync(result.Items);
 
 		Assert.NotEmpty(resultList);

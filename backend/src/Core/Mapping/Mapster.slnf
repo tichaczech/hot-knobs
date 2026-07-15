@@ -1,0 +1,11 @@
+{
+	"solution": {
+		"path": "..\\..\\..\\backend.slnx",
+		"projects": [
+			"src/Core/Common.Tests/Common.Tests.csproj",
+			"src/Core/Common/Common.csproj",
+			"src/Core/Mapping/Mapster.Tests/Mapping.Mapster.Tests.csproj",
+			"src/Core/Mapping/Mapster/Mapping.Mapster.csproj",
+		]
+	}
+}

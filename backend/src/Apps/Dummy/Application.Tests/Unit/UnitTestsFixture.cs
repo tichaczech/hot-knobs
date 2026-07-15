@@ -66,6 +66,17 @@ public class UnitTestsFixture : BaseTestsFixture
 			return ValueTask.CompletedTask;
 		}
 
+		public ValueTask Delete(string id, string etag, CancellationToken cancellationToken = default)
+		{
+			var entityToDelete = storage.FirstOrDefault(x => x.Id == id);
+			if (entityToDelete is not null)
+			{
+				_ = storage.Remove(entityToDelete);
+			}
+
+			return ValueTask.CompletedTask;
+		}
+
 		public void Dispose()
 		{
 		}
@@ -90,7 +101,7 @@ public class UnitTestsFixture : BaseTestsFixture
 			return ValueTask.FromResult(storage.SingleOrDefault(predicate.Compile()));
 		}
 
-		public ValueTask<T> Update(T entity, CancellationToken cancellationToken = default)
+		public ValueTask<T> Update(T entity, string etag, CancellationToken cancellationToken = default)
 		{
 			var entityToUpdate = storage.FirstOrDefault(x => x.Id == entity.Id);
 			if (entityToUpdate is not null)

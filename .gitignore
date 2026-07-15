@@ -1,21 +1,4 @@
 ﻿# === Custom rules
 
-_packages/
-node_modules/
-
 # Docker Compose volumes
 _data/
-
-# Artifacts directory
-_artifacts/
-
-# DocFX documentation files
-doc/code/**/*.yml
-doc/code/**/.manifest
-
-# User settings
-appsettings.Local.json
-appsettings.*.Local.json
-
-# .NET Core Tools
-.mono

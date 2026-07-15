@@ -95,21 +95,5 @@ public interface ILoanService : IResourceOperationsWithCreateAndUpdate<LoanRespo
 	/// <param name="reservationId">The ID of the reservation for which to create a loan.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
 	/// <returns>A <see cref="LoanResponse"/> object representing the created loan.</returns>
-	Task<LoanResponse> CreateAsync(string reservationId, CancellationToken cancellationToken = default);
-
-	/// <summary>
-	/// Retrieves a list of loans based on the specified criteria.
-	/// </summary>
-	/// <param name="modifiedSince">Limits the resulting list to only loans that have been modified since.</param>
-	/// <param name="bookId">The ID of the book to filter by.</param>
-	/// <param name="dueOn"></param>
-	/// <param name="patronId">The ID of the patron to filter by.</param>
-	/// <param name="reservationId"></param>
-	/// <param name="loanInProgressOn">The date on which the loan is/was in progress.</param>
-	/// <param name="loanedOn"></param>
-	/// <param name="overdueOn"></param>
-	/// <param name="onlyActive">Limits the resulting list to only active loans.</param>
-	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>A collection representing the ids of loans that match the specified criteria.</returns>
-	IAsyncEnumerable<string> ListAsync(string? bookId = default, DateTimeOffset? dueOn = default, DateTimeOffset? loanInProgressOn = default, DateTimeOffset? loanedOn = default, DateTimeOffset? overdueOn = default, string? patronId = default, string? reservationId = default, DateTimeOffset? modifiedSince = default, bool onlyActive = true, CancellationToken cancellationToken = default);
+	ValueTask<LoanResponse> Create(string reservationId, CancellationToken cancellationToken = default);
 }

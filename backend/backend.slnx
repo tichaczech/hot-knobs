@@ -5,22 +5,8 @@
 		<File Path="src/Directory.Build.props" />
 		<File Path="src/Directory.Packages.props" />
 	</Folder>
-	<Folder Name="/Common/">
-		<Project Path="src/Common/Application/Application.csproj" />
-		<Project Path="src/Common/Contracts/Contracts.csproj" />
-		<Project Path="src/Common/Domain/Domain.csproj" />
-		<Project Path="src/Common/Persistence.Cosmos/Persistence.Cosmos.csproj" />
-		<Project Path="src/Common/Persistence.Mongo/Persistence.Mongo.csproj" />
-		<Project Path="src/Common/Persistence.Postgres/Persistence.Postgres.csproj" />
-		<Project Path="src/Common/Persistence/Persistence.csproj" />
-		<Project Path="src/Common/Runtime.Server.Diagnostics.AzureMonitor/Runtime.Server.Diagnostics.AzureMonitor.csproj" />
-		<Project Path="src/Common/Runtime.Server/Runtime.Server.csproj" />
-		<Project Path="src/Common/Runtime.Worker.Diagnostics.AzureMonitor/Runtime.Worker.Diagnostics.AzureMonitor.csproj" />
-		<Project Path="src/Common/Runtime.Worker/Runtime.Worker.csproj" />
-		<Project Path="src/Common/Runtime/Runtime.csproj" />
-	</Folder>
 	<Folder Name="/Apps/" />
-	<Folder Name="/Apps/Collections/">
+	<!-- <Folder Name="/Apps/Collections/">
 		<File Path="src/Apps/Collections/manifest.yaml" />
 		<Project Path="src/Apps/Collections/Common/Collections.Common.csproj" />
 		<Project Path="src/Apps/Collections/Contracts/Collections.Contracts.csproj" />
@@ -37,7 +23,7 @@
 		<Project Path="src/Apps/Configuration/Implementation/Configuration.Implementation.csproj" />
 		<Project Path="src/Apps/Configuration/Persistence.Cosmos/Configuration.Persistence.Cosmos.csproj" />
 		<Project Path="src/Apps/Configuration/Server/Configuration.Server.csproj" />
-	</Folder>
+	</Folder> -->
 	<Folder Name="/Apps/Dummy/">
 		<File Path="src/Apps/Dummy/manifest.yaml" />
 		<Project Path="src/Apps/Dummy/Application.Tests/Dummy.Application.Tests.csproj" />
@@ -59,4 +45,42 @@
 		<Project Path="src/Apps/Users/Persistence.Postgres/Users.Persistence.Postgres.csproj" />
 		<Project Path="src/Apps/Users/Server/Users.Server.csproj" />
 	</Folder>
+	<Folder Name="/Blocks/">
+		<Project Path="src/Blocks/Application/Application.csproj" />
+		<Project Path="src/Blocks/Contracts/Contracts.csproj" />
+		<Project Path="src/Blocks/Domain/Domain.csproj" />
+		<Project Path="src/Blocks/Persistence.Cosmos/Persistence.Cosmos.csproj" />
+		<Project Path="src/Blocks/Persistence.Mongo/Persistence.Mongo.csproj" />
+		<Project Path="src/Blocks/Persistence.Postgres/Persistence.Postgres.csproj" />
+		<Project Path="src/Blocks/Persistence/Persistence.csproj" />
+		<Project Path="src/Blocks/Runtime.Server.Diagnostics.AzureMonitor/Runtime.Server.Diagnostics.AzureMonitor.csproj" />
+		<Project Path="src/Blocks/Runtime.Server/Runtime.Server.csproj" />
+		<Project Path="src/Blocks/Runtime.Worker.Diagnostics.AzureMonitor/Runtime.Worker.Diagnostics.AzureMonitor.csproj" />
+		<Project Path="src/Blocks/Runtime.Worker/Runtime.Worker.csproj" />
+		<Project Path="src/Blocks/Runtime/Runtime.csproj" />
+	</Folder>
+	<Folder Name="/Core/" />
+	<Folder Name="/Core/Common/">
+		<Project Path="src/Core/Common.Tests/Common.Tests.csproj" />
+		<Project Path="src/Core/Common/Common.csproj" />
+	</Folder>
+	<Folder Name="/Core/Mapping/">
+		<Project Path="src/Core/Mapping/Mapster.Tests/Mapping.Mapster.Tests.csproj" />
+		<Project Path="src/Core/Mapping/Mapster/Mapping.Mapster.csproj" />
+	</Folder>
+	<Folder Name="/Core/Queues/">
+		<Project Path="src/Core/Queues/AzureQueueStorage.Tests/Queues.AzureQueueStorage.Tests.csproj" />
+		<Project Path="src/Core/Queues/AzureQueueStorage/Queues.AzureQueueStorage.csproj" />
+	</Folder>
+	<Folder Name="/Core/Storage/">
+		<Project Path="src/Core/Storage/AzureBlobStorage.Tests/Storage.AzureBlobStorage.Tests.csproj" />
+		<Project Path="src/Core/Storage/AzureBlobStorage/Storage.AzureBlobStorage.csproj" />
+		<Project Path="src/Core/Storage/GoogleCloudStorage.Tests/Storage.GoogleCloudStorage.Tests.csproj" />
+		<Project Path="src/Core/Storage/GoogleCloudStorage/Storage.GoogleCloudStorage.csproj" />
+	</Folder>
+	<Folder Name="/Core/Validation/">
+		<Project Path="src/Core/Validation/DataAnnotations.Tests/Validation.DataAnnotations.Tests.csproj" />
+		<Project Path="src/Core/Validation/DataAnnotations/Validation.DataAnnotations.csproj" />
+	</Folder>
+
 </Solution>

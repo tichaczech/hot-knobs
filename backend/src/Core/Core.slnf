@@ -1,0 +1,19 @@
+{
+	"solution": {
+		"path": "..\\..\\backend.slnx",
+		"projects": [
+			"src/Core/Common.Tests/Common.Tests.csproj",
+			"src/Core/Common/Common.csproj",
+			"src/Core/Mapping/Mapster.Tests/Mapping.Mapster.Tests.csproj",
+			"src/Core/Mapping/Mapster/Mapping.Mapster.csproj",
+			"src/Core/Queues/AzureQueueStorage.Tests/Queues.AzureQueueStorage.Tests.csproj",
+			"src/Core/Queues/AzureQueueStorage/Queues.AzureQueueStorage.csproj",
+			"src/Core/Storage/AzureBlobStorage.Tests/Storage.AzureBlobStorage.Tests.csproj",
+			"src/Core/Storage/AzureBlobStorage/Storage.AzureBlobStorage.csproj",
+			"src/Core/Storage/GoogleCloudStorage.Tests/Storage.GoogleCloudStorage.Tests.csproj",
+			"src/Core/Storage/GoogleCloudStorage/Storage.GoogleCloudStorage.csproj",
+			"src/Core/Validation/DataAnnotations.Tests/Validation.DataAnnotations.Tests.csproj",
+			"src/Core/Validation/DataAnnotations/Validation.DataAnnotations.csproj"
+		]
+	}
+}

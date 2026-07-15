@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-using thc.HotKnobs.Domains.Dummy.Model.Entities;
+using thc.HotKnobs.Domains.Dummy.Models;
 using thc.HotKnobs.Runtime.Persistence;
 
 namespace thc.HotKnobs.Domains.Dummy.Runtime.Persistence;

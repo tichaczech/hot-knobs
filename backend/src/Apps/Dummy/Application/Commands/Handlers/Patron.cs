@@ -1,4 +1,4 @@
-using MapsterMapper;
+using Fand.Runtime.Mapping;
 
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +8,7 @@ using thc.HotKnobs.Repositories;
 
 namespace thc.HotKnobs.Domains.Dummy.Commands.Handlers;
 
-public class PatronCreateCommandHandler : EntityCreateCommandHandler<PatronCreateCommand, PatronModel, Patron>
+public class PatronCreateCommandHandler : EntityCreateCommandHandler<PatronCreateCommand, PatronCreateModel, Patron>
 {
 	public PatronCreateCommandHandler(ILogger<PatronCreateCommandHandler> logger, IMapper mapper, IRepository<Patron> repository) : base(logger, mapper, repository) { }
 }
@@ -18,7 +18,7 @@ public class PatronDeleteCommandHandler : EntityDeleteCommandHandler<PatronDelet
 	public PatronDeleteCommandHandler(ILogger<PatronDeleteCommandHandler> logger, IMapper mapper, IRepository<Patron> repository) : base(logger, mapper, repository) { }
 }
 
-public class PatronUpdateCommandHandler : EntityUpdateCommandHandler<PatronUpdateCommand, PatronModel, Patron>
+public class PatronUpdateCommandHandler : EntityUpdateCommandHandler<PatronUpdateCommand, PatronUpdateModel, Patron>
 {
 	public PatronUpdateCommandHandler(ILogger<PatronUpdateCommandHandler> logger, IMapper mapper, IRepository<Patron> repository) : base(logger, mapper, repository) { }
 }

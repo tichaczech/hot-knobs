@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Runtime.Server\Runtime.Server.csproj" />
+    <ProjectReference Include="..\..\..\Blocks\Runtime.Server\Runtime.Server.csproj" />
     <ProjectReference Include="..\Contracts\Dummy.Contracts.csproj" />
     <ProjectReference Include="..\Application\Dummy.Application.csproj" />
     <ProjectReference Include="..\Persistence.Cosmos\Dummy.Persistence.Cosmos.csproj" />

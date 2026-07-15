@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using thc.HotKnobs.Domains.Dummy.Commands;
 using thc.HotKnobs.Domains.Dummy.Commands.Handlers;
 using thc.HotKnobs.Domains.Dummy.Models;
-using thc.HotKnobs.Domains.Dummy.Queries;
 using thc.HotKnobs.Domains.Dummy.Queries.Handlers;
 using thc.HotKnobs.Models;
 using thc.HotKnobs.Repositories;
@@ -95,27 +94,27 @@ public class IntegrationTestsFixture : BaseTestsFixture, IDisposable
 
 	public async Task CleanupAuthor(string id)
 	{
-		await AuthorDeleteCommandHandler.Handle(new AuthorDeleteCommand { Id = id, ETag = GetRandomAuthor().ETag }, default);
+		_ = await AuthorDeleteCommandHandler.Handle(new AuthorDeleteCommand { Id = id, ETag = GetRandomAuthor().ETag }, default);
 	}
 
 	public async Task CleanupBook(string id)
 	{
-		await BookDeleteCommandHandler.Handle(new BookDeleteCommand { Id = id, ETag = GetRandomBook().ETag }, default);
+		_ = await BookDeleteCommandHandler.Handle(new BookDeleteCommand { Id = id, ETag = GetRandomBook().ETag }, default);
 	}
 
 	public async Task CleanupPatron(string id)
 	{
-		await PatronDeleteCommandHandler.Handle(new PatronDeleteCommand { Id = id, ETag = GetRandomPatron().ETag }, default);
+		_ = await PatronDeleteCommandHandler.Handle(new PatronDeleteCommand { Id = id, ETag = GetRandomPatron().ETag }, default);
 	}
 
 	public async Task CleanupReservation(string id)
 	{
-		await ReservationDeleteCommandHandler.Handle(new ReservationDeleteCommand { Id = id, ETag = GetRandomReservation().ETag }, default);
+		_ = await ReservationDeleteCommandHandler.Handle(new ReservationDeleteCommand { Id = id, ETag = GetRandomReservation().ETag }, default);
 	}
 
 	public async Task CleanupLoan(string id)
 	{
-		await LoanDeleteCommandHandler.Handle(new LoanDeleteCommand { Id = id, ETag = GetRandomLoan().ETag }, default);
+		_ = await LoanDeleteCommandHandler.Handle(new LoanDeleteCommand { Id = id, ETag = GetRandomLoan().ETag }, default);
 	}
 
 	private sealed class InMemoryRepository<T>(ICollection<T> storage) : IRepository<T> where T : Entity
@@ -127,7 +126,7 @@ public class IntegrationTestsFixture : BaseTestsFixture, IDisposable
 			entity.CreatedBy = "IntegrationTests";
 			entity.UpdatedAt = now;
 			entity.UpdatedBy = "IntegrationTests";
-			entity.ETag = string.IsNullOrWhiteSpace(entity.ETag) ? Guid.NewGuid().ToString("N") : entity.ETag;
+			entity.ETag = String.IsNullOrWhiteSpace(entity.ETag) ? Guid.NewGuid().ToString("N") : entity.ETag;
 			storage.Add(entity);
 			return ValueTask.FromResult(entity);
 		}
@@ -135,6 +134,17 @@ public class IntegrationTestsFixture : BaseTestsFixture, IDisposable
 		public ValueTask Delete(T entity, CancellationToken cancellationToken = default)
 		{
 			_ = storage.Remove(entity);
+			return ValueTask.CompletedTask;
+		}
+
+		public ValueTask Delete(string id, string etag, CancellationToken cancellationToken = default)
+		{
+			var entityToDelete = storage.FirstOrDefault(x => x.Id == id);
+			if (entityToDelete is not null)
+			{
+				_ = storage.Remove(entityToDelete);
+			}
+
 			return ValueTask.CompletedTask;
 		}
 
@@ -160,7 +170,7 @@ public class IntegrationTestsFixture : BaseTestsFixture, IDisposable
 			return ValueTask.FromResult(storage.SingleOrDefault(predicate.Compile()));
 		}
 
-		public ValueTask<T> Update(T entity, CancellationToken cancellationToken = default)
+		public ValueTask<T> Update(T entity, string etag, CancellationToken cancellationToken = default)
 		{
 			var entityToUpdate = storage.FirstOrDefault(x => x.Id == entity.Id);
 			if (entityToUpdate is not null)

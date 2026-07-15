@@ -59,15 +59,4 @@ public class PatronUpdateRequest : PatronContract, IResourceUpdateRequest { }
 /// <summary>
 /// Provides methods for managing patrons.
 /// </summary>
-public interface IPatronService : IResourceOperationsWithCreateAndUpdate<PatronResponse, PatronCreateRequest, PatronUpdateRequest>
-{
-	/// <summary>
-	/// Lists all patrons.
-	/// </summary>
-	/// <param name="modifiedSince"></param>
-	/// <param name="onlyActive"></param>
-	/// <param name="query"></param>
-	/// <param name="cancellationToken"></param>
-	/// <returns></returns>
-	IAsyncEnumerable<string> ListAsync(string? query = default, DateTimeOffset? modifiedSince = default, bool onlyActive = true, CancellationToken cancellationToken = default);
-}
+public interface IPatronService : IResourceOperationsWithCreateAndUpdate<PatronResponse, PatronCreateRequest, PatronUpdateRequest>;

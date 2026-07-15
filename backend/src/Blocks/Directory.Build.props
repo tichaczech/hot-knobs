@@ -1,0 +1,11 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Naming convention -->
+  <PropertyGroup>
+    <DefaultAssemblyName>Fand.Apps.$(MSBuildProjectName)</DefaultAssemblyName>
+    <DefaultRootNamespace>Fand.Apps</DefaultRootNamespace>
+  </PropertyGroup>
+
+</Project>

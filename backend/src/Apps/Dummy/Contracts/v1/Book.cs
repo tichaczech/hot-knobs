@@ -66,16 +66,4 @@ public class BookResponse : BookContract, IResourceResponse
 /// <summary>
 /// Provides methods for managing books.
 /// </summary>
-public interface IBookService : IResourceOperationsWithCreateOrUpdate<BookResponse, BookCreateOrUpdateRequest>
-{
-	/// <summary>
-	/// Retrieves a list of books based on the specified criteria.
-	/// </summary>
-	/// <param name="authorId">The ID of the author to filter the books by.</param>
-	/// <param name="query">The query string to filter the books.</param>
-	/// <param name="modifiedSince">Limits the resulting list to only books that have been modified since.</param>
-	/// <param name="onlyActive">Limits the resulting list to only active books.</param>
-	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>A collection representing the ids of books that match the specified criteria.</returns>
-	IAsyncEnumerable<string> ListAsync(string? authorId = default, string? query = default, DateTimeOffset? modifiedSince = default, bool onlyActive = true, CancellationToken cancellationToken = default);
-}
+public interface IBookService : IResourceOperationsWithCreateOrUpdate<BookResponse, BookCreateOrUpdateRequest>;

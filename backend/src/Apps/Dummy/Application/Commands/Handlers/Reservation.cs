@@ -1,4 +1,4 @@
-using MapsterMapper;
+using Fand.Runtime.Mapping;
 
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +8,7 @@ using thc.HotKnobs.Repositories;
 
 namespace thc.HotKnobs.Domains.Dummy.Commands.Handlers;
 
-public class ReservationCreateCommandHandler : EntityCreateCommandHandler<ReservationCreateCommand, ReservationModel, Reservation>
+public class ReservationCreateCommandHandler : EntityCreateCommandHandler<ReservationCreateCommand, ReservationCreateModel, Reservation>
 {
 	public ReservationCreateCommandHandler(ILogger<ReservationCreateCommandHandler> logger, IMapper mapper, IRepository<Reservation> repository) : base(logger, mapper, repository) { }
 }
@@ -18,7 +18,7 @@ public class ReservationDeleteCommandHandler : EntityDeleteCommandHandler<Reserv
 	public ReservationDeleteCommandHandler(ILogger<ReservationDeleteCommandHandler> logger, IMapper mapper, IRepository<Reservation> repository) : base(logger, mapper, repository) { }
 }
 
-public class ReservationUpdateCommandHandler : EntityUpdateCommandHandler<ReservationUpdateCommand, ReservationModel, Reservation>
+public class ReservationUpdateCommandHandler : EntityUpdateCommandHandler<ReservationUpdateCommand, ReservationUpdateModel, Reservation>
 {
 	public ReservationUpdateCommandHandler(ILogger<ReservationUpdateCommandHandler> logger, IMapper mapper, IRepository<Reservation> repository) : base(logger, mapper, repository) { }
 }

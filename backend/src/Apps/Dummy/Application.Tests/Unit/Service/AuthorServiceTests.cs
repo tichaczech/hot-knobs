@@ -51,7 +51,7 @@ public class AuthorServiceTests(UnitTestsFixture unitTestsFixture) : IClassFixtu
 	[Fact]
 	public async Task ListQuery_ReturnsOnlyActiveAuthors()
 	{
-		var response = await unitTestsFixture.AuthorListQueryHandler.Handle(new AuthorListQuery<thc.HotKnobs.Domains.Dummy.Models.Author>(), default);
+		var response = await unitTestsFixture.AuthorListQueryHandler.Handle(new AuthorListQuery(), default);
 		var items = await BaseTestsFixture.ReadAllAsync(response.Items);
 
 		Assert.NotEmpty(items);

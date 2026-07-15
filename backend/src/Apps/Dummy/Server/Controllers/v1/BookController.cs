@@ -1,13 +1,16 @@
 using Asp.Versioning;
 
-using AutoMapper;
+using Fand.Runtime.Mapping;
+
+using Mediator;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using thc.HotKnobs.Domains.Dummy.Commands;
 using thc.HotKnobs.Domains.Dummy.Contracts.v1;
-using thc.HotKnobs.Domains.Dummy.Model.Entities;
-using thc.HotKnobs.Domains.Dummy.UseCases;
+using thc.HotKnobs.Domains.Dummy.Models;
+using thc.HotKnobs.Domains.Dummy.Queries;
 using thc.HotKnobs.Runtime.Server.Controllers;
 
 namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v1;
@@ -28,9 +31,12 @@ namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v1;
 [Consumes("application/json")]
 [Produces("application/json")]
 [Route("v{version:apiVersion}/books")]
-internal class BookController(ILogger<BookController> _logger, IMapper mapper, IBookUseCases service)
-	: EntityControllerWithCreateOrUpdate<Book, BookCreateModel, BookUpdateModel, BookResponse, BookCreateOrUpdateRequest, IBookUseCases>(_logger, mapper, service), IBookService
+internal class BookController : EntityControllerWithCreateOrUpdate<Book, BookCreateModel, BookUpdateModel, BookResponse, BookCreateOrUpdateRequest, BookCreateCommand, BookDeleteCommand, BookUpdateCommand, BookGetByIdQuery, BookListQuery>, IBookService
 {
+	public BookController(ILogger<BookController> _logger, IMapper mapper, IMediator mediator) : base(_logger, mapper, mediator)
+	{
+	}
+
 	/// <inheritdoc />
 	/// <response code="200">Book was updated successfully.</response>
 	/// <response code="201">Book was created successfully.</response>
@@ -44,9 +50,9 @@ internal class BookController(ILogger<BookController> _logger, IMapper mapper, I
 	[Authorize(Policy = "book-write")]
 #endif
 	[HttpPut("{id}", Name = "BookCreateOrUpdate")]
-	public override Task<BookResponse> CreateOrUpdateAsync(string id, BookCreateOrUpdateRequest request, CancellationToken cancellationToken = default)
+	public override ValueTask<BookResponse> CreateOrUpdate(BookCreateOrUpdateRequest request, [FromRoute] string? id = default, [FromHeader(Name = "If-Match")] string? etag = default, CancellationToken cancellationToken = default)
 	{
-		return base.CreateOrUpdateAsync(id, request, cancellationToken);
+		return base.CreateOrUpdate(request, id, etag, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -58,33 +64,27 @@ internal class BookController(ILogger<BookController> _logger, IMapper mapper, I
 	[Authorize(Policy = "book-write")]
 #endif
 	[HttpDelete("{id}", Name = "BookDelete")]
-	public override Task DeleteAsync(string id, CancellationToken cancellationToken = default)
+	public override ValueTask Delete([FromRoute] string id, [FromHeader(Name = "If-Match")] string etag, CancellationToken cancellationToken = default)
 	{
-		return base.DeleteAsync(id, cancellationToken);
+		return base.Delete(id, etag, cancellationToken);
 	}
 
 	/// <inheritdoc />
-	/// <response code="200">Author was found.</response>
+	/// <response code="200">Book was found.</response>
 	/// <response code="304">Book was not modified.</response>
 	/// <response code="404">Book was not found.</response>
 	/// <response code="409">Book is not active (if requested onlyActive record).</response>
 	[HttpGet("{id}", Name = "BookGet")]
-	public override Task<BookResponse> GetAsync(string id, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
+	public override ValueTask<BookResponse> Get([FromRoute] string id, [FromHeader(Name = "If-None-Match")] string? etag = default, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
 	{
-		return base.GetAsync(id, onlyActive, cancellationToken);
-	}
-
-	/// <inheritdoc />
-	public override IAsyncEnumerable<string> ListAsync([FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = null, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
-	{
-		throw new NotImplementedException();
+		return base.Get(id, etag, onlyActive, cancellationToken);
 	}
 
 	/// <inheritdoc />
 	/// <response code="304">Any book were modified since requested date.</response>
 	[HttpGet(Name = "BookList")]
-	public IAsyncEnumerable<string> ListAsync([FromQuery] string? authorId = default, [FromQuery] string? query = default, [FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = default, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
+	public override IAsyncEnumerable<dynamic> List([FromQuery] string? columns = default, [FromQuery] string? filter = null, [FromQuery] bool onlyActive = true, [FromQuery] string? orderBy = null, [FromQuery] string? paginationToken = null, [FromQuery] string? search = null, [FromQuery] string? synchronizationToken = null, CancellationToken cancellationToken = default)
 	{
-		return UseCases.ListAsync(query, authorId, modifiedSince, onlyActive, cancellationToken);
+		return base.List(columns, filter, onlyActive, orderBy, paginationToken, search, synchronizationToken, cancellationToken);
 	}
 }

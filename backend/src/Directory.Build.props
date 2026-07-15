@@ -99,7 +99,7 @@
   <!-- Naming convention -->
   <PropertyGroup>
     <DefaultAssemblyName>thc.HotKnobs</DefaultAssemblyName>
-	<DefaultRootNamespace>thc.HotKnobs</DefaultRootNamespace>
+    <DefaultRootNamespace>thc.HotKnobs</DefaultRootNamespace>
   </PropertyGroup>
 
   <!-- Versioning configuration -->
@@ -111,6 +111,7 @@
   <!-- SDK/Runtime configuration -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

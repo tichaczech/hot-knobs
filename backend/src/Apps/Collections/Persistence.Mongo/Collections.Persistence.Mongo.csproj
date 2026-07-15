@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Persistence.Mongo\Persistence.Mongo.csproj" />
+    <ProjectReference Include="..\..\..\Core\Persistence.Mongo\Persistence.Mongo.csproj" />
     <ProjectReference Include="..\Common\Collections.Common.csproj" />
   </ItemGroup>
 

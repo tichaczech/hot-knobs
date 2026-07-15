@@ -1,17 +1,20 @@
 using Asp.Versioning;
 
-using AutoMapper;
+using Fand.Runtime.Mapping;
+
+using Mediator;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-using thc.HotKnobs.Domains.Dummy.Contracts.v1;
-using thc.HotKnobs.Domains.Dummy.Model.Entities;
-using thc.HotKnobs.Domains.Dummy.UseCases;
-using thc.HotKnobs.Runtime.Server.Controllers;
+using Microsoft.OpenApi;
 
 using Swashbuckle.AspNetCore.Filters;
-using Microsoft.OpenApi;
+
+using thc.HotKnobs.Domains.Dummy.Commands;
+using thc.HotKnobs.Domains.Dummy.Contracts.v1;
+using thc.HotKnobs.Domains.Dummy.Models;
+using thc.HotKnobs.Domains.Dummy.Queries;
+using thc.HotKnobs.Runtime.Server.Controllers;
 
 namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v1;
 
@@ -31,8 +34,7 @@ namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v1;
 [Consumes("application/json")]
 [Produces("application/json")]
 [Route("v{version:apiVersion}/loans")]
-internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, ILoanUseCases service)
-	: EntityControllerWithCreateAndUpdate<Loan, LoanCreateModel, LoanUpdateModel, LoanResponse, LoanCreateRequest, LoanUpdateRequest, ILoanUseCases>(_logger, mapper, service), ILoanService
+internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, IMediator mediator) : EntityControllerWithCreateAndUpdate<Loan, LoanCreateModel, LoanUpdateModel, LoanResponse, LoanCreateRequest, LoanUpdateRequest, LoanCreateCommand, LoanDeleteCommand, LoanUpdateCommand, LoanGetByIdQuery, LoanListQuery>(_logger, mapper, mediator), ILoanService
 {
 	/// <inheritdoc />
 	/// <response code="201">Loan was created successfully.</response>
@@ -47,9 +49,9 @@ internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, I
 	[HttpPost("{reservationId}", Name = "LoanCreateFromReservation")]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[SwaggerResponseHeader(201, "Last-Modified", JsonSchemaType.String, "Last modified date of the resource")]
-	public async Task<LoanResponse> CreateAsync(string reservationId, CancellationToken cancellationToken = default)
+	public async ValueTask<LoanResponse> Create(string reservationId, CancellationToken cancellationToken = default)
 	{
-		var entity = await UseCases.CreateAsync(reservationId, cancellationToken);
+		var entity = await Mediator.Send(new LoanCreateFromReservationCommand { ReservationId = reservationId }, cancellationToken);
 
 		Response.StatusCode = StatusCodes.Status201Created;
 		return Mapper.Map<LoanResponse>(entity);
@@ -67,9 +69,9 @@ internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, I
 	[Authorize(Policy = "loan-write")]
 #endif
 	[HttpPost(Name = "LoanCreate")]
-	public override Task<LoanResponse> CreateAsync(LoanCreateRequest request, CancellationToken cancellationToken = default)
+	public override ValueTask<LoanResponse> Create(LoanCreateRequest request, CancellationToken cancellationToken = default)
 	{
-		return base.CreateAsync(request, cancellationToken);
+		return base.Create(request, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -80,9 +82,9 @@ internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, I
 	[Authorize(Policy = "loan-write")]
 #endif
 	[HttpDelete("{id}", Name = "LoanDelete")]
-	public override Task DeleteAsync(string id, CancellationToken cancellationToken = default)
+	public override ValueTask Delete([FromRoute] string id, [FromHeader(Name = "If-Match")] string etag, CancellationToken cancellationToken = default)
 	{
-		return base.DeleteAsync(id, cancellationToken);
+		return base.Delete(id, etag, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -90,24 +92,17 @@ internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, I
 	/// <response code="304">Loan was not modified.</response>
 	/// <response code="404">Loan was not found.</response>
 	[HttpGet("{id}", Name = "LoanGet")]
-	public override Task<LoanResponse> GetAsync(string id, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
+	public override ValueTask<LoanResponse> Get([FromRoute] string id, [FromHeader(Name = "If-None-Match")] string? etag = default, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
 	{
-		return base.GetAsync(id, onlyActive, cancellationToken);
-	}
-
-	/// <inheritdoc />
-	public override IAsyncEnumerable<string> ListAsync([FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = null, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
-	{
-		throw new NotImplementedException();
+		return base.Get(id, etag, onlyActive, cancellationToken);
 	}
 
 	/// <inheritdoc />
 	/// <response code="304">Any loan were modified since requested date.</response>
 	[HttpGet(Name = "LoanList")]
-	public IAsyncEnumerable<string> ListAsync(string? bookId = null, DateTimeOffset? dueOn = null, DateTimeOffset? loanInProgressOn = null, DateTimeOffset? loanedOn = null, DateTimeOffset? overdueOn = null, string? patronId = null, string? reservationId = null, [FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = null, bool onlyActive = true, CancellationToken cancellationToken = default)
-	// public IAsyncEnumerable<string> ListAsync([FromQuery] string? bookId = default, [FromQuery] DateTimeOffset? dueOn = default, [FromQuery] DateTimeOffset? loanInProgressOn = default, [FromQuery] DateTimeOffset? loanedOn = default, [FromQuery] DateTimeOffset? overdueOn = default, [FromQuery] string? patronId = default, [FromQuery] string? reservationId = default, [FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = default, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
+	public override IAsyncEnumerable<dynamic> List([FromQuery] string? columns = default, [FromQuery] string? filter = null, [FromQuery] bool onlyActive = true, [FromQuery] string? orderBy = null, [FromQuery] string? paginationToken = null, [FromQuery] string? search = null, [FromQuery] string? synchronizationToken = null, CancellationToken cancellationToken = default)
 	{
-		return UseCases.ListAsync(bookId, dueOn, loanInProgressOn, loanedOn, overdueOn, patronId, reservationId, modifiedSince, onlyActive, cancellationToken);
+		return base.List(columns, filter, onlyActive, orderBy, paginationToken, search, synchronizationToken, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -120,8 +115,8 @@ internal class LoanController(ILogger<LoanController> _logger, IMapper mapper, I
 	[Authorize(Policy = "loan-write")]
 #endif
 	[HttpPatch("{id}", Name = "LoanUpdate")]
-	public override Task<LoanResponse> UpdateAsync(string id, LoanUpdateRequest request, CancellationToken cancellationToken = default)
+	public override ValueTask<LoanResponse> Update([FromBody] LoanUpdateRequest request, [FromRoute] string id, [FromHeader(Name = "If-Match")] string etag, CancellationToken cancellationToken = default)
 	{
-		return base.UpdateAsync(id, request, cancellationToken);
+		return base.Update(request, id, etag, cancellationToken);
 	}
 }

@@ -38,7 +38,7 @@ public class BookIntegrationTests(IntegrationTestsFixture fixture) : IClassFixtu
 	{
 		//	Arrange
 		var book = await fixture.PrepareBook();
-		var result = await fixture.BookListQueryHandler.Handle(new BookListQuery<Book>(), default);
+		var result = await fixture.BookListQueryHandler.Handle(new BookListQuery(), default);
 		var resultList = await BaseTestsFixture.ReadAllAsync(result.Items);
 
 		Assert.NotEmpty(resultList);

@@ -38,7 +38,7 @@ public class AuthorIntegrationTests(IntegrationTestsFixture fixture) : IClassFix
 		// Arrange
 		var author = await fixture.PrepareAuthor();
 
-		var result = await fixture.AuthorListQueryHandler.Handle(new AuthorListQuery<Author>(), default);
+		var result = await fixture.AuthorListQueryHandler.Handle(new AuthorListQuery(), default);
 		var resultList = await BaseTestsFixture.ReadAllAsync(result.Items);
 
 		Assert.NotEmpty(resultList);

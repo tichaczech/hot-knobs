@@ -1,4 +1,4 @@
-using MapsterMapper;
+using Fand.Runtime.Mapping;
 
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +15,7 @@ public class ReservationGetByIdQueryHandler : EntityGetByIdQueryHandler<Reservat
 	public ReservationGetByIdQueryHandler(ILogger<ReservationGetByIdQueryHandler> logger, IMapper mapper, IRepository<Reservation> repository) : base(logger, mapper, repository) { }
 }
 
-public class ReservationListQueryHandler<TRepresentation> : EntityListQueryHandler<ReservationListQuery<TRepresentation>, Reservation, TRepresentation>
+public class ReservationListQueryHandler<TRepresentation> : EntityListQueryHandler<ReservationListQuery, Reservation, TRepresentation>
 	where TRepresentation : class, IModel
 {
 	public ReservationListQueryHandler(ILogger<ReservationListQueryHandler<TRepresentation>> logger, IMapper mapper, IRepository<Reservation> repository) : base(logger, mapper, repository) { }

@@ -1,4 +1,4 @@
-using MapsterMapper;
+using Fand.Runtime.Mapping;
 
 using Microsoft.Extensions.Logging;
 
@@ -30,7 +30,7 @@ public class AuthorGetByExternalIdQueryHandler : EntityQueryHandler<Author>, IEn
 	}
 }
 
-public class AuthorListQueryHandler<TRepresentation> : EntityListQueryHandler<AuthorListQuery<TRepresentation>, Author, TRepresentation>
+public class AuthorListQueryHandler<TRepresentation> : EntityListQueryHandler<AuthorListQuery, Author, TRepresentation>
 	where TRepresentation : class, IModel
 {
 	public AuthorListQueryHandler(ILogger<AuthorListQueryHandler<TRepresentation>> logger, IMapper mapper, IRepository<Author> repository) : base(logger, mapper, repository) { }

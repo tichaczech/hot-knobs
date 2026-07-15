@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 
-using thc.HotKnobs.Domains.Dummy.Model.Entities;
+using thc.HotKnobs.Domains.Dummy.Models;
 using thc.HotKnobs.Runtime.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);

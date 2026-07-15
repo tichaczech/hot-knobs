@@ -1,13 +1,16 @@
 using Asp.Versioning;
 
-using AutoMapper;
+using Fand.Runtime.Mapping;
+
+using Mediator;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using thc.HotKnobs.Domains.Dummy.Commands;
 using thc.HotKnobs.Domains.Dummy.Contracts.v1;
-using thc.HotKnobs.Domains.Dummy.Model.Entities;
-using thc.HotKnobs.Domains.Dummy.UseCases;
+using thc.HotKnobs.Domains.Dummy.Models;
+using thc.HotKnobs.Domains.Dummy.Queries;
 using thc.HotKnobs.Runtime.Server.Controllers;
 
 namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v1;
@@ -28,8 +31,7 @@ namespace thc.HotKnobs.Domains.Dummy.Server.Controllers.v1;
 [Consumes("application/json")]
 [Produces("application/json")]
 [Route("v{version:apiVersion}/patrons")]
-internal class PatronController(ILogger<PatronController> _logger, IMapper mapper, IPatronUseCases service)
-	: EntityControllerWithCreateAndUpdate<Patron, PatronCreateModel, PatronUpdateModel, PatronResponse, PatronCreateRequest, PatronUpdateRequest, IPatronUseCases>(_logger, mapper, service), IPatronService
+internal class PatronController(ILogger<PatronController> _logger, IMapper mapper, IMediator mediator) : EntityControllerWithCreateAndUpdate<Patron, PatronCreateModel, PatronUpdateModel, PatronResponse, PatronCreateRequest, PatronUpdateRequest, PatronCreateCommand, PatronDeleteCommand, PatronUpdateCommand, PatronGetByIdQuery, PatronListQuery>(_logger, mapper, mediator), IPatronService
 {
 	/// <inheritdoc />
 	/// <response code="201">Patron was created successfully.</response>
@@ -38,9 +40,9 @@ internal class PatronController(ILogger<PatronController> _logger, IMapper mappe
 	[Authorize(Policy = "patron-write")]
 #endif
 	[HttpPost(Name = "PatronCreate")]
-	public override Task<PatronResponse> CreateAsync(PatronCreateRequest request, CancellationToken cancellationToken = default)
+	public override ValueTask<PatronResponse> Create(PatronCreateRequest request, CancellationToken cancellationToken = default)
 	{
-		return base.CreateAsync(request, cancellationToken);
+		return base.Create(request, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -52,9 +54,9 @@ internal class PatronController(ILogger<PatronController> _logger, IMapper mappe
 	[Authorize(Policy = "patron-write")]
 #endif
 	[HttpDelete("{id}", Name = "PatronDelete")]
-	public override Task DeleteAsync(string id, CancellationToken cancellationToken = default)
+	public override ValueTask Delete([FromRoute] string id, [FromHeader(Name = "If-Match")] string etag, CancellationToken cancellationToken = default)
 	{
-		return base.DeleteAsync(id, cancellationToken);
+		return base.Delete(id, etag, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -63,23 +65,17 @@ internal class PatronController(ILogger<PatronController> _logger, IMapper mappe
 	/// <response code="404">Patron was not found.</response>
 	/// <response code="409">Patron is not active.</response>
 	[HttpGet("{id}", Name = "PatronGet")]
-	public override Task<PatronResponse> GetAsync(string id, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
+	public override ValueTask<PatronResponse> Get([FromRoute] string id, [FromHeader(Name = "If-None-Match")] string? etag = default, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
 	{
-		return base.GetAsync(id, onlyActive, cancellationToken);
-	}
-
-	/// <inheritdoc />
-	public override IAsyncEnumerable<string> ListAsync([FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = null, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
-	{
-		throw new NotImplementedException();
+		return base.Get(id, etag, onlyActive, cancellationToken);
 	}
 
 	/// <inheritdoc />
 	/// <response code="304">Any patron were modified since requested date.</response>
 	[HttpGet(Name = "PatronList")]
-	public IAsyncEnumerable<string> ListAsync([FromQuery] string? query = default, [FromHeader(Name = "If-Modified-Since")] DateTimeOffset? modifiedSince = default, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
+	public override IAsyncEnumerable<dynamic> List([FromQuery] string? columns = default, [FromQuery] string? filter = null, [FromQuery] bool onlyActive = true, [FromQuery] string? orderBy = null, [FromQuery] string? paginationToken = null, [FromQuery] string? search = null, [FromQuery] string? synchronizationToken = null, CancellationToken cancellationToken = default)
 	{
-		return UseCases.ListAsync(query, modifiedSince, onlyActive, cancellationToken);
+		return base.List(columns, filter, onlyActive, orderBy, paginationToken, search, synchronizationToken, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -92,8 +88,8 @@ internal class PatronController(ILogger<PatronController> _logger, IMapper mappe
 	[Authorize(Policy = "patron-write")]
 #endif
 	[HttpPatch("{id}", Name = "PatronUpdate")]
-	public override Task<PatronResponse> UpdateAsync(string id, PatronUpdateRequest request, CancellationToken cancellationToken = default)
+	public override ValueTask<PatronResponse> Update([FromBody] PatronUpdateRequest request, [FromRoute] string id, [FromHeader(Name = "If-Match")] string etag, CancellationToken cancellationToken = default)
 	{
-		return base.UpdateAsync(id, request, cancellationToken);
+		return base.Update(request, id, etag, cancellationToken);
 	}
 }

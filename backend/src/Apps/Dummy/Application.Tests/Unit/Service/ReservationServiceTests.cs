@@ -52,7 +52,7 @@ public class ReservationServiceTests(UnitTestsFixture unitTestsFixture) : IClass
 	[Fact]
 	public async Task ListQuery_ReturnsOnlyActiveReservations()
 	{
-		var response = await unitTestsFixture.ReservationListQueryHandler.Handle(new ReservationListQuery<thc.HotKnobs.Domains.Dummy.Models.Reservation>(), default);
+		var response = await unitTestsFixture.ReservationListQueryHandler.Handle(new ReservationListQuery(), default);
 		var items = await BaseTestsFixture.ReadAllAsync(response.Items);
 
 		Assert.NotEmpty(items);

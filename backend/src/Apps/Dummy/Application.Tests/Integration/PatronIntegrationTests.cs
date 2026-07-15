@@ -38,7 +38,7 @@ public class PatronIntegrationTests(IntegrationTestsFixture fixture) : IClassFix
 	{
 		// Arrange
 		var patron = await fixture.PreparePatron();
-		var result = await fixture.PatronListQueryHandler.Handle(new PatronListQuery<Patron>(), default);
+		var result = await fixture.PatronListQueryHandler.Handle(new PatronListQuery(), default);
 		var resultList = await BaseTestsFixture.ReadAllAsync(result.Items);
 
 		Assert.NotEmpty(resultList);

@@ -41,7 +41,7 @@ public class LoansIntegrationTests(IntegrationTestsFixture fixture) : IClassFixt
 	{
 		// Arrange
 		var loan = await fixture.PrepareLoan();
-		var result = await fixture.LoanListQueryHandler.Handle(new LoanListQuery<Loan>(), default);
+		var result = await fixture.LoanListQueryHandler.Handle(new LoanListQuery(), default);
 		var resultList = await BaseTestsFixture.ReadAllAsync(result.Items);
 
 		Assert.NotEmpty(resultList);

@@ -51,7 +51,7 @@ public class BookServiceTests(UnitTestsFixture unitTestsFixture) : IClassFixture
 	[Fact]
 	public async Task ListQuery_ReturnsOnlyActiveBooks()
 	{
-		var response = await unitTestsFixture.BookListQueryHandler.Handle(new BookListQuery<thc.HotKnobs.Domains.Dummy.Models.Book>(), default);
+		var response = await unitTestsFixture.BookListQueryHandler.Handle(new BookListQuery(), default);
 		var items = await BaseTestsFixture.ReadAllAsync(response.Items);
 
 		Assert.NotEmpty(items);

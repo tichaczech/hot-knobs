@@ -1,8 +1,8 @@
 using FakeItEasy;
 
-using Mapster;
+using Fand.Runtime.Mapping;
 
-using MapsterMapper;
+using Mapster;
 
 using Microsoft.Extensions.Logging;
 
@@ -82,7 +82,7 @@ public class BaseTestsFixture
 	public AuthorCreateCommand CreateAuthorCommand() => new()
 	{
 		Id = Guid.NewGuid().ToString(),
-		CreateModel = new AuthorModel
+		CreateModel = new AuthorCreateModel
 		{
 			ExternalId = $"author-{Guid.NewGuid():N}",
 			FirstName = "Test",
@@ -94,7 +94,7 @@ public class BaseTestsFixture
 	{
 		Id = author.Id,
 		ETag = author.ETag,
-		UpdateModel = new AuthorModel
+		UpdateModel = new AuthorUpdateModel
 		{
 			ExternalId = author.ExternalId,
 			FirstName = "Updated",
@@ -105,7 +105,7 @@ public class BaseTestsFixture
 	public PatronCreateCommand CreatePatronCommand() => new()
 	{
 		Id = Guid.NewGuid().ToString(),
-		CreateModel = new PatronModel
+		CreateModel = new PatronCreateModel
 		{
 			FirstName = "Test",
 			LastName = "Reader",
@@ -117,7 +117,7 @@ public class BaseTestsFixture
 	{
 		Id = patron.Id,
 		ETag = patron.ETag,
-		UpdateModel = new PatronModel
+		UpdateModel = new PatronUpdateModel
 		{
 			FirstName = "Updated",
 			LastName = patron.LastName,
@@ -128,7 +128,7 @@ public class BaseTestsFixture
 	public BookCreateCommand CreateBookCommand(string authorId) => new()
 	{
 		Id = Guid.NewGuid().ToString(),
-		CreateModel = new BookModel
+		CreateModel = new BookCreateModel
 		{
 			AuthorId = authorId,
 			ExternalId = $"book-{Guid.NewGuid():N}",
@@ -142,7 +142,7 @@ public class BaseTestsFixture
 	{
 		Id = book.Id,
 		ETag = book.ETag,
-		UpdateModel = new BookModel
+		UpdateModel = new BookUpdateModel
 		{
 			AuthorId = authorId,
 			ExternalId = book.ExternalId,
@@ -155,7 +155,7 @@ public class BaseTestsFixture
 	public ReservationCreateCommand CreateReservationCommand(string bookId, string patronId) => new()
 	{
 		Id = Guid.NewGuid().ToString(),
-		CreateModel = new ReservationModel
+		CreateModel = new ReservationCreateModel
 		{
 			BookId = bookId,
 			PatronId = patronId,
@@ -168,7 +168,7 @@ public class BaseTestsFixture
 	{
 		Id = reservation.Id,
 		ETag = reservation.ETag,
-		UpdateModel = new ReservationModel
+		UpdateModel = new ReservationUpdateModel
 		{
 			BookId = reservation.BookId,
 			PatronId = reservation.PatronId,
@@ -180,7 +180,7 @@ public class BaseTestsFixture
 	public LoanCreateCommand CreateLoanCommand(string bookId, string patronId) => new()
 	{
 		Id = Guid.NewGuid().ToString(),
-		CreateModel = new LoanModel
+		CreateModel = new LoanCreateModel
 		{
 			BookId = bookId,
 			PatronId = patronId,
@@ -193,21 +193,14 @@ public class BaseTestsFixture
 	public LoanCreateFromReservationCommand CreateLoanFromReservationCommand(string reservationId) => new()
 	{
 		Id = Guid.NewGuid().ToString(),
-		ReservationId = reservationId,
-		CreateModel = new LoanModel
-		{
-			BookId = string.Empty,
-			PatronId = string.Empty,
-			LoanedOn = DateTimeOffset.UtcNow,
-			DueOn = DateTimeOffset.UtcNow.AddDays(14)
-		}
+		ReservationId = reservationId
 	};
 
 	public LoanUpdateCommand CreateLoanUpdateCommand(Loan loan) => new()
 	{
 		Id = loan.Id,
 		ETag = loan.ETag,
-		UpdateModel = new LoanModel
+		UpdateModel = new LoanUpdateModel
 		{
 			BookId = loan.BookId,
 			PatronId = loan.PatronId,

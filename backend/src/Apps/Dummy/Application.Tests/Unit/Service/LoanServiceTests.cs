@@ -62,7 +62,7 @@ public class LoanServiceTests(UnitTestsFixture unitTestsFixture) : IClassFixture
 	[Fact]
 	public async Task ListQuery_ReturnsOnlyActiveLoans()
 	{
-		var response = await unitTestsFixture.LoanListQueryHandler.Handle(new LoanListQuery<thc.HotKnobs.Domains.Dummy.Models.Loan>(), default);
+		var response = await unitTestsFixture.LoanListQueryHandler.Handle(new LoanListQuery(), default);
 		var items = await BaseTestsFixture.ReadAllAsync(response.Items);
 
 		Assert.NotEmpty(items);

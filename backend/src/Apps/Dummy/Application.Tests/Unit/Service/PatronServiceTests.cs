@@ -49,7 +49,7 @@ public class PatronServiceTests(UnitTestsFixture unitTestsFixture) : IClassFixtu
 	[Fact]
 	public async Task ListQuery_ReturnsOnlyActivePatrons()
 	{
-		var response = await unitTestsFixture.PatronListQueryHandler.Handle(new PatronListQuery<thc.HotKnobs.Domains.Dummy.Models.Patron>(), default);
+		var response = await unitTestsFixture.PatronListQueryHandler.Handle(new PatronListQuery(), default);
 		var items = await BaseTestsFixture.ReadAllAsync(response.Items);
 
 		Assert.NotEmpty(items);

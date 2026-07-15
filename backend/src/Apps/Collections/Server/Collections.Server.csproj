@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Runtime.Server\Runtime.Server.csproj" />
+    <ProjectReference Include="..\..\..\Core\Runtime.Server\Runtime.Server.csproj" />
     <ProjectReference Include="..\Contracts\Collections.Contracts.csproj" />
     <ProjectReference Include="..\Implementation\Collections.Implementation.csproj" />
     <ProjectReference Include="..\Persistence.Cosmos\Collections.Persistence.Cosmos.csproj" />

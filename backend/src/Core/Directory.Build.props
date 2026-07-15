@@ -1,0 +1,16 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Naming convention -->
+  <PropertyGroup>
+    <DefaultAssemblyName>Fand.Runtime.$(MSBuildProjectName)</DefaultAssemblyName>
+    <DefaultRootNamespace>Fand.Runtime</DefaultRootNamespace>
+  </PropertyGroup>
+
+  <!-- SDK/Runtime configuration -->
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Common'))">
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+</Project>

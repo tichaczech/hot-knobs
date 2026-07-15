@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <AssemblyName>$(DefaultAssemblyName)</AssemblyName>
-	  <RootNamespace>$(DefaultRootNamespace)</RootNamespace>
+    <AssemblyName>$(DefaultAssemblyName)</AssemblyName>
+    <RootNamespace>$(DefaultRootNamespace)</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Common\Common.csproj" />
+    <ProjectReference Include="..\..\..\Core\Common\Common.csproj" />
   </ItemGroup>
 
 </Project>
